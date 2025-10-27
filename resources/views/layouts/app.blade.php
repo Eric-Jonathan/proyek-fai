@@ -78,72 +78,105 @@
     </style>
 </head>
 <body>
+    @if (Route::is(['kaprodi.*']))
+        {{-- Sidebar --}}
+        <div class="sidebar">
+            <div class="profile">
+                <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="User">
+                <h5>Hi Erick</h5>
+                <small>Kepala Program Studi</small>
+            </div>
+            <div class="menu">
+                <a href="{{ route('kaprodi.dashboard') }}" 
+                    class="{{ Route::is('kaprodi.dashboard') ? 'active' : '' }}">
+                <i class="fa fa-home me-2"></i>Home
+                </a>
 
-    {{-- Sidebar --}}
-    <div class="sidebar">
-        <div class="profile">
-            <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="User">
-            <h5>Hi Admin</h5>
-            <small>Administrator</small>
-        </div>
-        <div class="menu">
-            <a href="#" class="active"><i class="fa fa-home me-2"></i>Home</a>
-            <a href="#"><i class="fa fa-users me-2"></i>Pengguna</a>
-            <a href="#"><i class="fa fa-envelope me-2"></i>Surat Masuk</a>
-            <a href="#"><i class="fa fa-paper-plane me-2"></i>Surat Keluar</a>
-            <a href="#"><i class="fa fa-cog me-2"></i>Pengaturan</a>
-        </div>
-    </div>
+                <a href="{{ route('kaprodi.createSurat') }}" 
+                    class="{{ Route::is('kaprodi.createSurat') ? 'active' : '' }}">
+                    <i class="fa fa-plus-square me-2"></i>Buat Surat
+                </a>
 
-    {{-- Content --}}
-    <div class="content">
-        <div class="topbar">
-            <h4>Arsip Surat</h4>
-            <div class="user">
-                <i class="fa fa-user-circle me-2"></i>Hi Admin!
+                {{-- <a href="{{ route('kaprodi.users') }}" 
+                    class="{{ Route::is('kaprodi.users') ? 'active' : '' }}">
+                    <i class="fa fa-users me-2"></i>Pengguna
+                </a> --}}
             </div>
         </div>
 
-        <div class="container-fluid mt-4">
-            <h5 class="mb-3">The Dashboard</h5>
-            <div class="row g-3">
-                <div class="col-md-4">
-                    <div class="card-info card-purple">
-                        <div><strong>Pengguna</strong><br>2 Total</div>
-                        <i class="fa fa-user fa-2x"></i>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card-info card-blue">
-                        <div><strong>Jumlah Admin</strong><br>1</div>
-                        <i class="fa fa-user-shield fa-2x"></i>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card-info card-gray">
-                        <div><strong>Jumlah User</strong><br>1</div>
-                        <i class="fa fa-users fa-2x"></i>
-                    </div>
+        {{-- Content --}}
+        <div class="content p-4">
+            @yield('content')
+        </div>
+    @else
+        {{-- Sidebar --}}
+        <div class="sidebar">
+            <div class="profile">
+                <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="User">
+                <h5>Hi Admin</h5>
+                <small>Administrator</small>
+            </div>
+            <div class="menu">
+                <a href="#" class="active"><i class="fa fa-home me-2"></i>Home</a>
+                <a href="#"><i class="fa fa-users me-2"></i>Pengguna</a>
+                <a href="#"><i class="fa fa-envelope me-2"></i>Surat Masuk</a>
+                <a href="#"><i class="fa fa-paper-plane me-2"></i>Surat Keluar</a>
+                <a href="#"><i class="fa fa-cog me-2"></i>Pengaturan</a>
+            </div>
+        </div>
+
+        {{-- Content --}}
+        <div class="content">
+            <div class="topbar">
+                <h4>Arsip Surat</h4>
+                <div class="user">
+                    <i class="fa fa-user-circle me-2"></i>Hi Admin!
                 </div>
             </div>
 
-            <div class="row mt-4">
-                <div class="col-md-6">
-                    <div class="chart">
-                        <h6>Data Surat Masuk</h6>
-                        <canvas id="chartMasuk"></canvas>
+            <div class="container-fluid mt-4">
+                <h5 class="mb-3">The Dashboard</h5>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="card-info card-purple">
+                            <div><strong>Pengguna</strong><br>2 Total</div>
+                            <i class="fa fa-user fa-2x"></i>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card-info card-blue">
+                            <div><strong>Jumlah Admin</strong><br>1</div>
+                            <i class="fa fa-user-shield fa-2x"></i>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card-info card-gray">
+                            <div><strong>Jumlah User</strong><br>1</div>
+                            <i class="fa fa-users fa-2x"></i>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="chart">
-                        <h6>Data Surat Keluar</h6>
-                        <canvas id="chartKeluar"></canvas>
+
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="chart">
+                            <h6>Data Surat Masuk</h6>
+                            <canvas id="chartMasuk"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="chart">
+                            <h6>Data Surat Keluar</h6>
+                            <canvas id="chartKeluar"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-
+    @endif
+    
+    @yield('custom_js')
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         const ctx1 = document.getElementById('chartMasuk');

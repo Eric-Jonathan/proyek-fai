@@ -35,8 +35,12 @@ Route::prefix('dekan')->group(function () {
 // ====================
 Route::prefix('kaprodi')->group(function () {
     Route::get('/', function () {
-        return view('kaprodi.index');
+        return view('dosen_kaprodi.index');
     })->name('kaprodi.dashboard');
+
+    Route::get('/createSurat', function () {
+        return view('dosen_kaprodi.create_surat');
+    })->name('kaprodi.createSurat');
 });
 
 
@@ -44,10 +48,10 @@ Route::prefix('kaprodi')->group(function () {
 // 🧾 SEKRETARIS
 // ====================
 // Dashboard Sekretaris
-Route::prefix('seketaris')->group(function () {
+Route::prefix('sekretaris')->group(function () {
     Route::get('/', function () {
-        return view('seketaris.index'); // pastikan file ini ada di resources/views/seketaris/index.blade.php
-    })->name('seketaris.dashboard');
+        return view('sekretaris.index'); // pastikan file ini ada di resources/views/seketaris/index.blade.php
+    })->name('sekretaris.dashboard');
 });
 
 
