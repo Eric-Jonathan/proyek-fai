@@ -11,19 +11,19 @@ Route::get('/', function () {
 
 
 // ====================
-// 🧾 BAA
+// 🧾 BAU
 // ====================
-Route::prefix('baa')->group(function () {
+Route::prefix('bau')->group(function () {
     Route::get('/', function () {
-        return view('baa.index');
-    })->name('baa.dashboard');
+        return view('bau.index');
+    })->name('bau.dashboard');
 });
 
 
 // ====================
-// 🧑‍🏫 DOSEN
+// 🧑‍🏫 rektor/dekan
 // ====================
-Route::prefix('dosen')->group(function () {
+Route::prefix('dekan')->group(function () {
     Route::get('/', function () {
         return view('dosen.index');
     })->name('dosen.dashboard');
@@ -31,7 +31,7 @@ Route::prefix('dosen')->group(function () {
 
 
 // ====================
-// 🧑‍💼 KAPRODI
+// 🧑‍💼 dosen/kaprodi
 // ====================
 Route::prefix('kaprodi')->group(function () {
     Route::get('/', function () {
@@ -48,4 +48,11 @@ Route::prefix('seketaris')->group(function () {
     Route::get('/', function () {
         return view('seketaris.index'); // pastikan file ini ada di resources/views/seketaris/index.blade.php
     })->name('seketaris.dashboard');
+});
+
+
+route::prefix('admin')->group(function () {
+    Route::get('/', function () {
+        return view('admin.index');
+    })->name('admin.dashboard');
 });
