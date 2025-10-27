@@ -55,7 +55,7 @@
 
     <div class="login-card">
         <h4><i class="fa fa-envelope me-2"></i>Sistem Surat Penugasan</h4>
-        <form action="{{ url('/seketaris') }}" method="GET">
+        <form action="{{ url('/sekretaris') }}" method="GET">
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
                 <input type="text" class="form-control" id="username" placeholder="Masukkan username">
