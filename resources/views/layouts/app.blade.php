@@ -119,7 +119,7 @@
             </div>
             <div class="menu">
                 <a href="{{ route('rektor.dashboard') }}" 
-                    class="{{ Route::is('kaprodi.dashboard') ? 'active' : '' }}">
+                    class="{{ Route::is('rektor.dashboard') ? 'active' : '' }}">
                 <i class="fa fa-home me-2"></i>Home
                 </a>
 
@@ -129,6 +129,40 @@
                 </a> --}}
             </div>
         </div>
+
+        {{-- Content --}}
+        <div class="content p-4">
+            @yield('content')
+        </div>
+    @elseif (Route::is(['bau.*']))
+        <div class="sidebar">
+    <div class="profile text-center mb-3">
+        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="User" class="rounded-circle mb-2" width="60">
+        <h5 class="mb-0">Hi Erick</h5>
+        <small>BAU</small>
+    </div>
+    <div class="menu">
+        <a href="{{ route('bau.dashboard') }}" 
+            class="{{ Route::is('bau.dashboard') ? 'active' : '' }}">
+            <i class="fa fa-home me-2"></i>Dashboard
+        </a>
+
+        <a href="{{ route('bau.surat_tugas') }}" 
+            class="{{ Route::is('bau.surat_tugas') ? 'active' : '' }}">
+            <i class="fa fa-file-alt me-2"></i>Surat Tugas
+        </a>
+
+        <a href="{{ route('bau.arsip') }}" 
+            class="{{ Route::is('bau.arsip') ? 'active' : '' }}">
+            <i class="fa fa-archive me-2"></i>Arsip Surat
+        </a>
+
+        <a href="{{ route('bau.transport') }}" 
+            class="{{ Route::is('bau.transport') ? 'active' : '' }}">
+            <i class="fa fa-truck me-2"></i>Transportasi
+        </a>
+    </div>
+</div>
 
         {{-- Content --}}
         <div class="content p-4">

@@ -14,9 +14,35 @@ Route::get('/', function () {
 // 🧾 BAU
 // ====================
 Route::prefix('bau')->group(function () {
+
+    // Dashboard
     Route::get('/', function () {
         return view('bau.index');
     })->name('bau.dashboard');
+
+    // Daftar surat tugas
+    Route::get('/surat-tugas', function () {
+        return view('bau.surat_tugas');
+    })->name('bau.surat_tugas');
+
+    // Detail surat tugas
+    Route::get('/surat-tugas/{id}', function ($id) {
+        return view('bau.surat_detail');
+    })->name('bau.surat_detail');
+
+    // Arsip surat tugas
+    Route::get('/arsip', function () {
+        return view('bau.arsip');
+    })->name('bau.arsip');
+
+    // Transportasi / logistik
+    Route::get('/transportasi', function () {
+        return view('bau.transport');
+    })->name('bau.transport');
+
+    Route::get('/transport/{id}', function ($id) {
+        return view('bau.transport_detail'); // detail kendaraan
+    })->name('bau.transport_detail');
 });
 
 
