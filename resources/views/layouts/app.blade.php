@@ -134,41 +134,138 @@
         <div class="content p-4">
             @yield('content')
         </div>
-    @elseif (Route::is(['bau.*']))
+     @elseif (Route::is(['sekretaris.*']))
+        {{-- Sidebar Sekretaris --}}
         <div class="sidebar">
-    <div class="profile text-center mb-3">
-        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="User" class="rounded-circle mb-2" width="60">
-        <h5 class="mb-0">Hi Erick</h5>
-        <small>BAU</small>
-    </div>
-    <div class="menu">
-        <a href="{{ route('bau.dashboard') }}" 
-            class="{{ Route::is('bau.dashboard') ? 'active' : '' }}">
-            <i class="fa fa-home me-2"></i>Dashboard
-        </a>
+            <div class="profile text-center mb-3">
+                <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="User" class="rounded-circle mb-2" width="80">
+                <h5 class="mb-0">Hi Erick</h5>
+                <small>Sekretaris Rektor</small>
+            </div>
 
-        <a href="{{ route('bau.surat_tugas') }}" 
-            class="{{ Route::is('bau.surat_tugas') ? 'active' : '' }}">
-            <i class="fa fa-file-alt me-2"></i>Surat Tugas
-        </a>
+            <div class="menu">
+                <a href="{{ route('sekretaris.dashboard') }}" 
+                    class="{{ Route::is('sekretaris.dashboard') ? 'active' : '' }}">
+                    <i class="fa fa-home me-2"></i>Dashboard
+                </a>
 
-        <a href="{{ route('bau.arsip') }}" 
-            class="{{ Route::is('bau.arsip') ? 'active' : '' }}">
-            <i class="fa fa-archive me-2"></i>Arsip Surat
-        </a>
+                <a href="{{ route('sekretaris.daftar_surat') }}" 
+                    class="{{ Route::is('sekretaris.daftar_surat') ? 'active' : '' }}">
+                    <i class="fa fa-file-alt me-2"></i>Daftar Surat Tugas
+                </a>
 
-        <a href="{{ route('bau.transport') }}" 
-            class="{{ Route::is('bau.transport') ? 'active' : '' }}">
-            <i class="fa fa-truck me-2"></i>Transportasi
-        </a>
-    </div>
-</div>
+                <a href="{{ route('sekretaris.create_surat') }}" 
+                    class="{{ Route::is('sekretaris.create_surat') ? 'active' : '' }}">
+                    <i class="fa fa-plus-square me-2"></i>Buat Surat Tugas
+                </a>
+
+                <a href="{{ route('sekretaris.surat_keluar') }}" 
+                    class="{{ Route::is('sekretaris.surat_keluar') ? 'active' : '' }}">
+                    <i class="fa fa-paper-plane me-2"></i>Surat Keluar / Balasan
+                </a>
+
+                <a href="{{ route('sekretaris.arsip') }}" 
+                    class="{{ Route::is('sekretaris.arsip') ? 'active' : '' }}">
+                    <i class="fa fa-archive me-2"></i>Arsip Surat
+                </a>
+
+                <a href="{{ route('sekretaris.laporan') }}" 
+                    class="{{ Route::is('sekretaris.laporan') ? 'active' : '' }}">
+                    <i class="fa fa-chart-line me-2"></i>Laporan
+                </a>
+            </div>
+        </div>
 
         {{-- Content --}}
         <div class="content p-4">
             @yield('content')
+        </div>    
+
+
+        {{-- Sidebar Admin --}}
+        @elseif (Route::is(['admin.*']))
+        <div class="sidebar">
+            <div class="profile text-center mb-3">
+                <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="User" class="rounded-circle mb-2" width="80">
+                <h5 class="mb-0">Hi Admin</h5>
+                <small>Admin</small>
+            </div>
+
+            <div class="menu">
+                <a href="{{ route('admin.dashboard') }}" 
+                    class="{{ Route::is('admin.dashboard') ? 'active' : '' }}">
+                    <i class="fa fa-home me-2"></i>Dashboard
+                </a>
+
+                <a href="{{ route('admin.users') }}" 
+                    class="{{ Route::is('admin.users') ? 'active' : '' }}">
+                    <i class="fa fa-users me-2"></i>Manajemen Akun
+                </a>
+
+                <a href="{{ route('admin.roles') }}" 
+                    class="{{ Route::is('admin.roles') ? 'active' : '' }}">
+                    <i class="fa fa-key me-2"></i>Role & Permission
+                </a>
+
+                <a href="{{ route('admin.templates') }}" 
+                    class="{{ Route::is('admin.templates') ? 'active' : '' }}">
+                    <i class="fa fa-file-alt me-2"></i>Template Surat
+                </a>
+
+                <a href="{{ route('admin.logs') }}" 
+                    class="{{ Route::is('admin.logs') ? 'active' : '' }}">
+                    <i class="fa fa-history me-2"></i>Log Aktivitas
+                </a>
+
+                <a href="{{ route('admin.backup') }}" 
+                    class="{{ Route::is('admin.backup') ? 'active' : '' }}">
+                    <i class="fa fa-database me-2"></i>Backup & Reset Nomor
+                </a>
+                
+            </div>
         </div>
-    @else
+
+        {{-- Content --}}
+        <div class="content p-4">
+            @yield('content')
+        </div>    
+
+
+        @elseif (Route::is(['bau.*']))
+        <div class="sidebar">
+            <div class="profile text-center mb-3">
+                <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="User" class="rounded-circle mb-2" width="60">
+                <h5 class="mb-0">Hi Erick</h5>
+                <small>BAU</small>
+            </div>
+            <div class="menu">
+                <a href="{{ route('bau.dashboard') }}" 
+                    class="{{ Route::is('bau.dashboard') ? 'active' : '' }}">
+                    <i class="fa fa-home me-2"></i>Dashboard
+                </a>
+
+                <a href="{{ route('bau.surat_tugas') }}" 
+                    class="{{ Route::is('bau.surat_tugas') ? 'active' : '' }}">
+                    <i class="fa fa-file-alt me-2"></i>Surat Tugas
+                </a>
+
+                <a href="{{ route('bau.arsip') }}" 
+                    class="{{ Route::is('bau.arsip') ? 'active' : '' }}">
+                    <i class="fa fa-archive me-2"></i>Arsip Surat
+                </a>
+
+                <a href="{{ route('bau.transport') }}" 
+                    class="{{ Route::is('bau.transport') ? 'active' : '' }}">
+                    <i class="fa fa-truck me-2"></i>Transportasi
+                </a>
+            </div>
+        </div>
+        {{-- Content --}}
+        <div class="content p-4">
+            @yield('content')
+        </div>
+    
+        @else
         {{-- Sidebar --}}
         <div class="sidebar">
             <div class="profile">
