@@ -55,7 +55,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
+                    <tr onclick="window.location.href='{{ route('rektor.show', 1) }}'" style="cursor: pointer;">
                         <td>1</td>
                         <td>Dr. Alexander Erick</td>
                         <td>Surat Tugas</td>
@@ -63,12 +63,11 @@
                         <td>10-11 Nov 2025</td>
                         <td><span class="badge bg-warning">Diproses</span></td>
                         <td class="text-center">
-                            <button onclick="openDetailSurat({ nomor: 'ST/2025/001' })" class="btn btn-sm btn-info"><i class="fa fa-eye"></i></button>
                             <button class="btn btn-sm btn-success"><i class="fa fa-check"></i></button>
                             <button onclick="openModalTolak()" class="btn btn-sm btn-danger"><i class="fa fa-times"></i></button>
                         </td>
                     </tr>
-                    <tr>
+                    <tr onclick="window.location.href='{{ route('rektor.show', 2) }}'" style="cursor: pointer;">
                         <td>2</td>
                         <td>Johansen Kennedy</td>
                         <td>Assesor BKD</td>

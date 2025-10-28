@@ -24,10 +24,15 @@ Route::prefix('bau')->group(function () {
 // 🧑‍🏫 rektor
 // ====================
 Route::prefix('rektor')->group(function () {
+    // Halaman dashboard / daftar surat tugas
     Route::get('/', function () {
         return view('rektor.index');
     })->name('rektor.dashboard');
 
+    // Halaman detail surat tugas
+    Route::get('/surat/{id}', function ($id) {
+        return view('rektor.show');
+    })->name('rektor.show');
 });
 
 
