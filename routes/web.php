@@ -21,12 +21,13 @@ Route::prefix('bau')->group(function () {
 
 
 // ====================
-// 🧑‍🏫 rektor/dekan
+// 🧑‍🏫 rektor
 // ====================
-Route::prefix('dekan')->group(function () {
+Route::prefix('rektor')->group(function () {
     Route::get('/', function () {
-        return view('dosen.index');
-    })->name('dosen.dashboard');
+        return view('rektor.index');
+    })->name('rektor.dashboard');
+
 });
 
 

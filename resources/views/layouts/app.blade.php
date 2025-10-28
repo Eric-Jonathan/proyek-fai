@@ -108,6 +108,32 @@
         <div class="content p-4">
             @yield('content')
         </div>
+        
+    @elseif (Route::is(['rektor.*']))
+        {{-- Sidebar --}}
+        <div class="sidebar">
+            <div class="profile">
+                <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="User">
+                <h5>Hi Erick</h5>
+                <small>Rektor</small>
+            </div>
+            <div class="menu">
+                <a href="{{ route('rektor.dashboard') }}" 
+                    class="{{ Route::is('kaprodi.dashboard') ? 'active' : '' }}">
+                <i class="fa fa-home me-2"></i>Home
+                </a>
+
+                {{-- <a href="{{ route('kaprodi.users') }}" 
+                    class="{{ Route::is('kaprodi.users') ? 'active' : '' }}">
+                    <i class="fa fa-users me-2"></i>Pengguna
+                </a> --}}
+            </div>
+        </div>
+
+        {{-- Content --}}
+        <div class="content p-4">
+            @yield('content')
+        </div>
     @else
         {{-- Sidebar --}}
         <div class="sidebar">
