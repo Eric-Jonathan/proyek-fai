@@ -55,14 +55,25 @@
 
     <div class="login-card">
         <h4><i class="fa fa-envelope me-2"></i>Sistem Surat Penugasan</h4>
-        <form action="{{ url('/sekretaris') }}" method="GET">
+
+        {{-- Notifikasi --}}
+        @if(session('error'))
+            <div class="alert alert-danger text-center">{{ session('error') }}</div>
+        @endif
+        @if(session('success'))
+            <div class="alert alert-success text-center">{{ session('success') }}</div>
+        @endif
+
+        {{-- Form Login --}}
+        <form action="{{ route('login.process') }}" method="POST">
+            @csrf
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="username" placeholder="Masukkan username">
+                <input type="text" name="username" class="form-control" id="username" placeholder="Masukkan username" required>
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" placeholder="Masukkan password" >
+                <input type="text" name="password" class="form-control" id="password" placeholder="Masukkan password" required>
             </div>
             <button type="submit" class="btn-login mt-2">Masuk</button>
         </form>

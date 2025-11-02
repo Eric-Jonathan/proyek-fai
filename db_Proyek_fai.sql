@@ -1,0 +1,26 @@
+CREATE DATABASE Proyek_fai;
+USE Proyek_fai;
+
+CREATE TABLE `user` (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(100) UNIQUE NOT NULL,
+  `password` VARCHAR(255) NOT NULL,
+  jabatan VARCHAR(100) DEFAULT NULL,
+  atasan_id INT DEFAULT NULL,
+  hak_akses VARCHAR(50) DEFAULT 'user',
+  created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (atasan_id) REFERENCES `user`(id) ON DELETE SET NULL
+);
+DROP TABLE USER;
+
+INSERT INTO `user` (username, `password`, jabatan, atasan_id, hak_akses, created_at, updated_at)
+VALUES (
+  'admin',
+  '$2y$10$Lghs6vK6B35bhdVxKJ5JeuGJ/4p2ZUlTKBdkmQdW6oZzvB77miMBG',
+  'Administrator',
+  NULL,
+  'admin',
+  NOW(),
+  NOW()
+);
