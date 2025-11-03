@@ -222,6 +222,11 @@
                     <i class="fa fa-database me-2"></i>Backup & Reset Nomor
                 </a>
                 
+                <a href="{{ route('logout') }}" 
+            class="text-danger fw-bold"
+            onclick="return confirm('Yakin ingin logout?')">
+            <i class="fa fa-sign-out-alt me-2"></i>Logout
+        </a>
             </div>
         </div>
 

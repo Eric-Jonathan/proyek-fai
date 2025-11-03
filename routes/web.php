@@ -3,6 +3,7 @@
 
 
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 
 // ====================
@@ -54,10 +55,17 @@ Route::prefix('sekretaris')->middleware(['auth', 'role:sekretaris'])->group(func
 // 🧠 ADMIN
 // ====================
 Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
-    Route::view('/', 'admin.index')->name('admin.dashboard');
+    Route::view('/', [AdminController::class, 'admin.index'])->name('admin.dashboard');
     Route::view('/users', 'admin.users')->name('admin.users');
     Route::view('/roles', 'admin.roles')->name('admin.roles');
     Route::view('/templates', 'admin.templates')->name('admin.templates');
     Route::view('/logs', 'admin.logs')->name('admin.logs');
     Route::view('/backup', 'admin.backup')->name('admin.backup');
+    Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
+    Route::get('/users/create', [AdminController::class, 'createUser'])->name('admin.users.create');
+    Route::post('/users', [AdminController::class, 'storeUser'])->name('admin.users.store');
+    Route::get('/users/{id}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit');
+    Route::post('/users/{id}', [AdminController::class, 'updateUser'])->name('admin.users.update');
+    Route::get('/users/{id}/delete', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
+
 });

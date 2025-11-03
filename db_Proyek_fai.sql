@@ -14,13 +14,4 @@ CREATE TABLE `user` (
 );
 DROP TABLE USER;
 
-INSERT INTO `user` (username, `password`, jabatan, atasan_id, hak_akses, created_at, updated_at)
-VALUES (
-  'admin',
-  '$2y$10$Lghs6vK6B35bhdVxKJ5JeuGJ/4p2ZUlTKBdkmQdW6oZzvB77miMBG',
-  'Administrator',
-  NULL,
-  'admin',
-  NOW(),
-  NOW()
-);
+

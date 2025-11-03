@@ -73,7 +73,7 @@
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
-                <input type="text" name="password" class="form-control" id="password" placeholder="Masukkan password" required>
+                <input type="password" name="password" class="form-control" id="password" placeholder="Masukkan password" required>
             </div>
             <button type="submit" class="btn-login mt-2">Masuk</button>
         </form>

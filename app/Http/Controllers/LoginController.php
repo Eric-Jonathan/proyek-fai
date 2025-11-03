@@ -22,6 +22,7 @@ class LoginController extends Controller
         DB::table('user')->insert([
             'username' => 'admin',
             'password' => Hash::make('NomMon123'),
+            'email' => 'admin@mail.com',
             'hak_akses' => 'admin',
             'jabatan' => 'Administrator',
             'atasan_id' => null,
