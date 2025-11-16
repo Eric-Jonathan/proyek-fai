@@ -21,11 +21,12 @@ class LoginController extends Controller
     if (!$admin) {
         DB::table('user')->insert([
             'username' => 'admin',
-            'password' => Hash::make('NomMon123'),
+            'password' => Hash::make('password'),
+            'nidn' => '123123',
             'email' => 'admin@mail.com',
-            'hak_akses' => 'admin',
             'jabatan' => 'Administrator',
             'atasan_id' => null,
+            'hak_akses' => 'admin',
         ]);
     }
 

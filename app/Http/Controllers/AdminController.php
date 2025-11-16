@@ -30,6 +30,7 @@ class AdminController extends Controller
     $request->validate([
         'username' => 'required|unique:user,username',
         'email' => 'required|email|unique:user,email',
+        'nidn' => 'required|unique:user,nidn',
         'password' => 'required|min:4',
         'jabatan' => 'nullable|string',
         'atasan_id' => 'nullable|integer|exists:user,id',
@@ -40,6 +41,7 @@ class AdminController extends Controller
         'username' => $request->username,
         'email' => $request->email,
         'password' => bcrypt($request->password),
+        'nidn' => $request->nidn,
         'jabatan' => $request->jabatan,
         'atasan_id' => $request->atasan_id,
         'hak_akses' => $request->hak_akses,

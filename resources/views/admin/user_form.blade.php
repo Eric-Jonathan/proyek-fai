@@ -23,6 +23,13 @@
                    value="{{ old('email', $user->email ?? '') }}" required>
         </div>
 
+        {{-- NIDN --}}
+        <div class="mb-3">
+            <label for="nidn" class="form-label">NIDN</label>
+            <input type="text" name="nidn" id="nidn" class="form-control"
+                   value="{{ old('nidn', $user->nidn ?? '') }}" required>
+        </div>
+
         {{-- Password --}}
         <div class="mb-3">
             <label for="password" class="form-label">Password</label>
