@@ -74,3 +74,4 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 Route::get('/dashboard', function () {
     return view('dashboard.dashboard');
 });
+Route::get('/surat-tugas', [SuratController::class, 'index'])->name('surat-tugas.index');

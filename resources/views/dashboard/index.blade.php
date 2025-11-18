@@ -138,73 +138,106 @@
         <h5 class="header-title mb-3">Daftar Pengajuan <span class="fw-bold">AKTIF</span></h5>
 
         <div class="card table-card p-4 bg-white">
-            
-            <div class="row mb-3 align-items-center">
-                <div class="col-md-6 d-flex align-items-center">
-                    <select class="form-select form-select-sm w-auto me-2">
-                        <option value="10">10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                    </select>
-                    <small class="text-muted">entitas per halaman</small>
-                </div>
-                <div class="col-md-6 d-flex justify-content-md-end align-items-center mt-2 mt-md-0">
-                    <label class="me-2 small text-muted">Search:</label>
-                    <input type="search" class="form-control form-control-sm w-auto" placeholder="Cari...">
-                </div>
+    <!-- Form Pencarian & Pagination -->
+    <form method="GET" action="{{ url()->current() }}">
+        <div class="row mb-3 align-items-center">
+            <div class="col-md-6 d-flex align-items-center">
+                <select name="per_page" class="form-select form-select-sm w-auto me-2" onchange="this.form.submit()">
+                    <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
+                    <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
+                    <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
+                </select>
+                <small class="text-muted">entitas per halaman</small>
             </div>
-
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead>
-                        <tr>
-                            <th scope="col" style="width: 5%;">ID <i class="bi bi-caret-up-fill small text-primary"></i></th>
-                            <th scope="col">Nama Kegiatan <i class="bi bi-arrow-down-up small text-muted opacity-25"></i></th>
-                            <th scope="col">Tanggal <i class="bi bi-arrow-down-up small text-muted opacity-25"></i></th>
-                            <th scope="col">Penyelenggara <i class="bi bi-arrow-down-up small text-muted opacity-25"></i></th>
-                            <th scope="col">Jabatan <i class="bi bi-arrow-down-up small text-muted opacity-25"></i></th>
-                            <th scope="col" class="text-center">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>OPEN TALK SIB 2025</td>
-                            <td>26 May 2025</td>
-                            <td>HIMA SIB 2024/2025</td>
-                            <td>KETUA</td>
-                            <td><button type="button" class="btn btn-secondary">Belum</button></td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>OPEN TALK SIB 2025</td>
-                            <td>26 May 2025</td>
-                            <td>HIMA SIB 2024/2025</td>
-                            <td>KETUA</td>
-                            <td><button type="button" class="btn btn-success">Diterima</button></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="row align-items-center mt-2">
-                <div class="col-md-6 small text-muted">
-                    Showing 1 to 2 of 2 entries
-                </div>
-                
-                <div class="col-md-6">
-                    <nav aria-label="Page navigation example">
-                        <ul class="pagination justify-content-end mb-0">
-                            <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                            <li class="page-item"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                        </ul>
-                    </nav>
-                </div>
+            <div class="col-md-6 d-flex justify-content-md-end align-items-center mt-2 mt-md-0">
+                <label class="me-2 small text-muted">Search:</label>
+                <input type="search" name="search" value="{{ request('search') }}" class="form-control form-control-sm w-auto" placeholder="Cari Kegiatan..." onblur="this.form.submit()">
             </div>
         </div>
+    </form>
+
+    <!-- Tabel Data -->
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col" style="width: 5%;">No</th>
+                    <th scope="col">Nama Kegiatan</th>
+                    <th scope="col">Tanggal Mulai</th>
+                    <th scope="col">Tanggal Selesai</th>
+                    <th scope="col">Tempat Kegiatan</th>
+                    <th scope="col" class="text-center">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($data as $item)
+                <tr>
+                    <!-- 1. No -->
+                    <td>{{ $loop->iteration + $data->firstItem() - 1 }}</td>
+
+                    <!-- 2. Nama Kegiatan -->
+                    <td class="fw-bold">{{ $item->nama_kegiatan }}</td>
+
+                    <!-- 3. Tanggal Mulai -->
+                    <td>{{ \Carbon\Carbon::parse($item->tanggal_mulai)->format('d M Y') }}</td>
+
+                    <!-- 4. Tanggal Selesai -->
+                    <td>{{ \Carbon\Carbon::parse($item->tanggal_selesai)->format('d M Y') }}</td>
+
+                    <!-- 5. Tempat Kegiatan -->
+                    <td>{{ $item->tempat_kegiatan }}</td>
+
+                    <!-- 6. Status -->
+                    <td class="text-center">
+                        @php
+                            $badgeClass = 'secondary';
+                            $label = ucfirst(str_replace('_', ' ', $item->status_surat));
+
+                            switch($item->status_surat) {
+                                case 'diajukan':
+                                    $badgeClass = 'warning text-dark'; 
+                                    break;
+                                case 'diproses':
+                                    $badgeClass = 'info text-dark'; 
+                                    break;
+                                case 'disetujui_kaprodi':
+                                case 'disetujui_dekan':
+                                    $badgeClass = 'primary'; 
+                                    break;
+                                case 'ditandatangani':
+                                    $badgeClass = 'success'; 
+                                    break;
+                                case 'ditolak':
+                                    $badgeClass = 'danger'; 
+                                    break;
+                            }
+                        @endphp
+                        <span class="badge bg-{{ $badgeClass }}">{{ $label }}</span>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-4">Tidak ada data surat tugas ditemukan.</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Footer Pagination -->
+    <div class="row align-items-center mt-2">
+        <div class="col-md-6 small text-muted">
+            Showing {{ $data->firstItem() ?? 0 }} to {{ $data->lastItem() ?? 0 }} of {{ $data->total() }} entries
+        </div>
+        <div class="col-md-6">
+            <nav aria-label="Page navigation">
+                <div class="d-flex justify-content-end">
+                    {{ $data->links('pagination::bootstrap-5') }}
+                </div>
+            </nav>
+        </div>
+    </div>
+</div>
 
         <br><br>
         <h5 class="header-title mb-3">Riwayat Pengajuan </h5>
@@ -259,22 +292,22 @@
             </div>
 
             <div class="row align-items-center mt-2">
-    <div class="col-md-6 small text-muted">
-        Showing 1 to 2 of 2 entries
-    </div>
-    
-    <div class="col-md-6">
-        <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-end mb-0">
-                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item"><a class="page-link" href="#">Next</a></li>
-            </ul>
-        </nav>
-    </div>
-</div>
+                <div class="col-md-6 small text-muted">
+                    Showing 1 to 2 of 2 entries
+                </div>
+
+                <div class="col-md-6">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-end mb-0">
+                            <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                            <li class="page-item"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
         </div>
     </div>
 
