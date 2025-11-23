@@ -1,6 +1,9 @@
 @extends('layouts.app')
 @section('content')
 <div class="container mt-4">
+    @if($errors->any())
+        @dump($errors->all())
+    @endif
     <h3>{{ isset($user) ? 'Edit User' : 'Tambah User' }}</h3>
 
     <form action="{{ isset($user) ? route('admin.users.update', $user->id) : route('admin.users.store') }}" method="POST">
@@ -14,6 +17,9 @@
             <label for="username" class="form-label">Username</label>
             <input type="text" name="username" id="username" class="form-control"
                    value="{{ old('username', $user->username ?? '') }}" required>
+            @error('username')
+                <small class="text-danger">{{ $message }}</small>
+            @enderror
         </div>
 
         {{-- Email --}}
@@ -21,6 +27,9 @@
             <label for="email" class="form-label">Email</label>
             <input type="email" name="email" id="email" class="form-control"
                    value="{{ old('email', $user->email ?? '') }}" required>
+            @error('email')
+                <small class="text-danger">{{ $message }}</small>
+            @enderror
         </div>
 
         {{-- NIDN --}}
@@ -28,6 +37,9 @@
             <label for="nidn" class="form-label">NIDN</label>
             <input type="text" name="nidn" id="nidn" class="form-control"
                    value="{{ old('nidn', $user->nidn ?? '') }}" required>
+            @error('nidn')
+                <small class="text-danger">{{ $message }}</small>
+            @enderror
         </div>
 
         {{-- Password --}}
@@ -35,6 +47,9 @@
             <label for="password" class="form-label">Password</label>
             <input type="password" name="password" id="password" class="form-control"
                    placeholder="{{ isset($user) ? 'Kosongkan jika tidak ingin mengubah' : '' }}">
+            @error('password')
+                <small class="text-danger">{{ $message }}</small>
+            @enderror
         </div>
 
         {{-- Jabatan (gabungan role + jabatan) --}}
@@ -48,6 +63,9 @@
                 <option value="rektor" {{ old('jabatan', $user->jabatan ?? '') == 'rektor' ? 'selected' : '' }}>Rektor</option>
                 <option value="bau" {{ old('jabatan', $user->jabatan ?? '') == 'bau' ? 'selected' : '' }}>BAU</option>
             </select>
+            @error('jabatan')
+                <small class="text-danger">{{ $message }}</small>
+            @enderror
         </div>
 
         {{-- Atasan (sementara fixed) --}}
@@ -58,6 +76,9 @@
                 <option value="1" {{ old('atasan_id', $user->atasan_id ?? '') == 1 ? 'selected' : '' }}>Admin Utama</option>
                 <option value="2" {{ old('atasan_id', $user->atasan_id ?? '') == 2 ? 'selected' : '' }}>Rektor</option>
             </select>
+            @error('atasan_id')
+                <small class="text-danger">{{ $message }}</small>
+            @enderror
         </div>
 
         {{-- ✅ Hak akses detail (muncul hanya saat edit user) --}}

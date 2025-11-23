@@ -6,7 +6,8 @@
 
     <div class="card shadow-sm">
         <div class="card-body">
-            <form>
+            <form action="" method="POST">
+                @csrf
                 {{-- Pilihan Jenis Surat --}}
                 <div class="mb-3">
                     <label class="form-label fw-bold">Jenis Surat Tugas</label>
@@ -77,7 +78,7 @@
                         <i class="fa fa-undo me-1"></i>Reset
                     </button>
                     <button type="submit" class="btn btn-primary">
-                        <i class="fa fa-save me-1"></i>Simpan & Lanjutkan
+                        <i class="fa fa-save me-2"></i>Simpan & Lanjutkan
                     </button>
                 </div>
             </form>
