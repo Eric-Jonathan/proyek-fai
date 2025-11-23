@@ -69,5 +69,9 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/users/{id}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit');
     Route::post('/users/{id}', [AdminController::class, 'updateUser'])->name('admin.users.update');
     Route::get('/users/{id}/delete', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
-
 });
+
+Route::get('/dashboard', function () {
+    return view('dashboard.dashboard');
+});
+Route::get('/surat-tugas', [SuratController::class, 'index'])->name('surat-tugas.index');
