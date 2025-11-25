@@ -80,3 +80,7 @@ Route::get('/dashboard', function () {
 Route::get('/surat-tugas', [SuratController::class, 'index'])->name('surat-tugas.index');
 Route::get('/surat-tugas/create', [SuratTugasController::class, 'create'])->name('surat-tugas.create');
 Route::post('/surat-tugas', [SuratTugasController::class, 'store'])->name('surat-tugas.store');
+
+Route::get('/surat-tugas/preview/{id}', [SuratController::class, 'preview'])->name('dashboard.preview');
+Route::post('/surat-tugas/{id}/acc', [SuratController::class, 'acc'])->name('surat.acc');
+Route::post('/surat-tugas/{id}/tolak', [SuratController::class, 'tolak'])->name('surat.tolak');

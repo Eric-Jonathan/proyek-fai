@@ -191,11 +191,19 @@ CREATE TABLE `surat_tugas` (
   `tanggal_mulai` DATE NOT NULL,
   `tanggal_selesai` DATE NOT NULL,
 
-  `tanggal_surat` DATE NOT NULL,   -- tanggal surat dibuat
+  `tanggal_surat` DATE NOT NULL,          -- tanggal surat dibuat
   `lampiran_path` VARCHAR(255) DEFAULT NULL,
 
-  `status_surat` ENUM('diajukan','diproses','disetujui_kaprodi','disetujui_dekan','ditandatangani','ditolak')
-       NOT NULL DEFAULT 'diajukan',
+  `status_surat` ENUM(
+      'diajukan',
+      'diproses',
+      'disetujui_kaprodi',
+      'disetujui_dekan',
+      'ditandatangani',
+      'ditolak'
+  ) NOT NULL DEFAULT 'diajukan',
+
+  `alasan_penolakan` TEXT NULL DEFAULT NULL,   -- kolom baru
 
   `nomor_surat_final` VARCHAR(255) DEFAULT NULL,
   `signed_by_position_id` INT UNSIGNED DEFAULT NULL,
