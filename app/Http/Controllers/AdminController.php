@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Lecturer;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -16,7 +17,7 @@ class AdminController extends Controller
     // === USER MANAGEMENT ===
     public function users()
     {
-        $users = User::all();
+        $users = Lecturer::all();
         return view('admin.users', compact('users'));
     }
 

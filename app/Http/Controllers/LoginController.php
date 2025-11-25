@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Lecturer;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 
@@ -15,53 +15,84 @@ class LoginController extends Controller
     }
 
     public function authenticate(Request $request)
-{
-    // 🔹 Pastikan ada user admin default
-    $admin = DB::table('user')->where('username', 'admin')->first();
-    if (!$admin) {
-        DB::table('user')->insert([
-            'username' => 'admin',
-            'password' => Hash::make('password'),
-            'nidn' => '123123',
-            'email' => 'admin@mail.com',
-            'jabatan' => 'Administrator',
-            'atasan_id' => null,
-            'hak_akses' => 'admin',
-        ]);
-    }
+    {
+        // dd($request->all());
+        // ============================================
+        // 1. Ensure default admin exists
+        // ============================================
+        $admin = Lecturer::where('username', 'admin')->first();
+        // dd($admin);
 
-    // 🔹 Ambil user dari DB
-    $user = DB::table('user')->where('username', $request->username)->first();
+        if (!$admin) {
+            Lecturer::create([
+                'username' => 'admin',
+                'password' => Hash::make('123'),
+                'email' => 'admin@mail.com',
 
-    // 🔹 Cek password
-    if ($user && Hash::check($request->password, $user->password)) {
-        Session::put('user', [
-            'id' => $user->id,
-            'username' => $user->username,
-            'hak_akses' => $user->hak_akses,
-            'jabatan' => $user->jabatan,
-            'atasan_id' => $user->atasan_id,
-        ]);
+                // kolom relasi/role
+                'role' => 'admin',
+                'atasan_id' => null,
 
-        switch ($user->hak_akses) {
-            case 'admin':
-                return redirect()->route('admin.dashboard');
-            case 'sekretaris':
-                return redirect()->route('sekretaris.dashboard');
-            case 'kaprodi':
-                return redirect()->route('kaprodi.dashboard');
-            case 'rektor':
-                return redirect()->route('rektor.dashboard');
-            case 'bau':
-                return redirect()->route('bau.dashboard');
-            default:
-                return redirect('/')->with('error', 'Hak akses tidak dikenali.');
+                // kolom dosen
+                'full_name' => 'Administrator',
+                'lecturer_code' => 'ADM001',
+                'nidn' => '999999',
+                'employment_status' => 'active',
+                'is_certified' => 0,
+            ]);
         }
+
+        // ============================================
+        // 2. Ambil lecturer by username
+        // ============================================
+        $user = Lecturer::where('username', $request->username)->first();
+        // dd($user);
+
+        // dd([
+        //     'request_password' => $request->password,
+        //     'user_password_hash' => $user ? $user->password : null,
+        //     'user_exists' => (bool)$user
+        // ]);
+
+        // ============================================
+        // 3. Validasi password
+        // ============================================
+        if ($user && Hash::check($request->password, $user->password)) {
+            // dd('berhasil login');
+            // Simpan data ke session
+            Session::put('user', [
+                'id' => $user->id,
+                'username' => $user->username,
+                'role' => $user->role,
+                'full_name' => $user->full_name,
+                'nidn' => $user->nidn,
+                'atasan_id' => $user->atasan_id,
+            ]);
+
+            // dd($user->role);
+
+            // ============================================
+            // 4. Redirect berdasarkan role
+            // ============================================
+            // dd(Session::get('user'));
+            switch ($user->role) {
+                case 'admin':
+                    return redirect()->route('admin.dashboard');
+                case 'sekretaris':
+                    return redirect()->route('sekretaris.dashboard');
+                case 'kaprodi':
+                    return redirect()->route('kaprodi.dashboard');
+                case 'rektor':
+                    return redirect()->route('rektor.dashboard');
+                case 'bau':
+                    return redirect()->route('bau.dashboard');
+                default:
+                    return redirect('/')->with('error', 'Hak akses tidak dikenali.');
+            }
+        }
+
+        return redirect('/')->with('error', 'Username atau password salah.');
     }
-
-    return redirect('/')->with('error', 'Username atau password salah.');
-}
-
 
     public function logout()
     {
@@ -69,4 +100,3 @@ class LoginController extends Controller
         return redirect('/')->with('success', 'Anda telah logout.');
     }
 }
-    

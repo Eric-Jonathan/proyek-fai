@@ -8,18 +8,11 @@ use Illuminate\Support\Facades\Session;
 
 class AuthMiddleware
 {
-    public function handle(Request $request, Closure $next, $role = null)
+    public function handle(Request $request, Closure $next)
     {
-        $user = Session::get('user');
-
-        // belum login
-        if (!$user) {
+        // Cek apakah session berisi data user
+        if (!Session::has('user')) {
             return redirect('/')->with('error', 'Silakan login terlebih dahulu.');
-        }
-
-        // cek role jika ada parameter
-        if ($role && $user['hak_akses'] !== $role) {
-            return redirect('/')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
         }
 
         return $next($request);

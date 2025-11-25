@@ -5,6 +5,7 @@
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\SuratController;
+use App\Http\Controllers\SuratTugasController;
 use Illuminate\Support\Facades\Route;
 
 // ====================
@@ -57,21 +58,25 @@ Route::prefix('sekretaris')->middleware(['auth', 'role:sekretaris'])->group(func
 // 🧠 ADMIN
 // ====================
 Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
-    Route::view('/', [AdminController::class, 'admin.index'])->name('admin.dashboard');
-    Route::view('/users', 'admin.users')->name('admin.users');
-    Route::view('/roles', 'admin.roles')->name('admin.roles');
-    Route::view('/templates', 'admin.templates')->name('admin.templates');
-    Route::view('/logs', 'admin.logs')->name('admin.logs');
-    Route::view('/backup', 'admin.backup')->name('admin.backup');
+
+    Route::get('/', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+
     Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
     Route::get('/users/create', [AdminController::class, 'createUser'])->name('admin.users.create');
     Route::post('/users', [AdminController::class, 'storeUser'])->name('admin.users.store');
     Route::get('/users/{id}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit');
     Route::post('/users/{id}', [AdminController::class, 'updateUser'])->name('admin.users.update');
     Route::get('/users/{id}/delete', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
+
+    Route::view('/roles', 'admin.roles')->name('admin.roles');
+    Route::view('/templates', 'admin.templates')->name('admin.templates');
+    Route::view('/logs', 'admin.logs')->name('admin.logs');
+    Route::view('/backup', 'admin.backup')->name('admin.backup');
 });
 
 Route::get('/dashboard', function () {
     return view('dashboard.dashboard');
 });
 Route::get('/surat-tugas', [SuratController::class, 'index'])->name('surat-tugas.index');
+Route::get('/surat-tugas/create', [SuratTugasController::class, 'create'])->name('surat-tugas.create');
+Route::post('/surat-tugas', [SuratTugasController::class, 'store'])->name('surat-tugas.store');
