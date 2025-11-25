@@ -1,7 +1,4 @@
 <?php
-
-
-
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\SuratController;
@@ -77,6 +74,12 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 Route::get('/dashboard', function () {
     return view('dashboard.dashboard');
 });
+
+Route::prefix('CRUD_Surat')->group(function () {
+    Route::get('/form_surat', [SuratTugasController::class, 'create'])->name('CRUD_Surat.form_surat');
+    Route::post('/submit_surat', [SuratTugasController::class, 'store'])->name('CRUD_Surat.submit_surat');
+});
+
 Route::get('/surat-tugas', [SuratController::class, 'index'])->name('surat-tugas.index');
-Route::get('/surat-tugas/create', [SuratTugasController::class, 'create'])->name('surat-tugas.create');
-Route::post('/surat-tugas', [SuratTugasController::class, 'store'])->name('surat-tugas.store');
+// Route::get('/surat-tugas/create', [SuratTugasController::class, 'create'])->name('surat-tugas.create');
+// Route::post('/surat-tugas', [SuratTugasController::class, 'store'])->name('surat-tugas.store');

@@ -81,15 +81,4 @@ class Lecturer extends Authenticatable
     {
         return $this->hasMany(LogAktivitas::class, 'nidn', 'nidn');
     }
-
-    /* =====================================================
-     |  ACCESSORS / MUTATORS (opsional)
-     ===================================================== */
-
-    // public function setPasswordAttribute($value)
-    // {
-    //     if ($value) {
-    //         $this->attributes['password'] = bcrypt($value);
-    //     }
-    // }
 }

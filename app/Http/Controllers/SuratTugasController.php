@@ -9,18 +9,6 @@ use Illuminate\Http\Request;
 
 class SuratTugasController extends Controller
 {
-    // Tampilkan form pengajuan surat tugas
-    // public function create()
-    // {
-    //     // Ambil template surat untuk dropdown
-    //     $templates = SuratTemplate::all();
-
-    //     // Ambil nip user yang login (nanti ganti sesuai auth)
-    //     $employeeNip = auth()->user()->employee_nip ?? null;
-
-    //     return view('surat_tugas.create', compact('templates', 'employeeNip'));
-    // }
-
     public function create()
     {
         $positions = Position::all();
@@ -37,37 +25,47 @@ class SuratTugasController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'employee_nip' => 'required|exists:lecturers,employee_nip',
-            'template_id' => 'required|exists:surat_templates,template_id',
-            
-            'nama_kegiatan' => 'required|string|max:255',
-            'jenis_tugas' => 'required|string|max:255',
-            'dasar_tugas' => 'required|string',
-            'sifat' => 'required|string|max:50',
-            'tujuan' => 'required|string',
-            'waktu_pelaksanaan' => 'required|string|max:255',
-
-            'tanggal_mulai' => 'required|date',
-            'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
-
-            'lampiran' => 'nullable|file|mimes:pdf,jpg,png|max:2048',
+            'jenis_tugas'        => 'required|string|max:255',
+            'dasar_tugas'        => 'required|string',            
+            'sifat_surat'        => 'required|string|max:50',   // dari form -> nanti mapping
+            'tujuan'             => 'required|string',
+            'tanggal_mulai'      => 'required|date',
+            'tanggal_selesai'    => 'required|date|after_or_equal:tanggal_mulai',
+            'lampiran'           => 'nullable|file|mimes:pdf,jpg,png|max:2048',
+            'jabatan'            => 'nullable|string|max:255',   // ada di form
         ]);
 
-        // Upload lampiran jika ada
+        // Ambil NIDN dari session
+        $nidn = session('user.nidn');
+
+        if (!$nidn) {
+            return back()->with('error', 'Session user tidak ditemukan.');
+        }
+
+        // Upload file
         $lampiranPath = null;
         if ($request->hasFile('lampiran')) {
             $lampiranPath = $request->file('lampiran')->store('lampiran_surat', 'public');
         }
 
-        // Buat record surat
+        // SIMPAN DATA KE DATABASE
         SuratTugas::create([
-            ...$validated,
-            'lampiran_path' => $lampiranPath,
-            'tanggal_surat' => now()->format('Y-m-d'),
-            'status_surat' => 'diajukan',
+            'nidn'               => $nidn,
+            'template_id'        => 1,                              // tidak ada di form
+            'jenis_tugas'        => $validated['jenis_tugas'],
+            'dasar_tugas'        => $validated['dasar_tugas'],
+            'sifat'              => $validated['sifat_surat'],         // mapping
+            'tujuan'             => $validated['tujuan'],
+            'waktu_pelaksanaan'  => $validated['tanggal_mulai'] . ' s/d ' . $validated['tanggal_selesai'],
+            'tanggal_mulai'      => $validated['tanggal_mulai'],
+            'tanggal_selesai'    => $validated['tanggal_selesai'],
+            'tanggal_surat'      => now()->format('Y-m-d'),
+            'lampiran_path'      => $lampiranPath,
+            'status_surat'       => 'diajukan',
         ]);
 
         return redirect()->route('surat-tugas.create')
             ->with('success', 'Pengajuan surat tugas berhasil dikirim!');
     }
+
 }

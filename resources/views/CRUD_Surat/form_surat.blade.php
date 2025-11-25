@@ -11,47 +11,47 @@
         </div>
 
         <div class="card-body">
-            <form action="{{ route('surat-tugas.store') }}" method="POST" enctype="multipart/form-data">
+            <form method="POST" enctype="multipart/form-data">
                 @csrf
 
-                {{-- Nomor Surat (auto generate, readonly) --}}
+                {{-- Nomor Surat (readonly) --}}
                 <div class="mb-3">
                     <label class="form-label">Nomor Surat</label>
                     <input type="text" class="form-control" value="{{ $nomor_surat }}" readonly>
                 </div>
 
-                {{-- Nama Dosen (autofill) --}}
+                {{-- Nama Dosen (dari session) --}}
                 <div class="mb-3">
                     <label class="form-label">Nama Dosen</label>
-                    <input type="text" class="form-control" value="{{ auth()->user()->name }}" readonly>
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        value="{{ session('user.full_name') }}" 
+                        readonly
+                    >
                 </div>
 
-                {{-- NIDN (autofill) --}}
+                {{-- NIDN (dari session) --}}
                 <div class="mb-3">
                     <label class="form-label">NIDN</label>
-                    <input type="text" class="form-control" value="{{ auth()->user()->nidn }}" readonly>
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        value="{{ session('user.nidn') }}" 
+                        readonly
+                    >
                 </div>
 
                 {{-- Jabatan --}}
                 <div class="mb-3">
                     <label class="form-label">Jabatan</label>
-                    <select name="position_id" class="form-select" required>
-                        <option disabled selected>Pilih Jabatan</option>
-                        @foreach ($positions as $pos)
-                            <option value="{{ $pos->id }}">{{ $pos->name }}</option>
-                        @endforeach
-                    </select>
+                    <input type="text" name="jabatan" id="jabatan" class="form-control" placeholder="Contoh: Dosen S1-Informatika, Kaprodi S1-Desain Komunikasi Visual">
                 </div>
 
-                {{-- Jenis Surat Tugas --}}
+                {{-- Jenis Surat --}}
                 <div class="mb-3">
-                    <label class="form-label">Jenis Surat Tugas</label>
-                    <select name="jenis_surat" class="form-select" required>
-                        <option disabled selected>Pilih Jenis Surat</option>
-                        <option value="Dinas">Dinas</option>
-                        <option value="Kegiatan Akademik">Kegiatan Akademik</option>
-                        <option value="Kegiatan Non-Akademik">Kegiatan Non-Akademik</option>
-                    </select>
+                    <label class="form-label">Jenis Tugas</label>
+                    <textarea name="jenis_tugas" class="form-control" rows="3" required></textarea>
                 </div>
 
                 {{-- Dasar Tugas --}}
@@ -63,17 +63,16 @@
                 {{-- Sifat --}}
                 <div class="mb-3">
                     <label class="form-label">Sifat</label>
-                    <select name="sifat" class="form-select" required>
-                        <option value="Penting">Penting</option>
-                        <option value="Segera">Segera</option>
-                        <option value="Rahasia">Rahasia</option>
+                    <select name="sifat_surat" class="form-select" required>
+                        <option value="Dinas">Dinas</option>
+                        <option value="Non-Dinas">Non-Dinas</option>                    
                     </select>
                 </div>
 
                 {{-- Tujuan --}}
                 <div class="mb-3">
                     <label class="form-label">Tujuan</label>
-                    <input type="text" class="form-control" name="tujuan" placeholder="Tujuan surat" required>
+                    <input type="text" class="form-control" name="tujuan" required>
                 </div>
 
                 {{-- Waktu Pelaksanaan --}}
@@ -95,16 +94,15 @@
                     <input type="file" name="lampiran" class="form-control" required>
                 </div>
 
-                {{-- Tanggal Surat Dibuat --}}
-                <div class="mb-3">
+                {{-- Tanggal Surat --}}
+                {{-- <div class="mb-3">
                     <label class="form-label">Tanggal Surat Dibuat</label>
                     <input type="text" class="form-control" value="{{ now()->format('d-m-Y') }}" readonly>
-                </div>
+                </div> --}}
 
                 <div class="text-end">
                     <button class="btn btn-primary">Ajukan Surat Tugas</button>
                 </div>
-
             </form>
         </div>
     </div>

@@ -41,35 +41,26 @@ class LoginController extends Controller
                 'is_certified' => 0,
             ]);
         }
+        // 2. Ambil lecturer + load permission
+        $user = Lecturer::with('permissions')->where('username', $request->username)->first();
 
-        // ============================================
-        // 2. Ambil lecturer by username
-        // ============================================
-        $user = Lecturer::where('username', $request->username)->first();
-        // dd($user);
-
-        // dd([
-        //     'request_password' => $request->password,
-        //     'user_password_hash' => $user ? $user->password : null,
-        //     'user_exists' => (bool)$user
-        // ]);
-
-        // ============================================
         // 3. Validasi password
-        // ============================================
         if ($user && Hash::check($request->password, $user->password)) {
-            // dd('berhasil login');
-            // Simpan data ke session
-            Session::put('user', [
-                'id' => $user->id,
-                'username' => $user->username,
-                'role' => $user->role,
-                'full_name' => $user->full_name,
-                'nidn' => $user->nidn,
-                'atasan_id' => $user->atasan_id,
-            ]);
 
-            // dd($user->role);
+            // AMBIL PERMISSION DALAM BENTUK ARRAY STRING
+            $permissionList = $user->permissions->pluck('permission_name')->toArray();
+            // contoh hasil: ["create_surat", "view_dashboard", "approve_surat"]
+
+            // SIMPAN SESSION
+            Session::put('user', [
+                'id'        => $user->id,
+                'username'  => $user->username,
+                'role'      => $user->role,
+                'full_name' => $user->full_name,
+                'nidn'      => $user->nidn,
+                'atasan_id' => $user->atasan_id,
+                'permissions' => $permissionList      // <= PERMISSION DISIMPAN
+            ]);
 
             // ============================================
             // 4. Redirect berdasarkan role
