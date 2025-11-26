@@ -150,7 +150,7 @@
                 @forelse($dataTop as $item)
                     <tr onclick="window.location='{{ url('/surat-tugas/preview/' . $item->surat_id) }}'" style="cursor:pointer">
                         <td>{{ $loop->iteration + $dataTop->firstItem() - 1 }}</td>
-                        <td class="fw-bold">{{ $item->nama_kegiatan }}</td>
+                        <td class="fw-bold">{{ $item->jenis_tugas }}</td>
                         <td>{{ $item->full_name }}</td>
                         <td>{{ \Carbon\Carbon::parse($item->tanggal_mulai)->format('d M Y') }}</td>
                         <td>{{ \Carbon\Carbon::parse($item->tanggal_surat)->format('d M Y') }}</td>
@@ -249,7 +249,7 @@
                 @forelse($dataBottom as $item)
                     <tr onclick="window.location='{{ url('/surat-tugas/preview/' . $item->surat_id) }}'" style="cursor:pointer">
                         <td>{{ $loop->iteration + $dataBottom->firstItem() - 1 }}</td>
-                        <td class="fw-bold">{{ $item->nama_kegiatan }}</td>
+                        <td class="fw-bold">{{ $item->jenis_tugas }}</td>
                         <td>{{ $item->full_name }}</td>
                         <td>{{ \Carbon\Carbon::parse($item->tanggal_mulai)->format('d M Y') }}</td>
                         <td>{{ \Carbon\Carbon::parse($item->tanggal_surat)->format('d M Y') }}</td>

@@ -63,6 +63,7 @@
             $permissions = session('user')['permissions'] ?? [];
         @endphp
         <div class="menu">
+            
             <a href="{{ route(session('user.role') . '.dashboard') }}">
                 Dashboard
             </a>

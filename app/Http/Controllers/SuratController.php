@@ -8,6 +8,17 @@ use Illuminate\Support\Facades\DB;
 
 class SuratController extends Controller
 {
+    public function surat(){
+        $pdf = app(\Barryvdh\DomPDF\PDF::class);
+        $pdf->setOptions([
+            'isRemoteEnabled' => true,
+            'isHtml5ParserEnabled' => true,
+        ]);
+        $pdf->loadView('CRUD_Surat.cetak_surat');
+
+        return $pdf->download('surat_tugas.pdf');
+    }
+    
     /**
      * Halaman utama daftar surat
      */
@@ -45,7 +56,8 @@ class SuratController extends Controller
             });
         }
 
-        $dataTop = $queryTop->orderBy('st.created_at', 'desc')
+        $dataTop = $queryTop->groupBy('st.surat_id')
+                            ->orderBy('st.created_at', 'desc')
                             ->paginate($perPageTop, ['*'], 'page_top');
 
 
@@ -80,7 +92,8 @@ class SuratController extends Controller
             });
         }
 
-        $dataBottom = $queryBottom->orderBy('st.created_at', 'desc')
+        $dataBottom = $queryBottom->distinct()
+                                    ->orderBy('st.created_at', 'desc')
                                   ->paginate($perPageBottom, ['*'], 'page_bottom');
 
 

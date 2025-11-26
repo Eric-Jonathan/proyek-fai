@@ -95,7 +95,7 @@
 
                 <div class="mt-2 p-3 border rounded detail-box">
 
-                    <p><strong>Judul Surat:</strong> {{ $surat->nama_kegiatan }}</p>
+                    <p><strong>Judul Surat:</strong> {{ $surat->jenis_tugas }}</p>
                     <p><strong>Pengaju:</strong> {{ $surat->nama_pengaju }}</p>
 
                     <p><strong>Jenis Tugas:</strong> 
