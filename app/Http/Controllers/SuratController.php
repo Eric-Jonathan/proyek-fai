@@ -28,44 +28,156 @@ class SuratController extends Controller
 
     public function index(Request $request)
     {
-        $perPage = $request->input('per_page', 10);
-        
-        // Mulai Query dari tabel surat_tugas
-        $query = DB::table('surat_tugas as st')
-            // 1. Join ke Lecturers untuk dapat Nama Dosen (Penganju)
-            ->join('lecturers as l', 'st.employee_nip', '=', 'l.employee_nip')
-            
-            // 2. Join ke Position Assignments (Cari jabatan yang AKTIF saja / status=1)
-            ->leftJoin('position_assignments as pa', function($join) {
-                $join->on('l.employee_nip', '=', 'pa.employee_nip')
-                     ->where('pa.assignment_status', '=', 1);
-            })
-            
-            // 3. Join ke Positions untuk dapat Nama Jabatan (misal: Operations Lead)
-            ->leftJoin('positions as p', 'pa.position_id', '=', 'p.position_id')
-            
-            // Pilih kolom yang mau ditampilkan
-            ->select(
-                'st.*',                 // Semua data surat tugas
-                'l.lecturer_name',      // Nama Dosen
-                'p.position_name',      // Nama Jabatan
-                'p.bureau_name'         // Nama Biro (Opsional, bisa jadi Penyelenggara)
-            );
+        /* ================================
+         * TABEL ATAS (status: diajukan/diproses)
+         * ================================ */
+        $perPageTop = $request->input('per_page_top', 10);
 
-        // Logika Search
-        if ($request->has('search') && $request->search != '') {
-            $searchTerm = $request->search;
-            $query->where(function($q) use ($searchTerm) {
-                $q->where('st.nama_kegiatan', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('l.lecturer_name', 'like', '%' . $searchTerm . '%');
+        $queryTop = DB::table('surat_tugas AS st')
+            ->join('lecturers AS l', 'st.nidn', '=', 'l.nidn')
+            ->leftJoin('position_assignments AS pa', function ($join) {
+                $join->on('l.nidn', '=', 'pa.nidn')
+                    ->where('pa.assignment_status', 1);
+            })
+            ->leftJoin('positions AS p', 'pa.position_id', '=', 'p.position_id')
+            ->select(
+                'st.*',
+                'l.full_name',
+                'l.lecturer_code',
+                'p.position_name',
+                'p.bureau_name'
+            )
+            ->whereIn('st.status_surat', ['diajukan', 'diproses']);
+
+        // Search tabel atas
+        if ($request->filled('search_top')) {
+            $search = $request->search_top;
+
+            $queryTop->where(function ($q) use ($search) {
+                $q->where('st.nama_kegiatan', 'like', "%{$search}%")
+                  ->orWhere('l.full_name', 'like', "%{$search}%")
+                  ->orWhere('p.position_name', 'like', "%{$search}%");
             });
         }
 
-        // Order by terbaru & Pagination
-        $data = $query->orderBy('st.created_at', 'desc')->paginate($perPage);
+        $dataTop = $queryTop->groupBy('st.surat_id')
+                            ->orderBy('st.created_at', 'desc')
+                            ->paginate($perPageTop, ['*'], 'page_top');
 
-        $data->appends(['search' => $request->search, 'per_page' => $perPage]);
 
-        return view('dashboard.index', compact('data'));
+        /* ================================
+         * TABEL BAWAH (semua riwayat)
+         * ================================ */
+        $perPageBottom = $request->input('per_page_bottom', 10);
+
+        $queryBottom = DB::table('surat_tugas AS st')
+            ->join('lecturers AS l', 'st.nidn', '=', 'l.nidn')
+            ->leftJoin('position_assignments AS pa', function ($join) {
+                $join->on('l.nidn', '=', 'pa.nidn')
+                     ->where('pa.assignment_status', 1);
+            })
+            ->leftJoin('positions AS p', 'pa.position_id', '=', 'p.position_id')
+            ->select(
+                'st.*',
+                'l.full_name',
+                'l.lecturer_code',
+                'p.position_name',
+                'p.bureau_name'
+            );
+
+        // Search tabel bawah
+        if ($request->filled('search_bottom')) {
+            $search = $request->search_bottom;
+
+            $queryBottom->where(function ($q) use ($search) {
+                $q->where('st.nama_kegiatan', 'like', "%{$search}%")
+                  ->orWhere('l.full_name', 'like', "%{$search}%")
+                  ->orWhere('p.position_name', 'like', "%{$search}%");
+            });
+        }
+
+        $dataBottom = $queryBottom->distinct()
+                                    ->orderBy('st.created_at', 'desc')
+                                  ->paginate($perPageBottom, ['*'], 'page_bottom');
+
+
+        return view('dashboard.index', compact('dataTop', 'dataBottom'));
+    }
+
+
+    /**
+     * Preview surat sebelum diproses
+     */
+    public function preview($id)
+    {
+        $surat = DB::table('surat_tugas AS st')
+            ->leftJoin('lecturers AS l', 'l.nidn', '=', 'st.nidn')
+            ->select(
+                'st.*',
+                'l.full_name AS nama_pengaju'
+            )
+            ->where('st.surat_id', $id)
+            ->first();
+
+        if (!$surat) {
+            abort(404, 'Surat tidak ditemukan');
+        }
+
+        return view('dashboard.preview', compact('surat'));
+    }
+
+
+    /**
+     * Proses status tertentu (jika diperlukan)
+     */
+    public function proses(Request $request, $id)
+    {
+        DB::table('surat_tugas')
+            ->where('id_surat', $id)
+            ->update([
+                'status_surat' => $request->status,
+                'updated_at'   => now(),
+            ]);
+
+        return back()->with('success', 'Surat telah diproses.');
+    }
+
+
+    /**
+     * ACC surat
+     */
+    public function acc($id)
+    {
+        DB::table('surat_tugas')
+            ->where('surat_id', $id)
+            ->update([
+                'status_surat' => 'diproses',
+                'updated_at'   => now(),
+            ]);
+
+        return redirect('/surat-tugas')
+            ->with('success', 'Surat berhasil di-ACC.');
+    }
+
+
+    /**
+     * Tolak surat
+     */
+    public function tolak(Request $request, $id)
+    {
+        $request->validate([
+            'catatan_penolakan' => 'required|string',
+        ]);
+
+        DB::table('surat_tugas')
+            ->where('surat_id', $id)
+            ->update([
+                'status_surat'      => 'ditolak',
+                'alasan_penolakan'  => $request->catatan_penolakan,
+                'updated_at'        => now(),
+            ]);
+
+        return redirect('/surat-tugas')
+            ->with('success', 'Surat berhasil ditolak.');
     }
 }
