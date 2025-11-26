@@ -8,23 +8,23 @@ use Illuminate\Support\Facades\DB;
 
 class SuratController extends Controller
 {
-    // public function surat()
-    // {
-    //     // Set options terlebih dahulu
-    //     Pdf::setOptions([
-    //         'isRemoteEnabled' => true,
-    //         'isHtml5ParserEnabled' => true,
-    //     ]);
+    public function surat()
+    {
+        // Set options terlebih dahulu
+        Pdf::setOptions([
+            'isRemoteEnabled' => true,
+            'isHtml5ParserEnabled' => true,
+        ]);
 
-    //     // Load view utama
-    //     $pdf = Pdf::loadView('CRUD_Surat.cetak_surat', [
-    //         // Data yang ingin dikirim ke view bisa ditaruh di sini
-    //         // 'nama' => 'Erick'
-    //     ]);
+        // Load view utama
+        $pdf = Pdf::loadView('CRUD_Surat.cetak_surat', [
+            // Data yang ingin dikirim ke view bisa ditaruh di sini
+            // 'nama' => 'Erick'
+        ]);
 
-    //     // Download file
-    //     return $pdf->download('surat_tugas.pdf');
-    // }
+        // Download file
+        return $pdf->download('surat_tugas.pdf');
+    }
 
     public function index(Request $request)
     {
