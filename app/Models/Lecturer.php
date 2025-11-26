@@ -1,14 +1,14 @@
 <?php
 
 namespace App\Models;
+
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 
 class Lecturer extends Authenticatable
 {
-    use HasFactory;
-    use Notifiable;
+    use HasFactory, Notifiable;
 
     protected $table = 'lecturers';
 
@@ -17,7 +17,6 @@ class Lecturer extends Authenticatable
         'password',
         'email',
         'role',
-        'atasan_id',
         'full_name',
         'lecturer_code',
         'nidn',
@@ -29,6 +28,7 @@ class Lecturer extends Authenticatable
 
     protected $hidden = [
         'password',
+        'remember_token',
     ];
 
     protected $casts = [
@@ -41,19 +41,7 @@ class Lecturer extends Authenticatable
      |  RELATIONSHIPS
      ===================================================== */
 
-    // relasi ke atasan (self reference)
-    public function atasan()
-    {
-        return $this->belongsTo(Lecturer::class, 'atasan_id');
-    }
-
-    // relasi bawahannya
-    public function bawahan()
-    {
-        return $this->hasMany(Lecturer::class, 'atasan_id');
-    }
-
-    // relasi permission many-to-many
+    // Many-to-many permissions
     public function permissions()
     {
         return $this->belongsToMany(
@@ -64,19 +52,19 @@ class Lecturer extends Authenticatable
         );
     }
 
-    // relasi ke surat tugas
+    // Lecturer → Surat Tugas (relasi via NIDN)
     public function suratTugas()
     {
         return $this->hasMany(SuratTugas::class, 'nidn', 'nidn');
     }
 
-    // relasi ke stempel
+    // Lecturer → Stempel (via NIDN)
     public function stempel()
     {
         return $this->hasMany(Stempel::class, 'nidn', 'nidn');
     }
 
-    // relasi ke log aktivitas
+    // Lecturer → Log Aktivitas (via NIDN)
     public function logAktivitas()
     {
         return $this->hasMany(LogAktivitas::class, 'nidn', 'nidn');

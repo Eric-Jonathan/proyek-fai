@@ -34,7 +34,7 @@
         }
         .sidebar .menu a {
             display: block;
-            padding: 12px 20px;
+            padding: 10px 20px;
             color: #dcdde1;
             text-decoration: none;
             transition: 0.2s;
@@ -56,21 +56,30 @@
     <div class="sidebar">
         <div class="profile">
             <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="User">
-            <h5>Hi {{ session('user.username')}}</h5>
+            <h5>Hi, {{ session('user.username')}}!</h5>
             <small>{{ session('user.role')}}</small>
         </div>
-
-        @if(in_array('create_surat', session('user.permissions')))
-            <a href="{{ route('CRUD_Surat.form_surat') }}">
-                <i class="fa fa-plus-square me-2"></i>Buat Surat
+        @php
+            $permissions = session('user')['permissions'] ?? [];
+        @endphp
+        <div class="menu">
+            <a href="{{ route(session('user.role') . '.dashboard') }}">
+                Dashboard
             </a>
-        @endif
-
-        @if(in_array('edit_surat', session('user.permissions')))
-            <a href="{{ route('CRUD_Surat.edit_surat') }}">
-                <i class="fa fa-plus-square me-2"></i>Edit Surat
+            @if(in_array('create_surat', $permissions))
+                <a href="{{ route('CRUD_Surat.form_surat') }}">
+                    Buat Surat
+                </a>
+            @endif
+            @if(in_array('edit_surat', $permissions))
+                <a href="{{ route('CRUD_Surat.edit_surat') }}">
+                    Edit Surat
+                </a>
+            @endif
+            <a href="{{ route('logout') }}">
+                Logout
             </a>
-        @endif
+        </div>
     </div>
 
     {{-- Content (INI HARUS DI ATAS SCRIPT) --}}

@@ -64,7 +64,7 @@ class SuratTugasController extends Controller
             'status_surat'       => 'diajukan',
         ]);
 
-        return redirect()->route('surat-tugas.create')
+        return redirect()->route(session('user.role') . '.dashboard')
             ->with('success', 'Pengajuan surat tugas berhasil dikirim!');
     }
 

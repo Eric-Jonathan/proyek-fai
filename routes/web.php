@@ -52,6 +52,15 @@ Route::prefix('sekretaris')->middleware(['auth', 'role:sekretaris'])->group(func
 });
 
 // ====================
+// 🧑‍💼 DOSEN
+// ====================
+Route::prefix('dosen')->middleware(['auth', 'role:dosen'])->group(function () {
+    Route::get('/', fn() => view('dosen_kaprodi.index'))->name('dosen.dashboard');
+    Route::view('/createSurat', 'dosen_kaprodi.create_surat')->name('dosen.createSurat');
+});
+
+
+// ====================
 // 🧠 ADMIN
 // ====================
 Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
@@ -73,10 +82,11 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 
 Route::get('/dashboard', function () {
     return view('dashboard.dashboard');
-});
+})->name('dashboard');
 
 Route::prefix('CRUD_Surat')->group(function () {
     Route::get('/form_surat', [SuratTugasController::class, 'create'])->name('CRUD_Surat.form_surat');
+    Route::get('/edit_surat', [SuratTugasController::class, 'edit'])->name('CRUD_Surat.edit_surat');
     Route::post('/submit_surat', [SuratTugasController::class, 'store'])->name('CRUD_Surat.submit_surat');
 });
 
