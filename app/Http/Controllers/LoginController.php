@@ -17,11 +17,8 @@ class LoginController extends Controller
 
     public function authenticate(Request $request)
     {
-        // ============================================
-        // 1. Ensure default admin exists
-        // ============================================
+        // pastikan admin default ada
         $admin = Lecturer::where('username', 'admin')->first();
-
         if (!$admin) {
             Lecturer::create([
                 'username' => 'admin',
@@ -29,39 +26,37 @@ class LoginController extends Controller
                 'email'    => 'admin@mail.com',
                 'role'     => 'admin',
 
-                // kolom dosen
-                'full_name'      => 'Administrator Utama',
-                'lecturer_code'  => 'ADM001',
-                'nidn'           => '999999',
+                'full_name' => 'Administrator Utama',
+                'lecturer_code' => 'ADM001',
+                'nidn' => '999999',
                 'employment_status' => 'active',
-                'is_certified'   => 0,
+                'is_certified' => 0,
             ]);
         }
 
-        // ============================================
-        // 2. Ambil lecturer beserta permissions
-        // ============================================
-        $user = Lecturer::with('permissions')
-                ->where('username', $request->username)
-                ->first();
+        // ambil lecturer + permissions + jabatannya
+        $user = Lecturer::with([
+                'permissions',
+                'activePositions.position'
+            ])
+            ->where('username', $request->username)
+            ->first();
 
-        // ============================================
-        // 3. Validasi password
-        // ============================================
         if ($user && Hash::check($request->password, $user->password)) {
-            $jabatan = PositionAssignment::with('position')
-                ->where('nidn', $user->nidn)
-                ->where('assignment_status', 1)
-                ->get()
-                ->pluck('position.position_name')   // ambil hanya nama jabatan
-                ->toArray();
 
-            // Semua permissions user (string array)
-            $permissionList = $user->permissions->pluck('permission_name')->toArray();
+            // ambil semua nama jabatan aktif
+            $parentPosition = $user->activePositions
+                            ->pluck('position.parent_position_id')
+                            ->first();
 
-            // ============================================
-            // 4. Simpan ke SESSION
-            // ============================================
+            $jabatan = $user->activePositions()->first()?->position?->position_name;
+
+            // array nama permissions
+            $permissionList = $user->permissions
+                                ->pluck('permission_name')
+                                ->toArray();
+
+            // simpan ke session
             session([
                 'user' => [
                     'id' => $user->id,
@@ -72,35 +67,27 @@ class LoginController extends Controller
                     'email' => $user->email,
                     'role' => $user->role,
                     'permissions' => $permissionList,
+                    'parent_position_id' => $parentPosition,
                 ]
             ]);
 
-            // ============================================
-            // 5. Redirect berdasarkan role
-            // ============================================
-            switch ($user->role) {
-                case 'admin':
-                    return redirect()->route('admin.dashboard');
-                case 'sekretaris':
-                    return redirect()->route('sekretaris.dashboard');
-                case 'kaprodi':
-                    return redirect()->route('kaprodi.dashboard');
-                case 'rektor':
-                    return redirect()->route('rektor.dashboard');
-                case 'bau':
-                    return redirect()->route('bau.dashboard');
-                case 'dosen':
-                    return redirect()->route('dosen.dashboard');
-                default:
-                    return redirect('/')->with('error', 'Role tidak dikenali.');
-            }
+            // dd( session('user'));
+
+            // redirect role
+            return match ($user->role) {
+                'admin' => redirect()->route('admin.dashboard'),
+                'sekretaris' => redirect()->route('sekretaris.dashboard'),
+                'kaprodi' => redirect()->route('kaprodi.dashboard'),
+                'rektor' => redirect()->route('rektor.dashboard'),
+                'bau' => redirect()->route('bau.dashboard'),
+                'dosen' => redirect()->route('dosen.dashboard'),
+                default => redirect('/')->with('error', 'Role tidak dikenali.'),
+            };
         }
 
-        // ============================================
-        // Jika gagal login
-        // ============================================
         return redirect('/')->with('error', 'Username atau password salah.');
     }
+
 
     public function logout()
     {

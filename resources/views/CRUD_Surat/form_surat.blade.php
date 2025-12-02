@@ -49,19 +49,12 @@
                 {{-- Jabatan --}}
                 <div class="mb-3">
                     <label class="form-label">Jabatan</label>
-                    <select name="jabatan" class="form-select" required>
-                        <option value="">-- Pilih Jabatan --</option>
-
-                        @foreach(session('user.jabatan', []) as $jab)
-                            <option value="{{ $jab }}" {{ old('jabatan') == $jab ? 'selected' : '' }}>
-                                {{ $jab }}
-                            </option>
-                        @endforeach
-                    </select>
-
-                    @error('jabatan')
-                        <small class="text-danger">{{ $message }}</small>
-                    @enderror
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        value="{{ session('user.jabatan') }}" 
+                        readonly
+                    >
                 </div>
 
                 {{-- Jenis Tugas --}}
