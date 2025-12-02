@@ -1,7 +1,6 @@
 <?php
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\SuratController;
 use App\Http\Controllers\SuratTugasController;
 use Illuminate\Support\Facades\Route;
 
@@ -11,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [LoginController::class, 'authenticate'])->name('login.process');
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
-Route::get('/cetak-surat/{id}', [SuratController::class, 'surat'])->name('surat');
+Route::get('/cetak-surat/{id}', [SuratTugasController::class, 'surat'])->name('surat');
 
 // ====================
 // 🧾 BAU

@@ -2,13 +2,47 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Lecturer;
 use App\Models\Position;
+use App\Models\PositionAssignment;
 use App\Models\SuratTugas;
 use App\Models\SuratTemplate;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class SuratTugasController extends Controller
 {
+    public function surat($id)
+    {
+        // Set options terlebih dahulu
+        Pdf::setOptions([
+            'isRemoteEnabled' => true,
+            'isHtml5ParserEnabled' => true,
+        ]);
+        $user = session('user');
+        $surat = SuratTugas::with(['signedByPosition.parent'])->find($id);
+
+        $lecturer = Lecturer::where('nidn', $user['nidn'])->first();
+        $position = PositionAssignment::where('nidn', $lecturer->nidn)
+            ->with('position')
+            ->first();
+        $atasanAssignment = PositionAssignment::whereHas('position', function ($query) use ($position) {
+            $query->where('hierarchy_level', '<', $position->position->hierarchy_level);
+        })
+            ->with(['lecturer', 'position'])
+            ->orderBy('position_id')
+            ->first();
+
+        $atasan = $atasanAssignment?->lecturer;
+        
+        return Pdf::loadView('CRUD_Surat.cetak_surat', [
+            'surat' => $surat,
+            'lecturer' => $lecturer,
+            'atasan' => $atasan,
+            'user' => $user
+        ])->download('surat_tugas.pdf');
+    }
+    
     public function create()
     {
         
