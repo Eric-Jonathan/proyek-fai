@@ -70,14 +70,16 @@ class Lecturer extends Authenticatable
         return $this->hasMany(LogAktivitas::class, 'nidn', 'nidn');
     }
 
-    // Relasi self-join untuk atasan
-    public function atasan()
+    public function positionAssignments()
     {
-        return $this->belongsTo(User::class, 'atasan_id');
+        return $this->hasMany(PositionAssignment::class, 'nidn', 'nidn');
+    }
+    
+    public function activePositions()
+    {
+        return $this->hasMany(PositionAssignment::class, 'nidn', 'nidn')
+                    ->where('assignment_status', 1)
+                    ->with('position');
     }
 
-    public function bawahan()
-    {
-        return $this->hasMany(User::class, 'atasan_id');
-    }
 }

@@ -23,7 +23,7 @@
                 <tr>
                     <td>{{ $u->id }}</td>
                     <td>{{ $u->username }}</td>
-                    <td>{{ $u->jabatan }}</td>
+                    <td>{{ $u->role }}</td>
                     <td>
                         <a href="{{ route('admin.users.edit', $u->id) }}" class="btn btn-warning btn-sm">Edit</a>
                         <a href="{{ route('admin.users.delete', $u->id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus?')">Hapus</a>

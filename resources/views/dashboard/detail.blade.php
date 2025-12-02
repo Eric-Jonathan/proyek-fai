@@ -62,7 +62,6 @@
             </div>
 
             <div class="card-body p-4">
-
                 @php
                     $status = $surat->status_surat ?? 'Menunggu Persetujuan';
 
@@ -112,6 +111,7 @@
                     </p>
 
                     <p><strong>Waktu Pelaksanaan:</strong>  
+                        {{ $surat->tanggal_mulai }} – {{ $surat->tanggal_selesai }}  
                         ({{ $surat->waktu_pelaksanaan }})
                     </p>
 
@@ -133,81 +133,13 @@
                 <!-- Action Buttons -->
                 <div class="d-flex justify-content-end align-items-start gap-3 mt-4">
 
-                    <!-- FORM TOLAK -->
-                    <form method="POST" action="{{ route('surat.tolak', $surat->surat_id) }}" class="d-flex gap-2">
-                        @csrf
 
-                        <!-- TEXTAREA + BUTTONS -->
-                        <div id="notesSection" class="d-none d-flex align-items-start gap-2">
-                            <textarea 
-                                id="textareaPenolakan"
-                                name="catatan_penolakan"
-                                class="form-control"
-                                placeholder="Tuliskan alasan penolakan..."
-                                rows="3"
-                                style="text-align: left; vertical-align: top; padding-left: 8px;"
-                            ></textarea>
-
-                            <div class="d-flex flex-column gap-2">
-                                <button type="button" class="btn btn-secondary" onclick="cancelTolak()">Cancel</button>
-                                <button id="btnSubmitTolak" type="submit" class="btn btn-danger">Konfirmasi</button>
-                            </div>
-                        </div>
-
-                        <!-- BUTTON TOLAK AWAL -->
-                        <button 
-                            id="btnTolakAwal"
-                            type="button"
-                            class="btn btn-danger px-4"
-                            onclick="showNotes()">
-                            <i class="bi bi-x-circle"></i> Tolak
-                        </button>
-
-                    </form>
-
-                    <!-- FORM SETUJUI -->
-                    <form id="formSetujui" method="POST" action="{{ route('surat.acc', $surat->surat_id) }}">
-                        @csrf
-                        <button id="btnSetujui" type="submit" class="btn btn-success px-4">
-                            <i class="bi bi-check-circle"></i> Setujui
-                        </button>
-                    </form>
 
                 </div>
 
             </div>
         </div>
     </div>
-
-    <!-- SCRIPT -->
-    <script>
-        function showNotes() {
-            const notes = document.getElementById('notesSection');
-            const btnTolakAwal = document.getElementById('btnTolakAwal');
-            const btnSetujui = document.getElementById('btnSetujui');
-            const textarea = document.getElementById('textareaPenolakan');
-
-            notes.classList.remove('d-none');
-            btnTolakAwal.classList.add('d-none');
-            btnSetujui.classList.add('d-none');
-
-            textarea.setAttribute('required', 'required');
-        }
-
-        function cancelTolak() {
-            const notes = document.getElementById('notesSection');
-            const btnTolakAwal = document.getElementById('btnTolakAwal');
-            const btnSetujui = document.getElementById('btnSetujui');
-            const textarea = document.getElementById('textareaPenolakan');
-
-            notes.classList.add('d-none');
-            btnTolakAwal.classList.remove('d-none');
-            btnSetujui.classList.remove('d-none');
-
-            textarea.removeAttribute('required');
-            textarea.value = '';
-        }
-    </script>
 
 </body>
 </html>

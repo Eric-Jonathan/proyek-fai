@@ -12,6 +12,16 @@
             @method('PUT')
         @endif
 
+        {{-- Full Name --}}
+        <div class="mb-3">
+            <label for="username" class="form-label">Full name</label>
+            <input type="text" name="full_name" id="full_name" class="form-control"
+                   value="{{ old('full_name', $user->username ?? '') }}" required>
+            @error('full_name')
+                <small class="text-danger">{{ $message }}</small>
+            @enderror
+        </div>
+
         {{-- Username --}}
         <div class="mb-3">
             <label for="username" class="form-label">Username</label>
