@@ -82,12 +82,22 @@
                     Riwayat Surat
                 </a>
             @endif
+<<<<<<< HEAD
             
+=======
+
+            <a href="{{ route('logout') }}">
+                User
+            </a>
+
+>>>>>>> fa4224cf5fb283ed3341a2164d40800308f11591
             <a href="{{ route('logout') }}">
                 Logout
             </a>
+
         </div>
     </div>
+    
 
     {{-- Content (INI HARUS DI ATAS SCRIPT) --}}
     <div class="content">
