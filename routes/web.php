@@ -75,6 +75,8 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/users/{id}', [AdminController::class, 'updateUser'])->name('admin.users.update');
     Route::get('/users/{id}/delete', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
 
+    Route::get('/surat', [SuratTugasController::class, 'riwayat_surat'])->name('admin.surat');
+
     Route::view('/roles', 'admin.roles')->name('admin.roles');
     Route::view('/templates', 'admin.templates')->name('admin.templates');
     Route::view('/logs', 'admin.logs')->name('admin.logs');

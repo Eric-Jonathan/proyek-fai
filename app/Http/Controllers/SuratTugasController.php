@@ -240,8 +240,17 @@ class SuratTugasController extends Controller
 {
     $role = session('user')['role'] ?? null;
     $nidn = session('user')['nidn'] ?? null;
+    if ($role === 'admin') {
+        $surat = SuratTugas::all();
 
-    if ($role === 'dosen') {
+        $dataTop = SuratTugas::whereNotIn('status_surat', ['ditolak', 'ditandatangani'])
+                    ->paginate(request('per_page') ?? 10)
+                    ->appends(request()->query());
+
+        $dataBottom = SuratTugas::whereIn('status_surat', ['ditolak', 'ditandatangani'])
+                    ->paginate(request('per_page') ?? 10)
+                    ->appends(request()->query());
+    } elseif ($role === 'dosen') {
         $surat = SuratTugas::where('nidn', $nidn);
         // Data yang sedang diproses (kecuali ditolak dan ditandatangani)
         $dataTop = $surat->whereNotIn('status_surat', ['ditolak', 'ditandatangani'])
@@ -268,7 +277,11 @@ class SuratTugasController extends Controller
         abort(403, 'Role pengguna tidak dikenali.');
     }
 
-    return view('dosen_kaprodi.riwayat_surat', compact('surat', 'dataBottom', 'dataTop'));
+    if ($role === 'admin') {
+        return view('admin.riwayat_surat', compact('surat', 'dataBottom', 'dataTop'));
+    } else {
+        return view('dosen_kaprodi.riwayat_surat', compact('surat', 'dataBottom', 'dataTop'));
+    }
 }
 
 public function edit($id)

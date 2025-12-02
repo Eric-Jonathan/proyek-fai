@@ -63,10 +63,30 @@
 
             <div class="card-body p-4">
 
+                @php
+                    $status = $surat->status_surat ?? 'Menunggu Persetujuan';
+
+                    switch($status) {
+                        case 'ditolak':
+                            $badgeClass = 'bg-danger text-white';
+                            $iconClass = 'bi-x-circle';
+                            break;
+                    
+                        case 'ditandatangani':
+                            $badgeClass = 'bg-success text-white';
+                            $iconClass = 'bi-check-circle';
+                            break;
+                    
+                        default:
+                            $badgeClass = 'bg-warning text-dark';
+                            $iconClass = 'bi-hourglass-split';
+                    }
+                @endphp
+
                 <!-- Status -->
-                <span class="badge bg-warning text-dark mb-3 px-3 py-2">
-                    <i class="bi bi-hourglass-split"></i>
-                    {{ $surat->status_surat ?? 'Menunggu Persetujuan' }}
+                <span class="badge {{ $badgeClass }} mb-3 px-3 py-2">
+                    <i class="bi {{ $iconClass }}"></i>
+                    {{ $status }}
                 </span>
 
                 <!-- Sifat -->
