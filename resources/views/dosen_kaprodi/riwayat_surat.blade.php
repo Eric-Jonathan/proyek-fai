@@ -1,3 +1,9 @@
+
+@extends('layouts.app')
+
+@section('title', 'Dashboard Surat Tugas')
+
+@section('content')
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -76,32 +82,6 @@
 <body>
 
 <div class="container py-4">
-
-    <!-- HEADER -->
-    <div class="d-flex align-items-center mb-4">
-        <h3 class="header-title mb-0">Selamat Datang, [nama]</h3>
-    </div>
-
-    <!-- ACTION CARD -->
-    <div class="row g-3 mb-5">
-        <div class="col-md-6">
-            <a href="#" class="card action-card p-3 h-100">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-center">
-                        <div class="icon-box me-3">
-                            <i class="bi bi-bar-chart-line-fill"></i>
-                        </div>
-                        <div>
-                            <h5 class="fw-bold mb-0">Ajukan Kegiatan</h5>
-                            <small class="text-muted">Buat pengajuan kegiatan.</small>
-                        </div>
-                    </div>
-                    <i class="bi bi-chevron-right fs-4"></i>
-                </div>
-            </a>
-        </div>
-    </div>
-
     <!-- TOP TABLE -->
     <h5 class="header-title mb-3">Daftar Pengajuan <span class="fw-bold">AKTIF</span></h5>
 
@@ -148,8 +128,12 @@
 
                 <tbody>
                 @forelse($dataTop as $item)
-                    <tr onclick="window.location='{{ url('/surat-tugas/preview/' . $item->surat_id) }}'" style="cursor:pointer">
-                        <td>{{ $loop->iteration + $dataTop->firstItem() - 1 }}</td>
+                {{-- bikin condition kalo status diajukan bisa ke --}}
+<tr onclick="window.location='{{ $item->status_surat == 'diajukan' 
+    ? url('/surat-tugas/edit/' . $item->surat_id) 
+    : url('/surat-tugas/detail/' . $item->surat_id) }}'" 
+    style="cursor:pointer">
+                        <td>{{ $loop->iteration}}</td>
                         <td class="fw-bold">{{ $item->jenis_tugas }}</td>
                         <td>{{ $item->full_name }}</td>
                         <td>{{ \Carbon\Carbon::parse($item->tanggal_mulai)->format('d M Y') }}</td>
@@ -188,7 +172,7 @@
         <!-- Pagination -->
         <div class="row mt-2 align-items-center">
             <div class="col-md-6 small text-muted">
-                Showing {{ $dataTop->firstItem() ?? 0 }} to {{ $dataTop->lastItem() ?? 0 }} of {{ $dataTop->total() }} entries
+                    Showing {{ $dataTop instanceof \Illuminate\Pagination\LengthAwarePaginator ? $dataTop->firstItem() : ($dataTop->count() ? 1 : 0) }}to {{ $dataTop instanceof \Illuminate\Pagination\LengthAwarePaginator ? $dataTop->lastItem() : $dataTop->count() }}of {{ $dataTop->count() }} entries
             </div>
             <div class="col-md-6">
                 <div class="d-flex justify-content-end">
@@ -248,7 +232,7 @@
                 <tbody>
                 @forelse($dataBottom as $item)
                     <tr onclick="window.location='{{ url('/surat-tugas/detail/' . $item->surat_id) }}'" style="cursor:pointer">
-                        <td>{{ $loop->iteration + $dataBottom->firstItem() - 1 }}</td>
+                        <td>{{ $loop->iteration  }}</td>
                         <td class="fw-bold">{{ $item->jenis_tugas }}</td>
                         <td>{{ $item->full_name }}</td>
                         <td>{{ \Carbon\Carbon::parse($item->tanggal_mulai)->format('d M Y') }}</td>
@@ -321,3 +305,4 @@
 
 </body>
 </html>
+@endsection

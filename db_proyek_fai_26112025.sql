@@ -274,6 +274,7 @@ CREATE TABLE `surat_tugas` (
   `status_surat` enum('diajukan','diproses','disetujui_kaprodi','disetujui_dekan','ditandatangani','ditolak') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'diajukan',
   `nomor_surat_final` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `signed_by_position_id` int unsigned DEFAULT NULL,
+  `alasan_penolakan` TEXT NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`surat_id`),

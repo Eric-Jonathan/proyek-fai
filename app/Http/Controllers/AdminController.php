@@ -38,14 +38,13 @@ class AdminController extends Controller
         'hak_akses' => 'required',
     ]);
 
-    User::create([
+    Lecturer::create([
         'username' => $request->username,
         'email' => $request->email,
         'password' => Hash::make($request->password),
         'nidn' => $request->nidn,
-        'jabatan' => $request->jabatan,
-        'atasan_id' => $request->atasan_id,
-        'hak_akses' => $request->hak_akses,
+        'role' => $request->jabatan,
+
     ]);
 
     return redirect()->route('admin.users')->with('success', 'User berhasil ditambahkan.');
@@ -54,13 +53,13 @@ class AdminController extends Controller
 
     public function editUser($id)
     {
-        $user = User::findOrFail($id);
+        $user = Lecturer::findOrFail($id);
         return view('admin.user_form', compact('user'));
     }
 
     public function updateUser(Request $request, $id)
 {
-    $user = User::findOrFail($id);
+    $user = Lecturer::findOrFail($id);
 
     $data = $request->validate([
         'username' => 'required',
@@ -81,7 +80,7 @@ class AdminController extends Controller
 
     public function deleteUser($id)
     {
-        User::destroy($id);
+        Lecturer::destroy($id);
         return redirect()->route('admin.users')->with('success', 'User berhasil dihapus.');
     }
 }

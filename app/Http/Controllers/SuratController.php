@@ -8,40 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class SuratController extends Controller
 {
-<<<<<<< HEAD
-    public function surat(){
-        $pdf = app(\Barryvdh\DomPDF\PDF::class);
-        $pdf->setOptions([
-            'isRemoteEnabled' => true,
-            'isHtml5ParserEnabled' => true,
-        ]);
-        $pdf->loadView('CRUD_Surat.cetak_surat');
 
-        return $pdf->download('surat_tugas.pdf');
-    }
-    /**
-     * Halaman utama daftar surat
-     */
-=======
-    public function surat()
-    {
-        // Set options terlebih dahulu
-        Pdf::setOptions([
-            'isRemoteEnabled' => true,
-            'isHtml5ParserEnabled' => true,
-        ]);
-
-        // Load view utama
-        $pdf = Pdf::loadView('CRUD_Surat.cetak_surat', [
-            // Data yang ingin dikirim ke view bisa ditaruh di sini
-            // 'nama' => 'Erick'
-        ]);
-
-        // Download file
-        return $pdf->download('surat_tugas.pdf');
-    }
-
->>>>>>> 5f50554b542ed793f408be3972963165b07c1179
     public function index(Request $request)
     {
         /* ================================
@@ -49,21 +16,21 @@ class SuratController extends Controller
          * ================================ */
         $perPageTop = $request->input('per_page_top', 10);
 
-        $queryTop = DB::table('surat_tugas AS st')
-            ->join('lecturers AS l', 'st.nidn', '=', 'l.nidn')
-            ->leftJoin('position_assignments AS pa', function ($join) {
-                $join->on('l.nidn', '=', 'pa.nidn')
-                    ->where('pa.assignment_status', 1);
-            })
-            ->leftJoin('positions AS p', 'pa.position_id', '=', 'p.position_id')
-            ->select(
-                'st.*',
-                'l.full_name',
-                'l.lecturer_code',
-                'p.position_name',
-                'p.bureau_name'
-            )
-            ->whereIn('st.status_surat', ['diajukan', 'diproses']);
+        $queryTop = SuratTugas::query()
+    ->select(
+        'surat_tugas.*',
+        'lecturers.full_name',
+        'lecturers.lecturer_code',
+        'positions.position_name',
+        'positions.bureau_name'
+    )
+    ->join('lecturers', 'surat_tugas.nidn', '=', 'lecturers.nidn')
+    ->leftJoin('position_assignments', function ($join) {
+        $join->on('lecturers.nidn', '=', 'position_assignments.nidn')
+             ->where('position_assignments.assignment_status', 1);
+    })
+    ->leftJoin('positions', 'position_assignments.position_id', '=', 'positions.position_id')
+    ->whereIn('surat_tugas.status_surat', ['diajukan', 'diproses']);
 
         // Search tabel atas
         if ($request->filled('search_top')) {

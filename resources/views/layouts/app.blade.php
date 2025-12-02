@@ -72,11 +72,17 @@
                     Buat Surat
                 </a>
             @endif
-            @if(in_array('edit_surat', $permissions))
+            {{-- @if(in_array('edit_surat', $permissions))
                 <a href="{{ route('CRUD_Surat.edit_surat') }}">
                     Edit Surat
                 </a>
+            @endif --}}
+            @if(in_array('lihat_surat', $permissions))
+                <a href="{{ route('dosen.riwayatSurat') }}">
+                    Riwayat Surat
+                </a>
             @endif
+            
             <a href="{{ route('logout') }}">
                 Logout
             </a>
