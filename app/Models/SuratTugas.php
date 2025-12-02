@@ -17,7 +17,6 @@ class SuratTugas extends Model
     protected $fillable = [
         'nidn',
         'template_id',
-        'nama_kegiatan',
         'jenis_tugas',
         'dasar_tugas',
         'sifat',

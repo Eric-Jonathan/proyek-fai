@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Lecturer;
+use App\Models\PositionAssignment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
@@ -16,65 +17,67 @@ class LoginController extends Controller
 
     public function authenticate(Request $request)
     {
-        // dd($request->all());
         // ============================================
         // 1. Ensure default admin exists
         // ============================================
         $admin = Lecturer::where('username', 'admin')->first();
-        // dd($admin);
 
         if (!$admin) {
             Lecturer::create([
                 'username' => 'admin',
                 'password' => Hash::make('123'),
-                'email' => 'admin@mail.com',
-
-                // kolom relasi/role
-                'role' => 'admin',
-                'atasan_id' => null,
+                'email'    => 'admin@mail.com',
+                'role'     => 'admin',
 
                 // kolom dosen
-                'full_name' => 'Administrator',
-                'lecturer_code' => 'ADM001',
-                'nidn' => '999999',
+                'full_name'      => 'Administrator Utama',
+                'lecturer_code'  => 'ADM001',
+                'nidn'           => '999999',
                 'employment_status' => 'active',
-                'is_certified' => 0,
+                'is_certified'   => 0,
             ]);
         }
 
         // ============================================
-        // 2. Ambil lecturer by username
+        // 2. Ambil lecturer beserta permissions
         // ============================================
-        $user = Lecturer::where('username', $request->username)->first();
-        // dd($user);
-
-        // dd([
-        //     'request_password' => $request->password,
-        //     'user_password_hash' => $user ? $user->password : null,
-        //     'user_exists' => (bool)$user
-        // ]);
+        $user = Lecturer::with('permissions')
+                ->where('username', $request->username)
+                ->first();
 
         // ============================================
         // 3. Validasi password
         // ============================================
         if ($user && Hash::check($request->password, $user->password)) {
-            // dd('berhasil login');
-            // Simpan data ke session
-            Session::put('user', [
-                'id' => $user->id,
-                'username' => $user->username,
-                'role' => $user->role,
-                'full_name' => $user->full_name,
-                'nidn' => $user->nidn,
-                'atasan_id' => $user->atasan_id,
+            $jabatan = PositionAssignment::with('position')
+                ->where('nidn', $user->nidn)
+                ->where('assignment_status', 1)
+                ->get()
+                ->pluck('position.position_name')   // ambil hanya nama jabatan
+                ->toArray();
+
+            // Semua permissions user (string array)
+            $permissionList = $user->permissions->pluck('permission_name')->toArray();
+
+            // ============================================
+            // 4. Simpan ke SESSION
+            // ============================================
+            session([
+                'user' => [
+                    'id' => $user->id,
+                    'username' => $user->username,
+                    'full_name' => $user->full_name,
+                    'nidn' => $user->nidn,
+                    'jabatan' => $jabatan,
+                    'email' => $user->email,
+                    'role' => $user->role,
+                    'permissions' => $permissionList,
+                ]
             ]);
 
-            // dd($user->role);
-
             // ============================================
-            // 4. Redirect berdasarkan role
+            // 5. Redirect berdasarkan role
             // ============================================
-            // dd(Session::get('user'));
             switch ($user->role) {
                 case 'admin':
                     return redirect()->route('admin.dashboard');
@@ -86,11 +89,16 @@ class LoginController extends Controller
                     return redirect()->route('rektor.dashboard');
                 case 'bau':
                     return redirect()->route('bau.dashboard');
+                case 'dosen':
+                    return redirect()->route('dosen.dashboard');
                 default:
-                    return redirect('/')->with('error', 'Hak akses tidak dikenali.');
+                    return redirect('/')->with('error', 'Role tidak dikenali.');
             }
         }
 
+        // ============================================
+        // Jika gagal login
+        // ============================================
         return redirect('/')->with('error', 'Username atau password salah.');
     }
 
