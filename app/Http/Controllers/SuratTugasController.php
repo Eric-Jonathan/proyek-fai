@@ -71,7 +71,6 @@ class SuratTugasController extends Controller
         return redirect()->route(session('user.role') . '.dashboard')
             ->with('success', 'Pengajuan surat tugas berhasil dikirim!');
     }
-<<<<<<< HEAD
 
     public function index(Request $request)
     {
@@ -315,6 +314,4 @@ public function update(Request $request, $id)
 }
 
 
-=======
->>>>>>> fa4224cf5fb283ed3341a2164d40800308f11591
 }
