@@ -2,28 +2,47 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Lecturer;
+use App\Models\PositionAssignment;
+use App\Models\SuratTugas;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class SuratController extends Controller
 {
-    public function surat()
+    public function surat($id)
     {
         // Set options terlebih dahulu
         Pdf::setOptions([
             'isRemoteEnabled' => true,
             'isHtml5ParserEnabled' => true,
         ]);
+        $user = session('user');
+        $surat = SuratTugas::with(['signedByPosition.parent'])->find($id);
 
-        // Load view utama
-        $pdf = Pdf::loadView('CRUD_Surat.cetak_surat', [
-            // Data yang ingin dikirim ke view bisa ditaruh di sini
-            // 'nama' => 'Erick'
-        ]);
+        $lecturer = Lecturer::where('nidn', $user['nidn'])->first();
+        $position = PositionAssignment::where('nidn', $lecturer->nidn)
+            ->with('position')
+            ->first();
+        $atasanAssignment = PositionAssignment::whereHas('position', function ($query) use ($position) {
+            $query->where('hierarchy_level', '<', $position->position->hierarchy_level);
+        })
+            ->with(['lecturer', 'position'])
+            ->orderBy('position_id')
+            ->first();
 
-        // Download file
-        return $pdf->download('surat_tugas.pdf');
+        $atasan = $atasanAssignment?->lecturer;
+
+        dd($atasan);
+        
+        return Pdf::loadView('CRUD_Surat.cetak_surat', [
+            'surat' => $surat,
+            'lecturer' => $lecturer,
+            'atasan' => $atasan,
+            'user' => $user
+        ])->download('surat_tugas.pdf');
     }
 
     public function index(Request $request)

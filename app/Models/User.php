@@ -24,14 +24,4 @@ class User extends Authenticatable
         'password',
     ];
 
-    // Relasi self-join untuk atasan
-    public function atasan()
-    {
-        return $this->belongsTo(User::class, 'atasan_id');
-    }
-
-    public function bawahan()
-    {
-        return $this->hasMany(User::class, 'atasan_id');
-    }
 }

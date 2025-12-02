@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [LoginController::class, 'authenticate'])->name('login.process');
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
-Route::get('/surat', [SuratController::class, 'surat'])->name('surat');
+Route::get('/cetak-surat/{id}', [SuratController::class, 'surat'])->name('surat');
 
 // ====================
 // 🧾 BAU
