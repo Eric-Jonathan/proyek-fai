@@ -51,7 +51,17 @@
                     <label class="form-label">Jabatan</label>
                     <select name="jabatan" class="form-select" required>
                         <option value="">-- Pilih Jabatan --</option>
-                        @foreach(session('user.jabatan', []) as $jab)
+                    
+                        @php
+                            $jabatans = session('user.jabatan');
+                    
+                            // Jika session jabatan bukan array, ubah menjadi array satu elemen
+                            if (!is_array($jabatans)) {
+                                $jabatans = [$jabatans];
+                            }
+                        @endphp
+                
+                        @foreach($jabatans as $jab)
                             <option value="{{ $jab }}" {{ $surat->jabatan == $jab ? 'selected' : '' }}>
                                 {{ $jab }}
                             </option>

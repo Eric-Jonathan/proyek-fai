@@ -129,7 +129,10 @@
                 <tbody>
                 @forelse($dataTop as $item)
                 {{-- bikin condition kalo status diajukan bisa ke --}}
-                    <tr onclick="window.location='{{ url('/surat-tugas/preview/' . $item->surat_id) }}'" style="cursor:pointer">
+                <tr onclick="window.location='{{ $item->status_surat == 'diajukan' 
+                    ? url('/surat-tugas/edit/' . $item->surat_id) 
+                    : url('/surat-tugas/detail/' . $item->surat_id) }}'" 
+                    style="cursor:pointer">
                         <td>{{ $loop->iteration}}</td>
                         <td class="fw-bold">{{ $item->jenis_tugas }}</td>
                         <td>{{ $item->full_name }}</td>

@@ -209,15 +209,46 @@ class SuratTugasController extends Controller
 
 
     /*** ACC surat */
+    // 2-3 -> dekan
+    // 4-12 -> kaprodi
     public function acc($id)
     {
-        $surat = SuratTugas::where('surat_id', $id)->firstOrFail();
-        $surat->status_surat = 'diproses';
+        $surat = SuratTugas::findOrFail($id);
+        $nidn = session('user')['nidn'] ?? null;
+        $role = session('user')['role'] ?? null;
+
+        // Ambil prefix dari NIDN (misal 3 karakter pertama)
+        $prefix = substr($nidn, 0, 3);
+
+        // Cari position_id sesuai prefix
+        $position = Position::where('position_code', $prefix)->first();
+
+        if (!$position) {
+            return redirect('/surat-tugas')
+                ->with('error', 'Posisi penandatangan tidak ditemukan.');
+        }
+
+        // Tentukan status berdasarkan role
+        switch($role) {
+            case 'dekan':
+                $status = 'disetujui_dekan';
+                break;
+            case 'kaprodi':
+                $status = 'disetujui_kaprodi';
+                break;
+            default:
+                $status = 'diproses'; // default jika bukan penandatangan resmi
+        }
+
+        // Update surat
+        $surat->status_surat = $status;
+        $surat->signed_by_position_id = $position->position_id;
         $surat->save();
-            
+
         return redirect('/surat-tugas')
-            ->with('success', 'Surat berhasil di-ACC.');
+            ->with('success', 'Surat berhasil di-ACC oleh ' . $position->position_name);
     }
+
 
 
     /*** Tolak surat */
@@ -227,104 +258,119 @@ class SuratTugasController extends Controller
             'catatan_penolakan' => 'required|string',
         ]);
 
-        $surat = SuratTugas::where('surat_id', $id)->firstOrFail();
-        $surat->status_surat     = 'ditolak';
+        $surat = SuratTugas::findOrFail($id);
+        $nidn = session('user')['nidn'] ?? null;
+
+        // Ambil prefix dari NIDN
+        $prefix = substr($nidn, 0, 3);
+
+        // Ambil posisi penandatangan
+        $position = Position::where('position_code', $prefix)->first();
+
+        if (!$position) {
+            return redirect('/surat-tugas')
+                ->with('error', 'Posisi penandatangan tidak ditemukan.');
+        }
+
+        // Update surat
+        $surat->status_surat = 'ditolak';
         $surat->alasan_penolakan = $request->catatan_penolakan;
-        $surat->save(); // updated_at otomatis terupdate
+        $surat->signed_by_position_id = $position->position_id;
+        $surat->save();
 
         return redirect('/surat-tugas')
-            ->with('success', 'Surat berhasil ditolak.');
+            ->with('success', 'Surat berhasil ditolak oleh ' . $position->position_name);
     }
 
     public function riwayat_surat()
-{
-    $role = session('user')['role'] ?? null;
-    $nidn = session('user')['nidn'] ?? null;
-    if ($role === 'admin') {
-        $surat = SuratTugas::all();
+    {
+        $role = session('user')['role'] ?? null;
+        $nidn = session('user')['nidn'] ?? null;
+        if ($role === 'admin') {
+            $surat = SuratTugas::all();
 
-        $dataTop = SuratTugas::whereNotIn('status_surat', ['ditolak', 'ditandatangani'])
-                    ->paginate(request('per_page') ?? 10)
-                    ->appends(request()->query());
+            $dataTop = SuratTugas::whereNotIn('status_surat', ['ditolak', 'ditandatangani'])
+                        ->paginate(request('per_page') ?? 10)
+                        ->appends(request()->query());
 
-        $dataBottom = SuratTugas::whereIn('status_surat', ['ditolak', 'ditandatangani'])
-                    ->paginate(request('per_page') ?? 10)
-                    ->appends(request()->query());
-    } elseif ($role === 'dosen') {
-        $surat = SuratTugas::where('nidn', $nidn);
-        // Data yang sedang diproses (kecuali ditolak dan ditandatangani)
-        $dataTop = $surat->whereNotIn('status_surat', ['ditolak', 'ditandatangani'])
-                         ->paginate(request('per_page') ?? 10)
-                         ->appends(request()->query());
+            $dataBottom = SuratTugas::whereIn('status_surat', ['ditolak', 'ditandatangani'])
+                        ->paginate(request('per_page') ?? 10)
+                        ->appends(request()->query());
+        } elseif ($role === 'dosen') {
+            $surat = SuratTugas::where('nidn', $nidn);
+            // Data yang sedang diproses (kecuali ditolak dan ditandatangani)
+            $dataTop = $surat->whereNotIn('status_surat', ['ditolak', 'ditandatangani'])
+                             ->paginate(request('per_page') ?? 10)
+                             ->appends(request()->query());
 
-        // Clone query untuk bagian bottom (karena query sebelumnya sudah digunakan)
-        $dataBottom = SuratTugas::where('nidn', $nidn)
-                         ->whereIn('status_surat', ['ditolak', 'ditandatangani'])
-                         ->paginate(request('per_page') ?? 10)
-                         ->appends(request()->query());
+            // Clone query untuk bagian bottom (karena query sebelumnya sudah digunakan)
+            $dataBottom = SuratTugas::where('nidn', $nidn)
+                             ->whereIn('status_surat', ['ditolak', 'ditandatangani'])
+                             ->paginate(request('per_page') ?? 10)
+                             ->appends(request()->query());
 
-    } elseif ($role === 'kaprodi') {
-        // Kaprodi melihat suratnya + yang status diajukan/diproses
-        $surat = SuratTugas::where('nidn', $nidn)
-            ->orWhereIn('status_surat', ['diajukan', 'diproses'])
-            ->get();
+        } elseif ($role === 'kaprodi') {
+            // Kaprodi melihat suratnya + yang status diajukan/diproses
+            $surat = SuratTugas::where('nidn', $nidn)
+                ->orWhereIn('status_surat', ['diajukan', 'diproses'])
+                ->get();
 
-    } elseif ($role === 'dekan') {
-        // Dekan hanya melihat surat yang sudah disetujui kaprodi
-        $surat = SuratTugas::where('status_surat', 'disetujui_kaprodi')->get();
+        } elseif ($role === 'dekan') {
+            // Dekan hanya melihat surat yang sudah disetujui kaprodi
+            $surat = SuratTugas::where('status_surat', 'disetujui_kaprodi')->get();
 
-    } else {
-        abort(403, 'Role pengguna tidak dikenali.');
+        } else {
+            abort(403, 'Role pengguna tidak dikenali.');
+        }
+
+        if ($role === 'admin') {
+            return view('admin.riwayat_surat', compact('surat', 'dataBottom', 'dataTop'));
+        } else {
+            return view('dosen_kaprodi.riwayat_surat', compact('surat', 'dataBottom', 'dataTop'));
+        }
     }
 
-    if ($role === 'admin') {
-        return view('admin.riwayat_surat', compact('surat', 'dataBottom', 'dataTop'));
-    } else {
-        return view('dosen_kaprodi.riwayat_surat', compact('surat', 'dataBottom', 'dataTop'));
-    }
-}
+    public function edit($id)
+    {
+        $surat = SuratTugas::findOrFail($id);
 
-public function edit($id)
-{
-    $surat = SuratTugas::findOrFail($id);
-
-    return view('CRUD_Surat.edit_surat', compact('surat'));
-}
-
-public function update(Request $request, $id)
-{
-    $request->validate([
-        'jabatan' => 'required',
-        'jenis_tugas' => 'required',
-        'dasar_tugas' => 'required',
-        'sifat_surat' => 'required',
-        'tujuan' => 'required',
-        'tanggal_mulai' => 'required|date',
-        'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
-        'lampiran' => 'nullable|mimes:pdf,jpg,jpeg,png|max:2048',
-    ]);
-
-    $surat = SuratTugas::findOrFail($id);
-
-    $surat->jabatan = $request->jabatan;
-    $surat->jenis_tugas = $request->jenis_tugas;
-    $surat->dasar_tugas = $request->dasar_tugas;
-    $surat->sifat_surat = $request->sifat_surat;
-    $surat->tujuan = $request->tujuan;
-    $surat->tanggal_mulai = $request->tanggal_mulai;
-    $surat->tanggal_selesai = $request->tanggal_selesai;
-
-    // → hanya replace file jika upload baru
-    if ($request->hasFile('lampiran')) {
-        $fileName = time().'_'.$request->lampiran->getClientOriginalName();
-        $request->lampiran->storeAs('lampiran', $fileName, 'public');
-        $surat->lampiran = $fileName;
+        return view('CRUD_Surat.edit_surat', compact('surat'));
     }
 
-    $surat->save();
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'jabatan' => 'required',
+            'jenis_tugas' => 'required',
+            'dasar_tugas' => 'required',
+            'sifat_surat' => 'required',
+            'tujuan' => 'required',
+            'tanggal_mulai' => 'required|date',
+            'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+            'lampiran' => 'nullable|mimes:pdf,jpg,jpeg,png|max:2048',
+        ]);
 
-    return redirect()->route('riwayat_surat')->with('success', 'Surat berhasil diperbarui.');
-}
+        $surat = SuratTugas::findOrFail($id);
+
+        $surat->jabatan = $request->jabatan;
+        $surat->jenis_tugas = $request->jenis_tugas;
+        $surat->dasar_tugas = $request->dasar_tugas;
+        $surat->sifat_surat = $request->sifat_surat;
+        $surat->tujuan = $request->tujuan;
+        $surat->tanggal_mulai = $request->tanggal_mulai;
+        $surat->tanggal_selesai = $request->tanggal_selesai;
+
+        // → hanya replace file jika upload baru
+        if ($request->hasFile('lampiran')) {
+            $fileName = time().'_'.$request->lampiran->getClientOriginalName();
+            $request->lampiran->storeAs('lampiran', $fileName, 'public');
+            $surat->lampiran = $fileName;
+        }
+
+        $surat->save();
+
+        return redirect()->route('riwayat_surat')->with('success', 'Surat berhasil diperbarui.');
+    }
 
 
 }
