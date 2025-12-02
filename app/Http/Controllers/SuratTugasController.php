@@ -11,10 +11,10 @@ class SuratTugasController extends Controller
 {
     public function create()
     {
+        
         $positions = Position::all();
-
+        
         $nomor_surat = app('App\Services\NomorSuratService')->generatePreview();
-
         return view('CRUD_Surat.form_surat', [
             'positions' => $positions,
             'nomor_surat' => $nomor_surat
@@ -24,6 +24,8 @@ class SuratTugasController extends Controller
     // Simpan pengajuan surat tugas
     public function store(Request $request)
     {
+        // dd( session('user.jabatan'));
+
         $validated = $request->validate([
             'jenis_tugas'        => 'required|string|max:255',
             'dasar_tugas'        => 'required|string',            
@@ -32,7 +34,6 @@ class SuratTugasController extends Controller
             'tanggal_mulai'      => 'required|date',
             'tanggal_selesai'    => 'required|date|after_or_equal:tanggal_mulai',
             'lampiran'           => 'nullable|file|mimes:pdf,jpg,png|max:2048',
-            'jabatan'            => 'nullable|string|max:255',   // ada di form
         ]);
 
         // Ambil NIDN dari session
@@ -51,7 +52,9 @@ class SuratTugasController extends Controller
         // SIMPAN DATA KE DATABASE
         SuratTugas::create([
             'nidn'               => $nidn,
-            'template_id'        => 1,                              // tidak ada di form
+            'template_id'        => 1,                          // tidak ada di form
+            'nomor_surat'        => $nomorPreview = app('App\Services\NomorSuratService')->generateFinal(), 
+            'jabatan'            => session('user.jabatan'),      // dari form        
             'jenis_tugas'        => $validated['jenis_tugas'],
             'dasar_tugas'        => $validated['dasar_tugas'],
             'sifat'              => $validated['sifat_surat'],         // mapping
@@ -62,10 +65,10 @@ class SuratTugasController extends Controller
             'tanggal_surat'      => now()->format('Y-m-d'),
             'lampiran_path'      => $lampiranPath,
             'status_surat'       => 'diajukan',
+            'signed_by_position_id' => session('user.parent_position_id'),  // dari session
         ]);
-
+    
         return redirect()->route(session('user.role') . '.dashboard')
             ->with('success', 'Pengajuan surat tugas berhasil dikirim!');
     }
-
 }

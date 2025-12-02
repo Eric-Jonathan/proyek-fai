@@ -8,21 +8,6 @@ use Illuminate\Support\Facades\DB;
 
 class SuratController extends Controller
 {
-<<<<<<< HEAD
-    public function surat(){
-        $pdf = app(\Barryvdh\DomPDF\PDF::class);
-        $pdf->setOptions([
-            'isRemoteEnabled' => true,
-            'isHtml5ParserEnabled' => true,
-        ]);
-        $pdf->loadView('CRUD_Surat.cetak_surat');
-
-        return $pdf->download('surat_tugas.pdf');
-    }
-    /**
-     * Halaman utama daftar surat
-     */
-=======
     public function surat()
     {
         // Set options terlebih dahulu
@@ -41,7 +26,6 @@ class SuratController extends Controller
         return $pdf->download('surat_tugas.pdf');
     }
 
->>>>>>> 5f50554b542ed793f408be3972963165b07c1179
     public function index(Request $request)
     {
         /* ================================

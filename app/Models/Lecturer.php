@@ -69,4 +69,17 @@ class Lecturer extends Authenticatable
     {
         return $this->hasMany(LogAktivitas::class, 'nidn', 'nidn');
     }
+
+    public function positionAssignments()
+    {
+        return $this->hasMany(PositionAssignment::class, 'nidn', 'nidn');
+    }
+    
+    public function activePositions()
+    {
+        return $this->hasMany(PositionAssignment::class, 'nidn', 'nidn')
+                    ->where('assignment_status', 1)
+                    ->with('position');
+    }
+
 }

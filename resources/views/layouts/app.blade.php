@@ -77,11 +77,18 @@
                     Edit Surat
                 </a>
             @endif
+
+            <a href="{{ route('logout') }}">
+                User
+            </a>
+
             <a href="{{ route('logout') }}">
                 Logout
             </a>
+
         </div>
     </div>
+    
 
     {{-- Content (INI HARUS DI ATAS SCRIPT) --}}
     <div class="content">
