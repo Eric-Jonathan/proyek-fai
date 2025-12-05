@@ -21,7 +21,11 @@ class AdminController extends Controller
     // === USER MANAGEMENT ===
     public function users()
     {
-        $users = Lecturer::all();
+        $users = Lecturer::with([
+            'activePositionAssignment.position',
+            'permissions'
+        ])->get();
+
         return view('admin.users', compact('users'));
     }
 
@@ -95,56 +99,56 @@ class AdminController extends Controller
     }
 
     public function updateUser(Request $request, $id)
-{
-    $user = Lecturer::findOrFail($id);
-
-    $data = $request->validate([
-        'username' => 'required',
-        'email' => 'required|email|unique:user,email,' . $id,
-        'jabatan' => 'nullable|string',
-        'hak_akses' => 'required|string',
-        'atasan_id' => 'nullable|integer|exists:user,id',
-    ]);
-
-    if ($request->filled('password')) {
-        $data['password'] = bcrypt($request->password);
-    }
-
-    $user->update($data);
-
-    return redirect()->route('admin.users')->with('success', 'User berhasil diperbarui.');
-}
-
-    public function deleteUser($id)
     {
-        Lecturer::destroy($id);
-        return redirect()->route('admin.users')->with('success', 'User berhasil dihapus.');
+        $user = Lecturer::findOrFail($id);
+
+        $data = $request->validate([
+            'username' => 'required',
+            'email' => 'required|email|unique:user,email,' . $id,
+            'jabatan' => 'nullable|string',
+            'hak_akses' => 'required|string',
+            'atasan_id' => 'nullable|integer|exists:user,id',
+        ]);
+
+        if ($request->filled('password')) {
+            $data['password'] = bcrypt($request->password);
+        }
+
+        $user->update($data);
+
+        return redirect()->route('admin.users')->with('success', 'User berhasil diperbarui.');
     }
 
+        public function deleteUser($id)
+        {
+            Lecturer::destroy($id);
+            return redirect()->route('admin.users')->with('success', 'User berhasil dihapus.');
+        }
 
-   public function logAktivitas(Request $request)
-{
-    $query = LogAktivitas::with('lecturer')->orderBy('log_id', 'DESC');
 
-    if ($request->filled('tanggal')) {
-        $query->whereDate('created_at', $request->tanggal);
+    public function logAktivitas(Request $request)
+    {
+        $query = LogAktivitas::with('lecturer')->orderBy('log_id', 'DESC');
+
+        if ($request->filled('tanggal')) {
+            $query->whereDate('created_at', $request->tanggal);
+        }
+
+        if ($request->filled('user')) {
+            $query->whereHas('lecturer', function ($q) use ($request) {
+                $q->where('nama', 'like', '%' . $request->user . '%')
+                ->orWhere('nidn', 'like', '%' . $request->user . '%');
+            });
+        }
+
+        if ($request->filled('jenis')) {
+            $query->where('aktivitas', 'like', '%' . $request->jenis . '%');
+        }
+
+        // 🔥 Pagination 20 item
+        $logs = $query->paginate(20);
+
+        return view('admin.logs', compact('logs'));
     }
-
-    if ($request->filled('user')) {
-        $query->whereHas('lecturer', function ($q) use ($request) {
-            $q->where('nama', 'like', '%' . $request->user . '%')
-              ->orWhere('nidn', 'like', '%' . $request->user . '%');
-        });
-    }
-
-    if ($request->filled('jenis')) {
-        $query->where('aktivitas', 'like', '%' . $request->jenis . '%');
-    }
-
-    // 🔥 Pagination 20 item
-    $logs = $query->paginate(20);
-
-    return view('admin.logs', compact('logs'));
-}
 
 }

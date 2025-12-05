@@ -87,5 +87,10 @@ public function activePosition()
     $assignment = $this->activePositions()->with('position')->first();
     return $assignment?->position;
 }
+public function positionAssignment()
+{
+    return $this->hasOne(PositionAssignment::class, 'nidn', 'nidn')
+                ->orderBy('start_date', 'desc'); 
+}
 
 }

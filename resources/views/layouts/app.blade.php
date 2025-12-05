@@ -63,7 +63,7 @@
         <div class="profile">
             <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="User">
             <h5>Hi, {{ session('user.username') }}!</h5>
-            <small>{{ session('user.role') }}</small>
+            <small>{{ session('user.jabatan') ?? '--'}}</small>
         </div>
 
         @php
@@ -77,7 +77,7 @@
                 <a href="{{ route('admin.users') }}">Manajemen User</a>
                 <a href="{{ route('admin.surat') }}">Manajemen Surat</a>
                 {{-- <a href="{{ route('admin.templates') }}">Manajemen Template Surat</a> --}}
-                <a href="{{ route('admin.roles') }}">Manajemen Role</a>
+                {{-- <a href="{{ route('admin.roles') }}">Manajemen Role</a> --}}
                 <a href="{{ route('admin.logs') }}">Log Aktivitas</a>
                 {{-- <a href="{{ route('admin.backup') }}">Backup</a> --}}
                 <a href="{{ route('logout') }}" class="logout">Logout</a>
@@ -153,6 +153,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    @stack('scripts')
 
 </body>
 </html>

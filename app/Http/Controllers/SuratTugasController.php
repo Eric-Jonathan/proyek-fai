@@ -289,7 +289,6 @@ return view('CRUD_Surat.form_surat', [
     }
 
 
-
     /*** Tolak surat */
     public function tolak(Request $request, $id)
     {
@@ -426,6 +425,4 @@ return view('CRUD_Surat.form_surat', [
 
         return redirect()->route('riwayat_surat')->with('success', 'Surat berhasil diperbarui.');
     }
-
-
 }
