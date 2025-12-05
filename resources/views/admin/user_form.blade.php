@@ -1,26 +1,30 @@
 @extends('layouts.app')
 @section('content')
 <div class="container mt-4">
-    @if($errors->any())
-        @dump($errors->all())
-    @endif
-    <h3>{{ isset($user) ? 'Edit User' : 'Tambah User' }}</h3>
-    <form action="{{ route('admin.users.store') }}" method="POST">
+
+<h3>Tambah User Baru</h3>
+
+<form action="{{ route('admin.users.store') }}" method="POST">
 @csrf
 
-{{-- Username --}}
+<label>Full Name</label>
+<input type="text" name="full_name" class="form-control" required>
+
 <label>Username</label>
-<input type="text" name="username" class="form-control">
+<input type="text" name="username" class="form-control" required>
 
-{{-- Email --}}
 <label>Email</label>
-<input type="email" name="email" class="form-control">
+<input type="email" name="email" class="form-control" required>
 
-{{-- NIDN --}}
 <label>NIDN</label>
-<input type="text" name="nidn" class="form-control">
+<input type="text" name="nidn" class="form-control" required>
 
-{{-- Role --}}
+<label>Lecturer Code</label>
+<input type="text" name="lecturer_code" class="form-control">
+
+<label>Password</label>
+<input type="password" name="password" class="form-control" required>
+
 <label>Role</label>
 <select name="role" class="form-control">
     <option value="dosen">Dosen</option>
@@ -31,73 +35,44 @@
     <option value="bau">BAU</option>
 </select>
 
-{{-- Password --}}
-<label>Password</label>
-<input type="password" name="password" class="form-control">
+<label>Status Kepegawaian</label>
+<select name="employment_status" class="form-control">
+    <option value="active">Active</option>
+    <option value="inactive">Inactive</option>
+</select>
+
+<label>Certified?</label><br>
+<input type="checkbox" name="is_certified" value="1"> Ya <br><br>
+
+<label>Start Date</label>
+<input type="date" name="start_date" class="form-control">
+
+<label>End Date</label>
+<input type="date" name="end_date" class="form-control">
 
 <hr>
 
-{{-- Permissions --}}
 <h4>Permissions</h4>
 @foreach($permissions as $p)
-    <label>
-        <input type="checkbox" name="permissions[]" value="{{ $p->permission_id }}">
-        {{ $p->name }}
-    </label><br>
+<label>
+    <input type="checkbox" name="permissions[]" value="{{ $p->permission_id }}">
+    {{ $p->permission_name }}
+</label><br>
 @endforeach
 
 <hr>
 
-{{-- Position Assignment --}}
-<h4>Position Assignments</h4>
-
-<div id="positions-wrapper">
-    <div class="position-group mb-3">
-        <label>Position</label>
-        <select name="positions[0][position_id]" class="form-control">
-            @foreach($positions as $pos)
-                <option value="{{ $pos->position_id }}">{{ $pos->position_name }}</option>
-            @endforeach
-        </select>
-
-        <label>Start Date</label>
-        <input type="date" name="positions[0][start_date]" class="form-control">
-
-        <label>End Date</label>
-        <input type="date" name="positions[0][end_date]" class="form-control">
-    </div>
-</div>
-
-<button type="button" onclick="addPosition()" class="btn btn-secondary">+ Tambah Jabatan</button>
+<h4>Pilih Posisi (Hanya 1)</h4>
+<select name="position_id" class="form-control" required>
+    @foreach($positions as $pos)
+        <option value="{{ $pos->position_id }}">{{ $pos->position_name }}</option>
+    @endforeach
+</select>
 
 <hr>
 
-<button type="submit" class="btn btn-primary">Create User</button>
+<button type="submit" class="btn btn-primary w-100">Create User</button>
 </form>
-
-<script>
-let posIndex = 1;
-function addPosition() {
-    const wrap = document.getElementById('positions-wrapper');
-    wrap.insertAdjacentHTML('beforeend', `
-        <div class="position-group mb-3">
-            <label>Position</label>
-            <select name="positions[${posIndex}][position_id]" class="form-control">
-                @foreach($positions as $pos)
-                    <option value="{{ $pos->position_id }}">{{ $pos->position_name }}</option>
-                @endforeach
-            </select>
-
-            <label>Start Date</label>
-            <input type="date" name="positions[${posIndex}][start_date]" class="form-control">
-
-            <label>End Date</label>
-            <input type="date" name="positions[${posIndex}][end_date]" class="form-control">
-        </div>
-    `);
-    posIndex++;
-}
-</script>
 
 </div>
 @endsection

@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\LogAktivitas;
 use App\Models\Lecturer;
+use App\Models\Permission;
+use App\Models\Position;
+use App\Models\PositionAssignment;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -24,33 +27,66 @@ class AdminController extends Controller
 
     public function createUser()
     {
-        return view('admin.user_form', ['user' => null]);
+        $permissions = Permission::all();
+        $positions   = Position::all();
+
+        return view('admin.user_form', compact('permissions','positions'))->with('user', null);
     }
 
     public function storeUser(Request $request)
-{
-    $request->validate([
-        'username' => 'required|unique:user,username',
-        'email' => 'required|email|unique:user,email',
-        'nidn' => 'required|unique:user,nidn',
-        'password' => 'required|min:4',
-        'jabatan' => 'nullable|string',
-        'atasan_id' => 'nullable|integer|exists:user,id',
-        'hak_akses' => 'required',
-    ]);
+    {
+        $request->validate([
+            'username' => 'required|unique:lecturers,username',
+            'email' => 'required|email|unique:lecturers,email',
+            'nidn' => 'required|unique:lecturers,nidn',
+            'lecturer_code' => 'nullable|unique:lecturers,lecturer_code',
+            'full_name' => 'required',
+            'password' => 'required|min:4',
+            'role' => 'required|in:admin,sekretaris,kaprodi,rektor,bau,dosen',
+            'employment_status' => 'required|in:active,inactive',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date',
+            'is_certified' => 'boolean',
 
-    Lecturer::create([
-        'username' => $request->username,
-        'email' => $request->email,
-        'password' => Hash::make($request->password),
-        'nidn' => $request->nidn,
-        'role' => $request->jabatan,
+            // permissions
+            'permissions' => 'nullable|array',
 
-    ]);
+            // posisi HANYA 1
+            'position_id' => 'required|exists:positions,position_id',
+        ]);
 
-    return redirect()->route('admin.users')->with('success', 'User berhasil ditambahkan.');
-}
+        // Insert lecturer
+        $lecturer = Lecturer::create([
+            'username' => $request->username,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => $request->role,
+            'full_name' => $request->full_name,
+            'lecturer_code' => $request->lecturer_code,
+            'nidn' => $request->nidn,
+            'employment_status' => $request->employment_status,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'is_certified' => $request->is_certified ?? 0,
+        ]);
 
+        // Attach permissions (many-to-many)
+        if($request->permissions){
+            $lecturer->permissions()->attach($request->permissions);
+        }
+
+        // Position Assignment (1 posisi)
+        PositionAssignment::create([
+            'position_id' => $request->position_id,
+            'nidn' => $request->nidn,
+            'start_date' => $request->start_date ?? now(),
+            'end_date' => $request->end_date ?? now()->addYears(1),
+            'decree_number' => $request->decree_number ?? null,
+            'assignment_status' => 1,
+        ]);
+
+        return redirect()->route('admin.users')->with('success','User berhasil ditambahkan.');
+    }
 
     public function editUser($id)
     {
