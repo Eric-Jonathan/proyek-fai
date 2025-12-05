@@ -39,6 +39,11 @@
             text-decoration: none;
             transition: 0.2s;
         }
+        .sidebar .menu a.logout {
+            color: #ff7675; /* Warna teks merah muda */
+            border-top: 1px solid #57606f;
+            margin-top: 10px;
+        }
         .sidebar .menu a:hover, .sidebar .menu a.active {
             background-color: #57606f;
             color: #fff;
@@ -48,52 +53,93 @@
             padding: 20px;
             min-height: 100vh;
         }
+
     </style>
 </head>
 <body>
 
     {{-- Sidebar --}}
     <div class="sidebar">
-    <div class="profile">
-        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="User">
-        <h5>Hi, {{ session('user.username') }}!</h5>
-        <small>{{ session('user.role') }}</small>
-    </div>
+        <div class="profile">
+            <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="User">
+            <h5>Hi, {{ session('user.username') }}!</h5>
+            <small>{{ session('user.role') }}</small>
+        </div>
 
-    @php
-        $role = session('user')['role'] ?? null;
-        $permissions = session('user')['permissions'] ?? [];
-    @endphp
+        @php
+            $role = session('user')['role'] ?? null;
+            $permissions = session('user')['permissions'] ?? [];
+        @endphp
 
-    <div class="menu">
-        @if($role === 'admin')
-            <a href="{{ route('admin.dashboard') }}">Dashboard</a>
-            <a href="{{ route('admin.users') }}">Manajemen User</a>
-            <a href="{{ route('admin.surat') }}">Manajemen Surat</a>
-            {{-- <a href="{{ route('admin.templates') }}">Manajemen Template Surat</a> --}}
-            <a href="{{ route('admin.roles') }}">Manajemen Role</a>
-            <a href="{{ route('admin.logs') }}">Log Aktivitas</a>
-            {{-- <a href="{{ route('admin.backup') }}">Backup</a> --}}
-            <a href="{{ route('logout') }}">Logout</a>
-        @else
-            <a href="{{ route($role . '.dashboard') }}">Dashboard</a>
+        <div class="menu">
+            @if($role === 'admin')
+                <a href="{{ route('admin.dashboard') }}">Dashboard</a>
+                <a href="{{ route('admin.users') }}">Manajemen User</a>
+                <a href="{{ route('admin.surat') }}">Manajemen Surat</a>
+                {{-- <a href="{{ route('admin.templates') }}">Manajemen Template Surat</a> --}}
+                <a href="{{ route('admin.roles') }}">Manajemen Role</a>
+                <a href="{{ route('admin.logs') }}">Log Aktivitas</a>
+                {{-- <a href="{{ route('admin.backup') }}">Backup</a> --}}
+                <a href="{{ route('logout') }}" class="logout">Logout</a>
+            @elseif($role === 'bau')
+                <a href="{{ route($role . '.dashboard') }}">Dashboard</a>
 
-            @if(in_array('create_surat', $permissions))
-                <a href="{{ route('CRUD_Surat.form_surat') }}">Buat Surat</a>
+                @if(in_array('create_surat', $permissions))
+                    <a href="{{ route('CRUD_Surat.form_surat') }}">Buat Surat</a>
+                @endif
+                
+                
+
+                <a href="{{ route('logout') }}" class="logout" >Logout</a>
+
+            @elseif($role === 'kaprodi')
+                <a href="{{ route($role . '.dashboard') }}">Dashboard</a>
+
+                @if(in_array('create_surat', $permissions))
+                    <a href="{{ route('kaprodi.CRUD_Surat.form_surat') }}">Buat Surat</a>
+                @endif
+
+                @if(in_array('lihat_surat', $permissions))
+                    <a href="{{ route('kaprodi.riwayatSurat') }}">Riwayat Surat</a>
+                @endif
+
+                <a href="{{ route('logout') }}"  class="logout" >Logout</a>
+
+            @elseif($role === 'rektor')
+                <a href="{{ route($role . '.dashboard') }}">Dashboard</a>
+
+                @if(in_array('create_surat', $permissions))
+                    <a href="{{ route('CRUD_Surat.form_surat') }}">Buat Surat</a>
+                @endif
+
+                {{-- Bagian @if(in_array('lihat_surat', $permissions)) kosong sehingga saya hapus agar lebih rapi --}}
+
+                <a href="{{ route('logout') }}"  class="logout" >Logout</a>
+
+            @elseif($role === 'dosen')
+                <a href="{{ route($role . '.dashboard') }}">Dashboard</a>
+
+                @if(in_array('create_surat', $permissions))
+                    <a href="{{ route('CRUD_Surat.form_surat') }}">Buat Surat</a>
+                @endif
+
+                @if(in_array('lihat_surat', $permissions))
+                    <a href="{{ route('dosen.riwayatSurat') }}">Riwayat Surat</a>
+                @endif
+
+                <a href="{{ route('logout') }}" class="logout" >Logout</a>
+            
+            {{-- Bagian @else telah disederhanakan dan dipindahkan ke dalam conditional yang sesuai --}}
+            {{-- Jika ada peran lain yang belum terdefinisi (seperti 'pegawai' atau 'user' generik),
+                 Anda bisa mengaktifkan kembali blok @else dengan menu default: --}}
+            {{-- 
+            @else
+                <a href="{{ route($role . '.dashboard') }}">Dashboard</a>
+                <a href="{{ route('logout') }}" class="logout" >Logout</a>
+            --}}
             @endif
-
-            {{-- @if(in_array('edit_surat', $permissions))
-                <a href="{{ route('CRUD_Surat.edit_surat') }}">Edit Surat</a>
-            @endif --}}
-
-            @if(in_array('lihat_surat', $permissions))
-                <a href="{{ route('dosen.riwayatSurat') }}">Riwayat Surat</a>
-            @endif
-
-            <a href="{{ route('logout') }}">Logout</a>
-        @endif
+        </div>
     </div>
-</div>
 
     
 

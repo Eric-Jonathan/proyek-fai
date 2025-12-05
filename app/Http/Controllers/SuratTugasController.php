@@ -44,16 +44,21 @@ class SuratTugasController extends Controller
     }
     
     public function create()
-    {
-        
-        $positions = Position::all();
-        
-        $nomor_surat = app('App\Services\NomorSuratService')->generatePreview();
-        return view('CRUD_Surat.form_surat', [
-            'positions' => $positions,
-            'nomor_surat' => $nomor_surat
-        ]);
-    }
+{
+    $nomor_surat = app('App\Services\NomorSuratService')->generatePreview();
+
+    $lecturer = Lecturer::where('nidn', session('user.nidn'))
+                        ->with('activePositionAssignment.position')
+                        ->first();
+
+    $jabatan = optional($lecturer->activePosition())->position_name;
+
+return view('CRUD_Surat.form_surat', [
+    'lecturer'    => $lecturer,
+    'jabatan'     => $jabatan,
+    'nomor_surat' => $nomor_surat,
+]);
+}
 
     // Simpan pengajuan surat tugas
     public function store(Request $request)
@@ -88,7 +93,7 @@ class SuratTugasController extends Controller
             'nidn'               => $nidn,
             'template_id'        => 1,                          // tidak ada di form
             'nomor_surat'        => $nomorPreview = app('App\Services\NomorSuratService')->generateFinal(), 
-            'jabatan'            => session('user.jabatan'),      // dari form        
+            // 'jabatan'            => $request->jabatan,   
             'jenis_tugas'        => $validated['jenis_tugas'],
             'dasar_tugas'        => $validated['dasar_tugas'],
             'sifat'              => $validated['sifat_surat'],         // mapping
@@ -345,9 +350,23 @@ class SuratTugasController extends Controller
 
         } elseif ($role === 'kaprodi') {
             // Kaprodi melihat suratnya + yang status diajukan/diproses
-            $surat = SuratTugas::where('nidn', $nidn)
-                ->orWhereIn('status_surat', ['diajukan', 'diproses'])
-                ->get();
+            // $surat = SuratTugas::where('nidn', $nidn)
+            //     ->orWhereIn('status_surat', ['diajukan', 'diproses'])
+            //     ->get();
+
+                $surat = SuratTugas::where('nidn', $nidn);
+            // Data yang sedang diproses (kecuali ditolak dan ditandatangani)
+            $dataTop = $surat->whereNotIn('status_surat', ['ditolak', 'ditandatangani'])
+                             ->paginate(request('per_page') ?? 10)
+                             ->appends(request()->query());
+
+            // Clone query untuk bagian bottom (karena query sebelumnya sudah digunakan)
+            $dataBottom = SuratTugas::where('nidn', $nidn)
+                             ->whereIn('status_surat', ['ditolak', 'ditandatangani'])
+                             ->paginate(request('per_page') ?? 10)
+                             ->appends(request()->query());
+            
+            
 
         } elseif ($role === 'dekan') {
             // Dekan hanya melihat surat yang sudah disetujui kaprodi
@@ -359,7 +378,9 @@ class SuratTugasController extends Controller
 
         if ($role === 'admin') {
             return view('admin.riwayat_surat', compact('surat', 'dataBottom', 'dataTop'));
-        } else {
+        } else if ($role ==="kaprodi"){
+            return view('dosen_kaprodi.riwayat_surat', compact('surat', 'dataBottom', 'dataTop'));
+        }else {
             return view('dosen_kaprodi.riwayat_surat', compact('surat', 'dataBottom', 'dataTop'));
         }
     }

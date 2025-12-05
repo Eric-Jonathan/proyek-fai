@@ -82,6 +82,10 @@
 <body>
 
 <div class="container py-4">
+    @php
+        $role = session('user')['role'] ?? null;
+        $permissions = session('user')['permissions'] ?? [];
+    @endphp
     <!-- TOP TABLE -->
     <h5 class="header-title mb-3">Daftar Pengajuan <span class="fw-bold">AKTIF</span></h5>
 
