@@ -78,8 +78,13 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 
     Route::view('/roles', 'admin.roles')->name('admin.roles');
     Route::view('/templates', 'admin.templates')->name('admin.templates');
-    Route::view('/logs', 'admin.logs')->name('admin.logs');
+    // Route::view('/logs', 'admin.logs')->name('admin.logs');
     Route::view('/backup', 'admin.backup')->name('admin.backup');
+
+
+    // log aktivitas 
+    Route::get('/logs', [AdminController::class, 'logAktivitas'])
+            ->name('admin.logs');
 });
 
 Route::get('/dashboard', function () {

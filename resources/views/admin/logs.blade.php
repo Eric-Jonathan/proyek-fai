@@ -45,6 +45,9 @@
         </div>
         <div class="card-body p-0">
             <table class="table table-hover align-middle mb-0">
+                <div class="mt-3 px-3">
+    {{ $logs->links() }}
+</div>
                 <thead class="table-light text-center">
                     <tr>
                         <th width="5%">#</th>
@@ -57,54 +60,53 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {{-- Contoh data statis --}}
-                    <tr>
-                        <td class="text-center">1</td>
-                        <td>28 Okt 2025</td>
-                        <td>10:15</td>
-                        <td><i class="fa fa-user text-primary me-1"></i> Sekretaris</td>
-                        <td>Membuat surat tugas baru</td>
-                        <td>Surat tugas untuk “Visiting Professor KMUTT” berhasil dibuat.</td>
-                        <td class="text-center">
-                            <span class="badge bg-success">Berhasil</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="text-center">2</td>
-                        <td>28 Okt 2025</td>
-                        <td>09:42</td>
-                        <td><i class="fa fa-user text-info me-1"></i> Admin Sistem</td>
-                        <td>Backup database sistem</td>
-                        <td>Backup otomatis harian selesai tanpa error.</td>
-                        <td class="text-center">
-                            <span class="badge bg-success">Berhasil</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="text-center">3</td>
-                        <td>27 Okt 2025</td>
-                        <td>17:03</td>
-                        <td><i class="fa fa-user text-danger me-1"></i> Dosen FTI</td>
-                        <td>Login gagal</td>
-                        <td>3 kali percobaan login dengan email yang tidak terdaftar.</td>
-                        <td class="text-center">
-                            <span class="badge bg-danger">Gagal</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="text-center">4</td>
-                        <td>27 Okt 2025</td>
-                        <td>14:25</td>
-                        <td><i class="fa fa-user text-warning me-1"></i> Kaprodi FST</td>
-                        <td>Menghapus data surat tugas</td>
-                        <td>Surat tugas nomor 594/ISTTS/A6/VII/2025 dihapus dari sistem.</td>
-                        <td class="text-center">
-                            <span class="badge bg-warning text-dark">Perhatian</span>
-                        </td>
-                    </tr>
-                </tbody>
+    @forelse ($logs as $index => $log)
+        <tr>
+            <td class="text-center">{{ $index + 1 }}</td>
+
+            {{-- Tanggal --}}
+            <td>{{ $log->created_at?->format('d M Y') }}</td>
+
+            {{-- Waktu --}}
+            <td>{{ $log->created_at?->format('H:i') }}</td>
+
+            {{-- Pengguna --}}
+            <td>
+                <i class="fa fa-user text-primary me-1"></i>
+                {{ $log->lecturer->nama ?? $log->nidn }}
+            </td>
+
+            {{-- Aktivitas --}}
+            <td>{{ $log->aktivitas }}</td>
+
+            {{-- Keterangan --}}
+            <td>{{ $log->keterangan }}</td>
+
+            {{-- Status --}}
+            <td class="text-center">
+                @php
+                    $status = 'success';
+                    if (str_contains(strtolower($log->aktivitas), 'gagal')) $status = 'danger';
+                    elseif (str_contains(strtolower($log->aktivitas), 'hapus')) $status = 'warning';
+                @endphp
+
+                <span class="badge bg-{{ $status }}">
+                    {{ ucfirst($status) }}
+                </span>
+            </td>
+        </tr>
+    @empty
+        <tr>
+            <td colspan="7" class="text-center py-3 text-muted">
+                Tidak ada aktivitas.
+            </td>
+        </tr>
+    @endforelse
+</tbody>
+
             </table>
         </div>
+        
     </div>
 
     {{-- 📈 Statistik Singkat --}}

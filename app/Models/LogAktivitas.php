@@ -21,6 +21,10 @@ class LogAktivitas extends Model
         'keterangan',
     ];
 
+    protected $casts = [
+        'created_at' => 'datetime'
+    ];
+
     public function lecturer()
     {
         return $this->belongsTo(Lecturer::class, 'nidn', 'nidn');

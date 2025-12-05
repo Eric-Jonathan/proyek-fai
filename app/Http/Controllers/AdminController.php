@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LogAktivitas;
 use App\Models\Lecturer;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -83,4 +84,31 @@ class AdminController extends Controller
         Lecturer::destroy($id);
         return redirect()->route('admin.users')->with('success', 'User berhasil dihapus.');
     }
+
+
+   public function logAktivitas(Request $request)
+{
+    $query = LogAktivitas::with('lecturer')->orderBy('log_id', 'DESC');
+
+    if ($request->filled('tanggal')) {
+        $query->whereDate('created_at', $request->tanggal);
+    }
+
+    if ($request->filled('user')) {
+        $query->whereHas('lecturer', function ($q) use ($request) {
+            $q->where('nama', 'like', '%' . $request->user . '%')
+              ->orWhere('nidn', 'like', '%' . $request->user . '%');
+        });
+    }
+
+    if ($request->filled('jenis')) {
+        $query->where('aktivitas', 'like', '%' . $request->jenis . '%');
+    }
+
+    // 🔥 Pagination 20 item
+    $logs = $query->paginate(20);
+
+    return view('admin.logs', compact('logs'));
+}
+
 }
