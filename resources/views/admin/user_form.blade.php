@@ -1,131 +1,78 @@
 @extends('layouts.app')
 @section('content')
 <div class="container mt-4">
-    @if($errors->any())
-        @dump($errors->all())
-    @endif
-    <h3>{{ isset($user) ? 'Edit User' : 'Tambah User' }}</h3>
 
-    <form action="{{ isset($user) ? route('admin.users.update', $user->id) : route('admin.users.store') }}" method="POST">
-        @csrf
-        @if(isset($user))
-            @method('PUT')
-        @endif
+<h3>Tambah User Baru</h3>
 
-        {{-- Full Name --}}
-        <div class="mb-3">
-            <label for="username" class="form-label">Full name</label>
-            <input type="text" name="full_name" id="full_name" class="form-control"
-                   value="{{ old('full_name', $user->username ?? '') }}" required>
-            @error('full_name')
-                <small class="text-danger">{{ $message }}</small>
-            @enderror
-        </div>
+<form action="{{ route('admin.users.store') }}" method="POST">
+@csrf
 
-        {{-- Username --}}
-        <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            <input type="text" name="username" id="username" class="form-control"
-                   value="{{ old('username', $user->username ?? '') }}" required>
-            @error('username')
-                <small class="text-danger">{{ $message }}</small>
-            @enderror
-        </div>
+<label>Full Name</label>
+<input type="text" name="full_name" class="form-control" required>
 
-        {{-- Email --}}
-        <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" name="email" id="email" class="form-control"
-                   value="{{ old('email', $user->email ?? '') }}" required>
-            @error('email')
-                <small class="text-danger">{{ $message }}</small>
-            @enderror
-        </div>
+<label>Username</label>
+<input type="text" name="username" class="form-control" required>
 
-        {{-- NIDN --}}
-        <div class="mb-3">
-            <label for="nidn" class="form-label">NIDN</label>
-            <input type="text" name="nidn" id="nidn" class="form-control"
-                   value="{{ old('nidn', $user->nidn ?? '') }}" required>
-            @error('nidn')
-                <small class="text-danger">{{ $message }}</small>
-            @enderror
-        </div>
+<label>Email</label>
+<input type="email" name="email" class="form-control" required>
 
-        {{-- Password --}}
-        <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
-            <input type="password" name="password" id="password" class="form-control"
-                   placeholder="{{ isset($user) ? 'Kosongkan jika tidak ingin mengubah' : '' }}">
-            @error('password')
-                <small class="text-danger">{{ $message }}</small>
-            @enderror
-        </div>
+<label>NIDN</label>
+<input type="text" name="nidn" class="form-control" required>
 
-        {{-- Jabatan (gabungan role + jabatan) --}}
-        <div class="mb-3">
-            <label for="jabatan" class="form-label">Jabatan</label>
-            <select name="jabatan" id="jabatan" class="form-select" required>
-                <option value="">-- Pilih Jabatan --</option>
-                <option value="admin" {{ old('jabatan', $user->jabatan ?? '') == 'admin' ? 'selected' : '' }}>Admin</option>
-                <option value="sekretaris" {{ old('jabatan', $user->jabatan ?? '') == 'sekretaris' ? 'selected' : '' }}>Sekretaris</option>
-                <option value="kaprodi" {{ old('jabatan', $user->jabatan ?? '') == 'kaprodi' ? 'selected' : '' }}>Kaprodi</option>
-                <option value="rektor" {{ old('jabatan', $user->jabatan ?? '') == 'rektor' ? 'selected' : '' }}>Rektor</option>
-                <option value="bau" {{ old('jabatan', $user->jabatan ?? '') == 'bau' ? 'selected' : '' }}>BAU</option>
-            </select>
-            @error('jabatan')
-                <small class="text-danger">{{ $message }}</small>
-            @enderror
-        </div>
+<label>Lecturer Code</label>
+<input type="text" name="lecturer_code" class="form-control">
 
-        {{-- Atasan (sementara fixed) --}}
-        <div class="mb-3">
-            <label for="atasan_id" class="form-label">Atasan</label>
-            <select name="atasan_id" id="atasan_id" class="form-select">
-                <option value="">-- Pilih Atasan --</option>
-                <option value="1" {{ old('atasan_id', $user->atasan_id ?? '') == 1 ? 'selected' : '' }}>Admin Utama</option>
-                <option value="2" {{ old('atasan_id', $user->atasan_id ?? '') == 2 ? 'selected' : '' }}>Rektor</option>
-            </select>
-            @error('atasan_id')
-                <small class="text-danger">{{ $message }}</small>
-            @enderror
-        </div>
+<label>Password</label>
+<input type="password" name="password" class="form-control" required>
 
-        {{-- ✅ Hak akses detail (muncul hanya saat edit user) --}}
-        @if(isset($user))
-        <div class="mb-3">
-            <label class="form-label d-block">Hak Akses</label>
-            @php
-                $aksesList = [
-                    'create surat' => 'Create Surat',
-                    'lihat surat' => 'Lihat Surat',
-                    'edit surat' => 'Edit Surat',
-                    'acc surat' => 'ACC Surat',
-                    'ttd surat' => 'TTD Surat',
-                    'stempel surat' => 'Stempel Surat',
-                ];
-                $userAkses = $user->hak_akses_detail ?? [];
-            @endphp
+<label>Role</label>
+<select name="role" class="form-control">
+    <option value="dosen">Dosen</option>
+    <option value="admin">Admin</option>
+    <option value="sekretaris">Sekretaris</option>
+    <option value="kaprodi">Kaprodi</option>
+    <option value="rektor">Rektor</option>
+    <option value="bau">BAU</option>
+</select>
 
-            @foreach ($aksesList as $value => $label)
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" 
-                           name="hak_akses_detail[]" 
-                           value="{{ $value }}" 
-                           id="akses_{{ $loop->index }}" 
-                           {{ in_array($value, $userAkses ?? []) ? 'checked' : '' }}>
-                    <label class="form-check-label" for="akses_{{ $loop->index }}">{{ $label }}</label>
-                </div>
-            @endforeach
+<label>Status Kepegawaian</label>
+<select name="employment_status" class="form-control">
+    <option value="active">Active</option>
+    <option value="inactive">Inactive</option>
+</select>
 
-            <small class="text-muted">✅ Centang hak akses surat yang ingin diberikan.</small>
-        </div>
-        @endif
+<label>Certified?</label><br>
+<input type="checkbox" name="is_certified" value="1"> Ya <br><br>
 
-        <button type="submit" class="btn btn-primary">
-            {{ isset($user) ? 'Update' : 'Simpan' }}
-        </button>
-        <a href="{{ route('admin.users') }}" class="btn btn-secondary">Batal</a>
-    </form>
+<label>Start Date</label>
+<input type="date" name="start_date" class="form-control">
+
+<label>End Date</label>
+<input type="date" name="end_date" class="form-control">
+
+<hr>
+
+<h4>Permissions</h4>
+@foreach($permissions as $p)
+<label>
+    <input type="checkbox" name="permissions[]" value="{{ $p->permission_id }}">
+    {{ $p->permission_name }}
+</label><br>
+@endforeach
+
+<hr>
+
+<h4>Pilih Posisi (Hanya 1)</h4>
+<select name="position_id" class="form-control" required>
+    @foreach($positions as $pos)
+        <option value="{{ $pos->position_id }}">{{ $pos->position_name }}</option>
+    @endforeach
+</select>
+
+<hr>
+
+<button type="submit" class="btn btn-primary w-100">Create User</button>
+</form>
+
 </div>
 @endsection
