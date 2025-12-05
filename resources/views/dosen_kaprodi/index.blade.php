@@ -12,43 +12,35 @@
     {{-- Statistik Surat --}}
     <div class="row g-3 mb-4">
         <div class="col-md-3">
-            <div class="card-info card-blue">
-                <div><strong>Diajukan</strong><br>12 Surat</div>
-                <i class="fa fa-paper-plane fa-2x"></i>
+            <div class="card">
+                <div class="card-body">
+                    <div><strong>Diajukan</strong><br>12 Surat</div>
+                    <i class="fa fa-paper-plane fa-2x"></i>
+                </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card-info card-purple">
-                <div><strong>Diproses</strong><br>8 Surat</div>
-                <i class="fa fa-hourglass-half fa-2x"></i>
+            <div class="card">
+                <div class="card-body">
+                    <div><strong>Diproses</strong><br>8 Surat</div>
+                    <i class="fa fa-hourglass-half fa-2x"></i>
+                </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card-info card-green">
-                <div><strong>Disetujui</strong><br>25 Surat</div>
-                <i class="fa fa-check-circle fa-2x"></i>
+            <div class="card">
+                <div class="card-body">
+                    <div><strong>Disetujui</strong><br>25 Surat</div>
+                    <i class="fa fa-check-circle fa-2x"></i>
+                </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card-info card-red">
-                <div><strong>Ditolak</strong><br>3 Surat</div>
-                <i class="fa fa-times-circle fa-2x"></i>
-            </div>
-        </div>
-    </div>
-
-    {{-- Grafik Statistik --}}
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <div class="chart">
-                <h6>Status Surat Tugas</h6>
-                <canvas id="chartStatus" class="pb-3"></canvas>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="chart">
-                <h6>Distribusi Surat per Prodi</h6>
-                <canvas id="chartProdi" class="pb-3"></canvas>
+            <div class="card">
+                <div class="card-body">
+                    <div><strong>Ditolak</strong><br>3 Surat</div>
+                    <i class="fa fa-times-circle fa-2x"></i>
+                </div>
             </div>
         </div>
     </div>
@@ -63,46 +55,106 @@
                 <thead class="table-secondary">
                     <tr class="text-center">
                         <th>#</th>
-                        <th>Nama Dosen</th>
-                        <th>Jenis Kegiatan</th>
+                        <th>Jenis Tugas</th>
                         <th>Tujuan</th>
                         <th>Tanggal</th>
                         <th>Status</th>
-                        <th>Opsi</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Dr. Alexander Erick</td>
-                        <td>Surat Tugas</td>
-                        <td>Seminar AI di ITS</td>
-                        <td>10-11 Nov 2025</td>
-                        <td><span class="badge bg-warning">Diproses</span></td>
-                        <td class="text-center">
-                            <button onclick="openDetailSurat({ nomor: 'ST/2025/001' })" class="btn btn-sm btn-info"><i class="fa fa-eye"></i></button>
-                            <button class="btn btn-sm btn-success"><i class="fa fa-check"></i></button>
-                            <button onclick="openModalTolak()" class="btn btn-sm btn-danger"><i class="fa fa-times"></i></button>
-                        </td>
+                    @foreach ($surat as $s)
+                        @if ($s->status_surat>0 && $s->status_surat<5)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $s->jenis_tugas }}</td>
+                                <td>{{ $s->tujuan }}</td>
+                                <td>{{ \Carbon\Carbon::parse($s->tanggal_mulai)->translatedFormat('d F Y') }}</td>
+
+                                <td class="text-center">
+                                    @php
+                                        $statusBadge = [
+                                            1 => ['warning', 'Diajukan'],
+                                            2 => ['primary', 'Diajukan'],
+                                            3 => ['primary', 'Disetujui Kaprodi'],
+                                            4 => ['primary', 'Disetujui Dekan'],
+                                        ];
+                                    @endphp
+
+                                    @if(isset($statusBadge[$s->status_surat]))
+                                        <span class="badge bg-{{ $statusBadge[$s->status_surat][0] }}">
+                                            {{ $statusBadge[$s->status_surat][1] }}
+                                        </span>
+                                    @else
+                                        <span class="badge bg-danger">Ditolak</span>
+                                    @endif
+                                </td>
+
+                                <td class="text-center">
+                                    @if ($s->status_surat >= 0 && $s->status_surat <= 2)
+                                        <button onclick="openDetailSurat({ nomor: 'ST/2025/001' })" class="btn btn-sm btn-info">
+                                            <i class="fa fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-warning"><i class="fa fa-pencil"></i></button>
+                                    @else
+                                        <a href="#" class="btn btn-sm btn-primary"><i class="fa fa-download"></i></a>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endif
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light">
+            <h6 class="mb-0 fw-semibold"><i class="fa fa-list me-2"></i>Riwayat Pengajuan Surat Tugas</h6>
+        </div>
+        <div class="card-body table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-secondary">
+                    <tr class="text-center">
+                        <th>Jenis Tugas</th>
+                        <th>Tujuan</th>
+                        <th>Tanggal</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
                     </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Johansen Kennedy</td>
-                        <td>Assesor BKD</td>
-                        <td>Evaluasi BKD FTI</td>
-                        <td>3-4 Des 2025</td>
-                        <td><span class="badge bg-success">Disetujui</span></td>
-                        <td class="text-center">
-                            <a href="#" class="btn btn-sm btn-primary"><i class="fa fa-download"></i></a>
-                        </td>
-                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($surat as $s)
+                        @if ($s->status_surat==0 || $s->status_surat==5)
+                            <tr>
+                                <td>{{ $s->jenis_tugas }}</td>
+                                <td>{{ $s->tujuan }}</td>
+                                <td>{{ \Carbon\Carbon::parse($s->tanggal_mulai)->translatedFormat('d F Y') }}</td>
+
+                                <td class="text-center">
+                                    @if($s->status_surat == 0)
+                                        <span class="badge bg-danger">Ditolak</span>
+                                    @else
+                                        <span class="badge bg-success">Telah Ditandatangani</span>
+                                    @endif
+                                </td>
+
+                                <td class="text-center">
+                                    <button onclick="openDetailSurat({ nomor: 'ST/2025/001' })" class="btn btn-sm btn-info">
+                                        <i class="fa fa-eye"></i>
+                                    </button>
+                                    <a href="#" class="btn btn-sm btn-primary"><i class="fa fa-download"></i></a>
+                                </td>
+                            </tr>
+                        @endif
+                    @endforeach
                 </tbody>
             </table>
         </div>
     </div>
 
     {{-- Riwayat Persetujuan --}}
-    <div class="card shadow-sm mb-4">
+    {{-- <div class="card shadow-sm mb-4">
         <div class="card-header bg-light">
             <h6 class="mb-0 fw-semibold"><i class="fa fa-history me-2"></i>Riwayat Persetujuan & Keputusan</h6>
         </div>
@@ -116,7 +168,7 @@
                 </li>
             </ul>
         </div>
-    </div>
+    </div> --}}
 </div>
 
 <!-- Modal: Detail Surat -->
@@ -181,95 +233,5 @@
 
 
 @section('custom_js')
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-    document.addEventListener("DOMContentLoaded", function () {
 
-        // === Chart 1: Status Surat Tugas ===
-        const ctxStatus = document.getElementById("chartStatus").getContext("2d");
-        new Chart(ctxStatus, {
-            type: "doughnut",
-            data: {
-                labels: ["Diajukan", "Diproses", "Disetujui", "Ditolak"],
-                datasets: [{
-                    data: [12, 8, 25, 3],
-                    backgroundColor: [
-                        "rgba(54, 162, 235, 0.8)",   // Diajukan - biru
-                        "rgba(153, 102, 255, 0.8)",  // Diproses - ungu
-                        "rgba(75, 192, 192, 0.8)",   // Disetujui - hijau
-                        "rgba(255, 99, 132, 0.8)"    // Ditolak - merah
-                    ],
-                    borderColor: "#fff",
-                    borderWidth: 2,
-                    hoverOffset: 10
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: "bottom",
-                        labels: { font: { size: 13 } }
-                    },
-                    title: {
-                        display: false
-                    }
-                }
-            }
-        });
-
-        // === Chart 2: Distribusi Surat per Prodi ===
-        const ctxProdi = document.getElementById("chartProdi").getContext("2d");
-        new Chart(ctxProdi, {
-            type: "bar",
-            data: {
-                labels: ["Informatika", "Sistem Informasi", "Elektro", "Bioteknologi", "Matematika"],
-                datasets: [{
-                    label: "Jumlah Surat",
-                    data: [15, 10, 6, 8, 12],
-                    backgroundColor: "rgba(54, 162, 235, 0.8)",
-                    borderRadius: 8
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 2
-                        }
-                    },
-                    x: {
-                        ticks: {
-                            font: { size: 12 }
-                        }
-                    }
-                },
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        backgroundColor: "#333",
-                        titleFont: { size: 13 },
-                        bodyFont: { size: 12 }
-                    }
-                }
-            }
-        });
-
-    });
-
-    function openDetailSurat(data) {
-        document.querySelector("#modalDetailSurat td:nth-child(2)").innerText = data.nomor;
-        // dan set elemen lain sesuai data JSON
-        const modal = new bootstrap.Modal(document.getElementById('modalDetailSurat'));
-        modal.show();
-    }
-
-    function openModalTolak() {
-        // dan set elemen lain sesuai data JSON
-        const modal = new bootstrap.Modal(document.getElementById('modalTolakSurat'));
-        modal.show();
-    }
-    </script>
 @endsection

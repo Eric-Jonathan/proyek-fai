@@ -271,7 +271,7 @@ CREATE TABLE `surat_tugas` (
   `tanggal_selesai` date NOT NULL,
   `tanggal_surat` date NOT NULL,
   `lampiran_path` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `status_surat` enum('diajukan','diproses','disetujui_kaprodi','disetujui_dekan','ditandatangani','ditolak') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'diajukan',
+  `status_surat` TINYINT(1) NOT NULL DEFAULT '1' COMMENT '-1=`delete`, 0=ditolak, 1=diajukan, 2=diproses, 3=disetujui_dekan, 4=disetujui_kaprodi, 5=ditandatangani',
   `nomor_surat_final` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `signed_by_position_id` int unsigned DEFAULT NULL,
   `alasan_penolakan` TEXT NULL DEFAULT NULL,
