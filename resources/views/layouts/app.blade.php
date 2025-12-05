@@ -70,10 +70,10 @@
             <a href="{{ route('admin.dashboard') }}">Dashboard</a>
             <a href="{{ route('admin.users') }}">Manajemen User</a>
             <a href="{{ route('admin.surat') }}">Manajemen Surat</a>
-            <a href="{{ route('admin.templates') }}">Manajemen Template Surat</a>
+            {{-- <a href="{{ route('admin.templates') }}">Manajemen Template Surat</a> --}}
             <a href="{{ route('admin.roles') }}">Manajemen Role</a>
             <a href="{{ route('admin.logs') }}">Log Aktivitas</a>
-            <a href="{{ route('admin.backup') }}">Backup</a>
+            {{-- <a href="{{ route('admin.backup') }}">Backup</a> --}}
             <a href="{{ route('logout') }}">Logout</a>
         @else
             <a href="{{ route($role . '.dashboard') }}">Dashboard</a>
