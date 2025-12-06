@@ -25,7 +25,7 @@ CREATE TABLE `lecturers` (
   `username` VARCHAR(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `password` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `email` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `role` ENUM('admin','sekretaris','kaprodi','rektor','bau','dosen') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'dosen',
+  `role` ENUM('admin','sekretaris','kaprodi','rektor','dekan','bau','dosen') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'dosen',
   `full_name` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `lecturer_code` VARCHAR(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `nidn` VARCHAR(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,

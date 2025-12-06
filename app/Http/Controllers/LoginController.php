@@ -78,6 +78,7 @@ class LoginController extends Controller
                 'admin' => redirect()->route('admin.dashboard'),
                 'sekretaris' => redirect()->route('sekretaris.dashboard'),
                 'kaprodi' => redirect()->route('kaprodi.dashboard'),
+                'dekan' => redirect()->route('dekan.dashboard'),
                 'rektor' => redirect()->route('rektor.dashboard'),
                 'bau' => redirect()->route('bau.dashboard'),
                 'dosen' => redirect()->route('dosen.dashboard'),
