@@ -110,7 +110,7 @@ class AdminController extends Controller
             'username' => 'required',
             'email' => 'required|email|unique:lecturers,email,' . $id,
             'jabatan' => 'nullable|string',
-            'hak_akses' => 'required|string',
+            'permissions' => 'required|array',
             'atasan_id' => 'nullable|integer|exists:user,id',
         ]);
 

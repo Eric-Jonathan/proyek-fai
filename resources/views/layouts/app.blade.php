@@ -104,6 +104,19 @@
                 @endif
 
                 <a href="{{ route('logout') }}"  class="logout" >Logout</a>
+            
+            @elseif($role === 'dekan')
+                <a href="{{ route($role . '.dashboard') }}">Dashboard</a>
+
+                @if(in_array('create_surat', $permissions))
+                    <a href="{{ route('dekan.CRUD_Surat.form_surat') }}">Buat Surat</a>
+                @endif
+
+                @if(in_array('lihat_surat', $permissions))
+                    <a href="{{ route('dekan.riwayatSurat') }}">Riwayat Surat</a>
+                @endif
+
+                <a href="{{ route('logout') }}"  class="logout" >Logout</a>
 
             @elseif($role === 'rektor')
                 <a href="{{ route($role . '.dashboard') }}">Dashboard</a>
