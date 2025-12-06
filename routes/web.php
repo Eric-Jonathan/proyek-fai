@@ -35,7 +35,8 @@ Route::prefix('rektor')->middleware(['auth', 'role:rektor'])->group(function () 
 // 🧑‍💼 KAPRODI
 // ====================
 Route::prefix('kaprodi')->middleware(['auth', 'role:kaprodi'])->group(function () {
-    Route::get('/', fn() => view('dosen_kaprodi.index'))->name('kaprodi.dashboard');
+    Route::get('/', [DosenController::class, 'dosen_dashboard'])->name('kaprodi.dashboard');
+    // Route::get('/', fn() => view('dosen_kaprodi.index'))->name('kaprodi.dashboard');
     // Route::view('/createSurat', 'dosen_kaprodi.create_surat')->name('kaprodi.createSurat');
     Route::view('/create-surat', 'dosen_kaprodi.create_surat')->name('kaprodi.createSurat');
     Route::get('/riwayat', [SuratTugasController::class, 'riwayat_surat'])->name('kaprodi.riwayatSurat');
@@ -81,7 +82,6 @@ Route::prefix('dosen')->middleware(['auth', 'role:dosen'])->group(function () {
     Route::get('/surat-tugas', [SuratTugasController::class, 'index'])->name('surat-tugas.index');
     Route::get('/surat-tugas/create', [SuratTugasController::class, 'create'])->name('surat-tugas.create');
     Route::post('/surat-tugas', [SuratTugasController::class, 'store'])->name('surat-tugas.store');
-
     Route::get('/surat-tugas/preview/{id}', [SuratTugasController::class, 'preview'])->name('dashboard.preview');
     Route::get('/surat-tugas/detail/{id}', [SuratTugasController::class, 'detail'])->name('dashboard.detail');
     Route::post('/surat-tugas/{id}/acc', [SuratTugasController::class, 'acc'])->name('surat.acc');

@@ -103,7 +103,7 @@ return view('CRUD_Surat.form_surat', [
             'tanggal_selesai'    => $validated['tanggal_selesai'],
             'tanggal_surat'      => now()->format('Y-m-d'),
             'lampiran_path'      => $lampiranPath,
-            'status_surat'       => 'diajukan',
+            'status_surat'       => '1',
             'signed_by_position_id' => session('user.parent_position_id'),  // dari session
         ]);
     
@@ -289,6 +289,7 @@ return view('CRUD_Surat.form_surat', [
     }
 
 
+
     /*** Tolak surat */
     public function tolak(Request $request, $id)
     {
@@ -425,4 +426,6 @@ return view('CRUD_Surat.form_surat', [
 
         return redirect()->route('riwayat_surat')->with('success', 'Surat berhasil diperbarui.');
     }
+
+
 }

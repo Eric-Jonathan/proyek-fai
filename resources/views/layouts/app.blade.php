@@ -132,11 +132,11 @@
             {{-- Bagian @else telah disederhanakan dan dipindahkan ke dalam conditional yang sesuai --}}
             {{-- Jika ada peran lain yang belum terdefinisi (seperti 'pegawai' atau 'user' generik),
                  Anda bisa mengaktifkan kembali blok @else dengan menu default: --}}
-            {{-- 
+            
             @else
                 <a href="{{ route($role . '.dashboard') }}">Dashboard</a>
                 <a href="{{ route('logout') }}" class="logout" >Logout</a>
-            --}}
+            
             @endif
         </div>
     </div>
