@@ -46,11 +46,7 @@
                     
                     <td>
                         <a href="{{ route('admin.users.edit', $u->id) }}" class="btn btn-warning btn-sm">Edit</a>
-
-                        <form action="{{ route('admin.users.delete', $u->id) }}" method="POST" class="d-inline">
-                            @csrf
-                            <button class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus?')">Hapus</button>
-                        </form>
+                        <a href="{{ route('admin.users.delete', $u->id) }}" class="btn btn-danger btn-sm ">Hapus</a>    
                     </td>
                 </tr>
             @endforeach

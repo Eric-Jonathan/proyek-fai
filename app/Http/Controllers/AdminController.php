@@ -94,9 +94,13 @@ class AdminController extends Controller
 
     public function editUser($id)
     {
-        $user = Lecturer::findOrFail($id);
-        return view('admin.user_form', compact('user'));
+        $user = Lecturer::with(['permissions', 'activePositionAssignment'])->findOrFail($id);
+        $permissions = Permission::all();
+        $positions = Position::all();
+
+        return view('admin.user_form', compact('user', 'permissions', 'positions'));
     }
+
 
     public function updateUser(Request $request, $id)
     {
@@ -104,7 +108,7 @@ class AdminController extends Controller
 
         $data = $request->validate([
             'username' => 'required',
-            'email' => 'required|email|unique:user,email,' . $id,
+            'email' => 'required|email|unique:lecturers,email,' . $id,
             'jabatan' => 'nullable|string',
             'hak_akses' => 'required|string',
             'atasan_id' => 'nullable|integer|exists:user,id',
@@ -124,6 +128,7 @@ class AdminController extends Controller
             Lecturer::destroy($id);
             return redirect()->route('admin.users')->with('success', 'User berhasil dihapus.');
         }
+
 
 
     public function logAktivitas(Request $request)
