@@ -51,11 +51,7 @@ class AdminController extends Controller
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date',
             'is_certified' => 'boolean',
-
-            // permissions
             'permissions' => 'nullable|array',
-
-            // posisi HANYA 1
             'position_id' => 'required|exists:positions,position_id',
         ]);
 
@@ -107,18 +103,58 @@ class AdminController extends Controller
         $user = Lecturer::findOrFail($id);
 
         $data = $request->validate([
-            'username' => 'required',
+            'username' => 'required|unique:lecturers,username,' .$id,
             'email' => 'required|email|unique:lecturers,email,' . $id,
-            'jabatan' => 'nullable|string',
-            'permissions' => 'required|array',
-            'atasan_id' => 'nullable|integer|exists:user,id',
+            'nidn' => 'required|unique:lecturers,nidn,' .$id,
+            'lecturer_code' => 'nullable|unique:lecturers,lecturer_code,' .$id,
+            'full_name' => 'required',
+            'password' => 'nullable|min:3',
+            'role' => 'required|in:admin,sekretaris,kaprodi,dekan,rektor,bau,dosen',
+            'employment_status' => 'required|in:active,inactive',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date',
+            'is_certified' => 'boolean',
+            'permissions' => 'nullable|array',
+            'position_id' => 'required|exists:positions,position_id',
         ]);
 
         if ($request->filled('password')) {
             $data['password'] = bcrypt($request->password);
+        } else {
+            unset($data['password']);
         }
 
         $user->update($data);
+
+        // PERMISSIONS (sync agar update)
+        if ($request->permissions) {
+            $user->permissions()->sync($request->permissions);
+        } else {
+            $user->permissions()->sync([]); // kosongkan jika tidak memilih
+        }
+
+        // UPDATE / CREATE POSITION ASSIGNMENT
+        $assignment = PositionAssignment::where('nidn', $user->nidn)->first();
+
+        if ($assignment) {
+            // Update existing assignment
+            $assignment->update([
+                'position_id' => $request->position_id,
+                'start_date' => $request->start_date ?? $assignment->start_date,
+                'end_date' => $request->end_date ?? $assignment->end_date,
+                'decree_number' => $request->decree_number ?? $assignment->decree_number,
+            ]);
+        } else {
+            // Create new assignment
+            PositionAssignment::create([
+                'position_id' => $request->position_id,
+                'nidn' => $request->nidn,
+                'start_date' => $request->start_date ?? now(),
+                'end_date' => $request->end_date ?? now()->addYears(1),
+                'decree_number' => $request->decree_number ?? null,
+                'assignment_status' => 1,
+            ]);
+        }
 
         return redirect()->route('admin.users')->with('success', 'User berhasil diperbarui.');
     }
