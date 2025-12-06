@@ -33,7 +33,7 @@ class AdminController extends Controller
     {
         $permissions = Permission::all();
         $positions   = Position::all();
-
+        
         return view('admin.user_form', compact('permissions','positions'))->with('user', null);
     }
 
@@ -51,7 +51,11 @@ class AdminController extends Controller
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date',
             'is_certified' => 'boolean',
+
+            // permissions
             'permissions' => 'nullable|array',
+
+            // posisi HANYA 1
             'position_id' => 'required|exists:positions,position_id',
         ]);
 
@@ -83,6 +87,14 @@ class AdminController extends Controller
             'end_date' => $request->end_date ?? now()->addYears(1),
             'decree_number' => $request->decree_number ?? null,
             'assignment_status' => 1,
+        ]);
+
+        logAktivitas::create([
+            'nidn'       => session('user.nidn'),
+            'aktivitas'  => 'Membuat User Baru : '. $request->full_name,
+            'module'     => 'Auth',
+            'module_id'  => null,
+            'keterangan' => 'Mengakses halaman tambah user baru',
         ]);
 
         return redirect()->route('admin.users')->with('success','User berhasil ditambahkan.');
@@ -155,13 +167,28 @@ class AdminController extends Controller
                 'assignment_status' => 1,
             ]);
         }
-
+        logAktivitas::create([
+            'nidn'       => session('user.nidn'),
+            'aktivitas'  => 'Memperbarui User : '. $request->full_name,
+            'module'     => 'Auth',
+            'module_id'  => $id,
+            'keterangan' => 'Memperbarui data user dengan ID: ' . $id,
+        ]);
+        
         return redirect()->route('admin.users')->with('success', 'User berhasil diperbarui.');
     }
 
         public function deleteUser($id)
-        {
+        {   
+            logAktivitas::create([
+                'nidn'       => session('user.nidn'),
+                'aktivitas'  => 'Menghapus user',
+                'module'     => 'Auth',
+                'module_id'  => $id,
+                'keterangan' => 'Menghapus user dengan ID: ' . $id,
+            ]);
             Lecturer::destroy($id);
+            
             return redirect()->route('admin.users')->with('success', 'User berhasil dihapus.');
         }
 

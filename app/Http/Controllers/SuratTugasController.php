@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Lecturer;
+use App\Models\LogAktivitas;
 use App\Models\Position;
 use App\Models\PositionAssignment;
 use App\Models\SuratTugas;
@@ -106,7 +107,13 @@ return view('CRUD_Surat.form_surat', [
             'status_surat'       => '1',
             'signed_by_position_id' => session('user.parent_position_id'),  // dari session
         ]);
-    
+        LogAktivitas::create([
+            'nidn'       => $nidn,
+            'aktivitas'  => 'Pengajuan Surat Tugas',
+            'module'     => 'Surat_Tugas',
+            'module_id'  => null,
+            'keterangan' => 'Diajukan oleh dosen dengan NIDN: ' . $nidn,
+        ]);
         return redirect()->route(session('user.role') . '.dashboard')
             ->with('success', 'Pengajuan surat tugas berhasil dikirim!');
     }
@@ -283,7 +290,13 @@ return view('CRUD_Surat.form_surat', [
         $surat->status_surat = $status;
         $surat->signed_by_position_id = $position->position_id;
         $surat->save();
-
+        LogAktivitas::create([
+            'nidn'       => $nidn,
+            'aktivitas'  => 'Surat Tugas' . $status,
+            'module'     => 'Surat_Tugas',
+            'module_id'  => $id,
+            'keterangan' => 'Surat dengan ID: ' . $id . ' di-ACC oleh ' . $role,
+        ]);
         return redirect('/surat-tugas')
             ->with('success', 'Surat berhasil di-ACC oleh ' . $position->position_name);
     }
@@ -316,7 +329,13 @@ return view('CRUD_Surat.form_surat', [
         $surat->alasan_penolakan = $request->catatan_penolakan;
         $surat->signed_by_position_id = $position->position_id;
         $surat->save();
-
+        LogAktivitas::create([
+            'nidn'       => $nidn,
+            'aktivitas'  => 'Penolakan Surat Tugas',
+            'module'     => 'Surat_Tugas',
+            'module_id'  => $id,
+            'keterangan' => 'Surat dengan ID: ' . $id . ' ditolak oleh ' . $position->position_name,
+        ]);
         return redirect('/surat-tugas')
             ->with('success', 'Surat berhasil ditolak oleh ' . $position->position_name);
     }
@@ -423,7 +442,13 @@ return view('CRUD_Surat.form_surat', [
         }
 
         $surat->save();
-
+        LogAktivitas::create([
+            'nidn'       => session('user')['nidn'] ?? null,
+            'aktivitas'  => 'Update Surat Tugas',
+            'module'     => 'Surat_Tugas',
+            'module_id'  => $id,
+            'keterangan' => 'Surat dengan ID: ' . $id . ' diperbarui.',
+        ]); 
         return redirect()->route('riwayat_surat')->with('success', 'Surat berhasil diperbarui.');
     }
 
