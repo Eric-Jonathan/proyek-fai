@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Lecturer;
+use App\Models\LogAktivitas;
 use App\Models\Position;
 use App\Models\PositionAssignment;
 use App\Models\SuratTugas;
 use App\Models\SuratTemplate;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class SuratTugasController extends Controller
 {
@@ -44,21 +47,21 @@ class SuratTugasController extends Controller
     }
     
     public function create()
-{
-    $nomor_surat = app('App\Services\NomorSuratService')->generatePreview();
+    {
+        $nomor_surat = app('App\Services\NomorSuratService')->generatePreview();
 
-    $lecturer = Lecturer::where('nidn', session('user.nidn'))
-                        ->with('activePositionAssignment.position')
-                        ->first();
+        $lecturer = Lecturer::where('nidn', session('user.nidn'))
+                            ->with('activePositionAssignment.position')
+                            ->first();
 
-    $jabatan = optional($lecturer->activePosition())->position_name;
+        $jabatan = optional($lecturer->activePosition())->position_name;
 
-return view('CRUD_Surat.form_surat', [
-    'lecturer'    => $lecturer,
-    'jabatan'     => $jabatan,
-    'nomor_surat' => $nomor_surat,
-]);
-}
+        return view('CRUD_Surat.form_surat', [
+            'lecturer'    => $lecturer,
+            'jabatan'     => $jabatan,
+            'nomor_surat' => $nomor_surat,
+        ]);
+    }
 
     // Simpan pengajuan surat tugas
     public function store(Request $request)
@@ -106,7 +109,13 @@ return view('CRUD_Surat.form_surat', [
             'status_surat'       => '1',
             'signed_by_position_id' => session('user.parent_position_id'),  // dari session
         ]);
-    
+        LogAktivitas::create([
+            'nidn'       => $nidn,
+            'aktivitas'  => 'Pengajuan Surat Tugas',
+            'module'     => 'Surat_Tugas',
+            'module_id'  => null,
+            'keterangan' => 'Diajukan oleh dosen dengan NIDN: ' . $nidn,
+        ]);
         return redirect()->route(session('user.role') . '.dashboard')
             ->with('success', 'Pengajuan surat tugas berhasil dikirim!');
     }
@@ -256,36 +265,41 @@ return view('CRUD_Surat.form_surat', [
         $nidn = session('user')['nidn'] ?? null;
         $role = session('user')['role'] ?? null;
 
-        // Ambil prefix dari NIDN (misal 3 karakter pertama)
-        $prefix = substr($nidn, 0, 3);
+        $userNidn = session('user.nidn');
 
-        // Cari position_id sesuai prefix
-        $position = Position::where('position_code', $prefix)->first();
+        // Ambil prefix dari lecturer_code
+        $userKode = DB::table('lecturers')
+            ->where('nidn', $userNidn)
+            ->value(DB::raw("REGEXP_SUBSTR(lecturer_code, '^[A-Z]+')"));
 
-        if (!$position) {
-            return redirect('/surat-tugas')
-                ->with('error', 'Posisi penandatangan tidak ditemukan.');
-        }
+        // Cari posisi berdasarkan prefix
+        $positionId = DB::table('positions')
+            ->where('position_code', 'LIKE', "%{$userKode}%")
+            ->value('position_id');
 
-        // Tentukan status berdasarkan role
-        switch($role) {
-            case 'dekan':
-                $status = 'disetujui_dekan';
-                break;
-            case 'kaprodi':
-                $status = 'disetujui_kaprodi';
-                break;
-            default:
-                $status = 'diproses'; // default jika bukan penandatangan resmi
-        }
+        $statusLabels = [
+            -1 => 'delete',
+            0 => 'ditolak',
+            1 => 'diajukan',
+            2 => 'disetujui_kaprodi',
+            3 => 'diproses',
+            4 => 'disetujui_dekan',
+            5 => 'ditandatangani',
+        ];
 
         // Update surat
-        $surat->status_surat = $status;
-        $surat->signed_by_position_id = $position->position_id;
+        $surat->status_surat += 1;
+        $surat->signed_by_position_id = $positionId;
         $surat->save();
-
-        return redirect('/surat-tugas')
-            ->with('success', 'Surat berhasil di-ACC oleh ' . $position->position_name);
+        LogAktivitas::create([
+            'nidn'       => $nidn,
+            'aktivitas'  => 'Surat Tugas' . $statusLabels[$surat->status_surat],
+            'module'     => 'Surat_Tugas',
+            'module_id'  => $id,
+            'keterangan' => 'Surat dengan ID: ' . $id . ' di-ACC oleh ' . $role,
+        ]);
+        return redirect()->route(session('user.role') . '.dashboard')
+            ->with('success', 'Surat berhasil disetujui!');
     }
 
 
@@ -297,28 +311,45 @@ return view('CRUD_Surat.form_surat', [
             'catatan_penolakan' => 'required|string',
         ]);
 
+        $userNidn = session('user.nidn');
+
+        // Ambil prefix dari lecturer_code
+        $userKode = DB::table('lecturers')
+            ->where('nidn', $userNidn)
+            ->value(DB::raw("REGEXP_SUBSTR(lecturer_code, '^[A-Z]+')"));
+
+        // Cari posisi berdasarkan prefix
+        $position_id = DB::table('positions')
+            ->where('position_code', 'LIKE', "%{$userKode}%")
+            ->value('position_id');
+
+        $statusLabels = [
+            -1 => 'delete',
+            0 => 'ditolak',
+            1 => 'diajukan',
+            2 => 'kaprodi',
+            3 => 'sekretaris',
+            4 => 'dekan',
+            5 => 'ditandatangani',
+        ];
+
         $surat = SuratTugas::findOrFail($id);
         $nidn = session('user')['nidn'] ?? null;
 
-        // Ambil prefix dari NIDN
-        $prefix = substr($nidn, 0, 3);
-
-        // Ambil posisi penandatangan
-        $position = Position::where('position_code', $prefix)->first();
-
-        if (!$position) {
-            return redirect('/surat-tugas')
-                ->with('error', 'Posisi penandatangan tidak ditemukan.');
-        }
-
         // Update surat
-        $surat->status_surat = 'ditolak';
+        LogAktivitas::create([
+            'nidn'       => $nidn,
+            'aktivitas'  => 'Penolakan Surat Tugas',
+            'module'     => 'Surat_Tugas',
+            'module_id'  => $id,
+            'keterangan' => 'Surat dengan ID: ' . $id . ' ditolak oleh ' . $statusLabels[$surat->status_surat + 1],
+        ]);
+        $surat->status_surat = 0;
         $surat->alasan_penolakan = $request->catatan_penolakan;
-        $surat->signed_by_position_id = $position->position_id;
+        $surat->signed_by_position_id = $position_id;
         $surat->save();
-
-        return redirect('/surat-tugas')
-            ->with('success', 'Surat berhasil ditolak oleh ' . $position->position_name);
+        return redirect(session('user.role') . '.dashboard')
+            ->with('success', 'Surat berhasil ditolak oleh ' . $statusLabels[$surat->status_surat + 1]);
     }
 
     public function riwayat_surat()
@@ -328,23 +359,23 @@ return view('CRUD_Surat.form_surat', [
         if ($role === 'admin') {
             $surat = SuratTugas::all();
 
-            $dataTop = SuratTugas::whereNotIn('status_surat', ['ditolak', 'ditandatangani'])
+            $dataTop = SuratTugas::whereNotIn('status_surat', [0, 5])
                         ->paginate(request('per_page') ?? 10)
                         ->appends(request()->query());
 
-            $dataBottom = SuratTugas::whereIn('status_surat', ['ditolak', 'ditandatangani'])
+            $dataBottom = SuratTugas::whereIn('status_surat', [0, 5])
                         ->paginate(request('per_page') ?? 10)
                         ->appends(request()->query());
         } elseif ($role === 'dosen') {
             $surat = SuratTugas::where('nidn', $nidn);
             // Data yang sedang diproses (kecuali ditolak dan ditandatangani)
-            $dataTop = $surat->whereNotIn('status_surat', ['ditolak', 'ditandatangani'])
+            $dataTop = $surat->whereNotIn('status_surat', [0, 5])
                              ->paginate(request('per_page') ?? 10)
                              ->appends(request()->query());
 
             // Clone query untuk bagian bottom (karena query sebelumnya sudah digunakan)
             $dataBottom = SuratTugas::where('nidn', $nidn)
-                             ->whereIn('status_surat', ['ditolak', 'ditandatangani'])
+                             ->whereIn('status_surat', [0, 5])
                              ->paginate(request('per_page') ?? 10)
                              ->appends(request()->query());
 
@@ -395,7 +426,7 @@ return view('CRUD_Surat.form_surat', [
     public function update(Request $request, $id)
     {
         $request->validate([
-            'jabatan' => 'required',
+            // 'jabatan' => 'required',
             'jenis_tugas' => 'required',
             'dasar_tugas' => 'required',
             'sifat_surat' => 'required',
@@ -407,10 +438,10 @@ return view('CRUD_Surat.form_surat', [
 
         $surat = SuratTugas::findOrFail($id);
 
-        $surat->jabatan = $request->jabatan;
+        // $surat->jabatan = $request->jabatan;
         $surat->jenis_tugas = $request->jenis_tugas;
         $surat->dasar_tugas = $request->dasar_tugas;
-        $surat->sifat_surat = $request->sifat_surat;
+        $surat->sifat = $request->sifat_surat;
         $surat->tujuan = $request->tujuan;
         $surat->tanggal_mulai = $request->tanggal_mulai;
         $surat->tanggal_selesai = $request->tanggal_selesai;
@@ -423,9 +454,15 @@ return view('CRUD_Surat.form_surat', [
         }
 
         $surat->save();
-
-        return redirect()->route('riwayat_surat')->with('success', 'Surat berhasil diperbarui.');
+        LogAktivitas::create([
+            'nidn'       => session('user')['nidn'] ?? null,
+            'aktivitas'  => 'Update Surat Tugas',
+            'module'     => 'Surat_Tugas',
+            'module_id'  => $id,
+            'keterangan' => 'Surat dengan ID: ' . $id . ' diperbarui.',
+        ]); 
+        
+        return redirect()->route(session('user.role') . '.dashboard')
+            ->with('success', 'Pengajuan surat tugas berhasil dikirim!');
     }
-
-
 }

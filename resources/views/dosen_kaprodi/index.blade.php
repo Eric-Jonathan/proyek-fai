@@ -11,38 +11,50 @@
 
     {{-- Statistik Surat --}}
     <div class="row g-3 mb-4">
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <div><strong>Diajukan</strong><br>12 Surat</div>
+<div class="col-md-3">
+            <div class="card text-white bg-primary shadow">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>Diajukan</strong><br>{{ $stats['diajukan'] }} Surat
+                    </div>
                     <i class="fa fa-paper-plane fa-2x text-primary mt-2"></i>
                 </div>
             </div>
         </div>
+
         <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <div><strong>Diproses</strong><br>8 Surat</div>
+            <div class="card text-white bg-warning shadow">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>Diproses</strong><br>{{ $stats['diproses'] }} Surat
+                    </div>
                     <i class="fa fa-hourglass-half fa-2x text-warning mt-2"></i>
                 </div>
             </div>
         </div>
+
         <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <div><strong>Disetujui</strong><br>25 Surat</div>
+            <div class="card text-white bg-success shadow">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>Disetujui</strong><br>{{ $stats['disetujui'] }} Surat
+                    </div>
                     <i class="fa fa-check-circle fa-2x text-success mt-2"></i>
                 </div>
             </div>
         </div>
+
         <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <div><strong>Ditolak</strong><br>3 Surat</div>
+            <div class="card text-white bg-danger shadow">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>Ditolak</strong><br>{{ $stats['ditolak'] }} Surat
+                    </div>
                     <i class="fa fa-times-circle fa-2x text-danger mt-2"></i>
                 </div>
             </div>
         </div>
+
     </div>
 
     {{-- Daftar Surat Pengajuan --}}
@@ -73,7 +85,7 @@
                                     @php
                                         $statusBadge = [
                                             1 => ['warning', 'Diajukan'],
-                                            2 => ['primary', 'Diajukan'],
+                                            2 => ['primary', 'Diproses'],
                                             3 => ['primary', 'Disetujui Kaprodi'],
                                             4 => ['primary', 'Disetujui Dekan'],
                                         ];
@@ -87,15 +99,20 @@
                                         <span class="badge bg-danger">Ditolak</span>
                                     @endif
                                 </td>
-
                                 <td class="text-center">
                                     @if ($s->status_surat >= 0 && $s->status_surat <= 2)
-                                        <button onclick="openDetailSurat({ nomor: 'ST/2025/001' })" class="btn btn-sm btn-info">
+                                        <a href="{{ route('surat-tugas.detail', $s->surat_id) }}" class="btn btn-sm btn-info">
                                             <i class="fa fa-eye"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-warning"><i class="fa fa-pencil"></i></button>
+                                        </a>
+                                    
+                                        <a href="{{ route('CRUD_Surat.edit', $s->surat_id) }}" class="btn btn-sm btn-warning">
+                                            <i class="fa fa-pencil"></i>
+                                        </a>
+                                    
                                     @else
-                                        <a href="#" class="btn btn-sm btn-primary"><i class="fa fa-download"></i></a>
+                                        <a href="#" class="btn btn-sm btn-primary">
+                                            <i class="fa fa-download"></i>
+                                        </a>
                                     @endif
                                 </td>
                             </tr>
@@ -124,7 +141,7 @@
                 <tbody>
                     @foreach ($surat as $s)
                         @if ($s->status_surat==0 || $s->status_surat==5)
-                            <tr>
+                            <tr >
                                 <td>{{ $s->jenis_tugas }}</td>
                                 <td>{{ $s->tujuan }}</td>
                                 <td>{{ \Carbon\Carbon::parse($s->tanggal_mulai)->translatedFormat('d F Y') }}</td>

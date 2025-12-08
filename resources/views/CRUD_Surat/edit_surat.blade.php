@@ -49,7 +49,8 @@
                 {{-- Jabatan --}}
                 <div class="mb-3">
                     <label class="form-label">Jabatan</label>
-                    <select name="jabatan" class="form-select" required>
+                    {{-- <select name="jabatan" class="form-select" required> --}}
+                    <select  class="form-select" required>
                         <option value="">-- Pilih Jabatan --</option>
                     
                         @php
@@ -122,7 +123,7 @@
                             type="date" 
                             name="tanggal_mulai" 
                             class="form-control"
-                            value="{{ old('tanggal_mulai', $surat->tanggal_mulai) }}"
+                            value="{{ old('tanggal_mulai', optional($surat->tanggal_mulai)->format('Y-m-d')) }}"
                             required>
                         @error('tanggal_mulai') <small class="text-danger">{{ $message }}</small> @enderror
                     </div>
@@ -133,7 +134,7 @@
                             type="date" 
                             name="tanggal_selesai" 
                             class="form-control"
-                            value="{{ old('tanggal_selesai', $surat->tanggal_selesai) }}"
+                            value="{{ old('tanggal_selesai', optional($surat->tanggal_selesai)->format('Y-m-d')) }}"
                             required>
                         @error('tanggal_selesai') <small class="text-danger">{{ $message }}</small> @enderror
                     </div>
@@ -159,7 +160,7 @@
                 {{-- Tombol --}}
                 <div class="text-end">
                     <a href="{{ url()->previous() }}" class="btn btn-secondary me-2">Batal</a>
-                    <button class="btn btn-primary">Simpan Perubahan</button>
+                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
                 </div>
 
             </form>
