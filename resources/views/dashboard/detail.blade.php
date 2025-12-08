@@ -63,29 +63,46 @@
 
             <div class="card-body p-4">
                 @php
-                    $status = $surat->status_surat ?? 'Menunggu Persetujuan';
-
-                    switch($status) {
-                        case 'ditolak':
-                            $badgeClass = 'bg-danger text-white';
-                            $iconClass = 'bi-x-circle';
-                            break;
-                    
-                        case 'ditandatangani':
-                            $badgeClass = 'bg-success text-white';
-                            $iconClass = 'bi-check-circle';
-                            break;
-                    
-                        default:
-                            $badgeClass = 'bg-warning text-dark';
-                            $iconClass = 'bi-hourglass-split';
-                    }
+                    $statusMapping = [
+                        -1 => 'Dihapus',
+                        0  => 'Ditolak',
+                        1  => 'Diajukan',
+                        2  => 'Diproses',
+                        3  => 'Disetujui Dekan',
+                        4  => 'Disetujui Kaprodi',
+                        5  => 'Ditandatangani',
+                    ];
+                            
+                    $badgeClassMapping = [
+                        -1 => 'bg-secondary text-white',
+                        0  => 'bg-danger text-white',
+                        1  => 'bg-warning text-dark',
+                        2  => 'bg-info text-dark',
+                        3  => 'bg-primary text-white',
+                        4  => 'bg-primary text-white',
+                        5  => 'bg-success text-white',
+                    ];
+                            
+                    $iconMapping = [
+                        -1 => 'bi-trash',
+                        0  => 'bi-x-circle',
+                        1  => 'bi-send',
+                        2  => 'bi-hourglass-split',
+                        3  => 'bi-check-circle',
+                        4  => 'bi-check-circle',
+                        5  => 'bi-patch-check-fill',
+                    ];
+                            
+                    $statusValue = $surat->status_surat ?? 1;
+                    $statusText = $statusMapping[$statusValue] ?? 'Status Tidak Dikenal';
+                    $badgeClass = $badgeClassMapping[$statusValue] ?? 'bg-secondary';
+                    $iconClass = $iconMapping[$statusValue] ?? 'bi-question-circle';
                 @endphp
 
                 <!-- Status -->
                 <span class="badge {{ $badgeClass }} mb-3 px-3 py-2">
                     <i class="bi {{ $iconClass }}"></i>
-                    {{ $status }}
+                    {{ $statusText }}
                 </span>
 
                 <!-- Sifat -->

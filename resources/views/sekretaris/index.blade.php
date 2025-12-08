@@ -6,64 +6,65 @@
 <div class="container mt-4">
     <h3 class="mb-4"><i class="fa fa-home me-2"></i> Dashboard Sekretaris</h3>
 
-    <!-- 🗓️ Filter -->
+    <!-- 🔍 Filter -->
     <div class="card mb-4 shadow-sm">
         <div class="card-body">
             <form action="" method="GET" class="row g-3 align-items-end">
+                
+                <!-- Bulan -->
                 <div class="col-md-3">
                     <label class="form-label">Bulan</label>
                     <select class="form-select" name="bulan">
                         <option value="">Semua Bulan</option>
-                        <option>Januari</option>
-                        <option>Februari</option>
-                        <option>Maret</option>
-                        <option>April</option>
-                        <option>Mei</option>
-                        <option>Juni</option>
-                        <option>Juli</option>
-                        <option>Agustus</option>
-                        <option>September</option>
-                        <option>Oktober</option>
-                        <option>November</option>
-                        <option>Desember</option>
+                        @foreach (['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'] as $b)
+                            <option value="{{ $b }}" {{ request('bulan') == $b ? 'selected' : '' }}>
+                                {{ $b }}
+                            </option>
+                        @endforeach
                     </select>
                 </div>
 
+                <!-- Tahun -->
                 <div class="col-md-3">
                     <label class="form-label">Tahun</label>
                     <select class="form-select" name="tahun">
                         <option value="">Semua Tahun</option>
                         @for ($year = 2023; $year <= 2025; $year++)
-                            <option>{{ $year }}</option>
+                            <option value="{{ $year }}" {{ request('tahun') == $year ? 'selected' : '' }}>
+                                {{ $year }}
+                            </option>
                         @endfor
                     </select>
                 </div>
 
+                <!-- Status -->
                 <div class="col-md-3">
                     <label class="form-label">Status</label>
                     <select class="form-select" name="status">
                         <option value="">Semua Status</option>
-                        <option>Menunggu ACC</option>
-                        <option>Disetujui</option>
-                        <option>Ditolak</option>
-                        <option>Selesai</option>
+                        @foreach (['Diajukan', 'Disetujui Kaprodi', 'Diproses', 'Disetujui Dekan', 'Ditandatangani', 'Ditolak'] as $s)
+                            <option value="{{ $s }}" {{ request('status') == $s ? 'selected' : '' }}>
+                                {{ $s }}
+                            </option>
+                        @endforeach
                     </select>
                 </div>
 
                 <div class="col-md-3 d-flex justify-content-end">
                     <button class="btn btn-primary"><i class="fa fa-search me-2"></i>Tampilkan</button>
-                </div>
+                    <a href="{{ route('sekretaris.dashboard') }}" class="btn btn-secondary ms-2"><i class="fas fa-sync-alt"></i> Reset </a>
+                </div>            
             </form>
         </div>
     </div>
 
-    <!-- 📊 Statistik Ringkas -->
+    <!-- 📊 Statistik -->
     <div class="row mb-4">
         <div class="col-md-3">
             <div class="card text-center border-primary shadow-sm">
                 <div class="card-body">
                     <h6 class="text-muted">Total Surat</h6>
-                    <h4 class="text-primary fw-bold">42</h4>
+                    <h4 class="fw-bold text-primary">{{ $stats['total'] }}</h4>
                 </div>
             </div>
         </div>
@@ -72,7 +73,7 @@
             <div class="card text-center border-success shadow-sm">
                 <div class="card-body">
                     <h6 class="text-muted">Disetujui</h6>
-                    <h4 class="text-success fw-bold">28</h4>
+                    <h4 class="fw-bold text-success">{{ $stats['disetujui'] }}</h4>
                 </div>
             </div>
         </div>
@@ -80,8 +81,8 @@
         <div class="col-md-3">
             <div class="card text-center border-warning shadow-sm">
                 <div class="card-body">
-                    <h6 class="text-muted">Menunggu ACC</h6>
-                    <h4 class="text-warning fw-bold">10</h4>
+                    <h6 class="text-muted">Diproses</h6>
+                    <h4 class="fw-bold text-warning">{{ $stats['diproses'] }}</h4>
                 </div>
             </div>
         </div>
@@ -90,99 +91,96 @@
             <div class="card text-center border-danger shadow-sm">
                 <div class="card-body">
                     <h6 class="text-muted">Ditolak</h6>
-                    <h4 class="text-danger fw-bold">4</h4>
+                    <h4 class="fw-bold text-danger">{{ $stats['ditolak'] }}</h4>
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- Tabel daftar surat tugas --}}
-        <table class="table table-bordered table-hover align-middle">
+    <!-- 📄 Tabel Data -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-light fw-semibold">
+            Daftar Surat Tugas
+        </div>
+
+        <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle mb-0">
             <thead class="table-light">
                 <tr>
-                    <th>No</th>
+                    <th style="width:50px;">No</th>
                     <th>Judul Surat</th>
                     <th>Dosen Pengaju</th>
+                    <th>Tanggal Surat</th>
                     <th>Tanggal Mulai</th>
                     <th>Tanggal Selesai</th>
                     <th>Status</th>
-                    <th style="width: 140px;">Aksi</th>
+                    <th style="width:160px;">Aksi</th>
                 </tr>
             </thead>
             <tbody>
-                {{-- Contoh data dummy untuk tampilan awal --}}
+            @forelse ($surat as $index => $item)
                 <tr>
-                    <td>1</td>
-                    <td>Surat Tugas Seminar Nasional AI</td>
-                    <td>Dr. Andi Santoso</td>
-                    <td>2025-10-10</td>
-                    <td>2025-10-12</td>
-                    <td><span class="badge bg-success">Disetujui Dekan</span></td>
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $item->dasar_tugas ?? '-' }}</td>
+                    <td>{{ $item->full_name ?? '-' }}</td>
+                    <td>{{ $item->tanggal_surat ? \Carbon\Carbon::parse($item->tanggal_surat)->format('Y-m-d') : '-' }}</td>
+                    <td>{{ $item->tanggal_mulai ? \Carbon\Carbon::parse($item->tanggal_mulai)->format('Y-m-d') : '-' }}</td>
+                    <td>{{ $item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai)->format('Y-m-d') : '-' }}</td>
+
+                    <!-- Status Badge -->
                     <td>
-                        <a href="#" class="btn btn-sm btn-warning">
-                            <i class="fa fa-edit"></i> Periksa
-                        </a>
+                        @php
+                            $statusLabel = [
+                                -1 => 'Dihapus',
+                                0 => 'Ditolak',
+                                1 => 'Diajukan',
+                                2 => 'Disetujui Kaprodi',
+                                3 => 'Diproses',
+                                4 => 'Disetujui Dekan',
+                                5 => 'Ditandatangani'
+                            ];
+
+                            $statusClass = [
+                                -1 => 'bg-secondary',
+                                0 => 'bg-danger',
+                                1 => 'bg-warning',
+                                2 => 'bg-info',
+                                3 => 'bg-primary',
+                                4 => 'bg-success',
+                                5 => 'bg-dark'
+                            ];
+                        @endphp
+
+                        <span class="badge {{ $statusClass[$item->status_surat] ?? 'bg-secondary' }}">
+                            {{ $statusLabel[$item->status_surat] ?? 'Tidak Diketahui' }}
+                        </span>
+                    </td>
+
+                    <!-- Tombol -->
+                    <td>
+                        @if ($item->status_surat == 2)
+                            <a href="{{ route('surat-tugas.preview', $item->surat_id) }}" class="btn btn-sm btn-warning">
+                                <i class="fa fa-clipboard-check"></i> Review
+                            </a>
+                        @else
+                            <a href="{{ route('surat-tugas.detail', $item->surat_id) }}" class="btn btn-sm btn-info">
+                                <i class="fa fa-eye"></i> Detail
+                            </a>
+                        @endif
                     </td>
                 </tr>
+
+            @empty
                 <tr>
-                    <td>2</td>
-                    <td>Surat Tugas Workshop IoT di Malang</td>
-                    <td>Ir. Budi Prakoso</td>
-                    <td>2025-09-05</td>
-                    <td>2025-09-07</td>
-                    <td><span class="badge bg-info text-dark">Diperiksa Sekretaris</span></td>
-                    <td>
-                        <a href="#" class="btn btn-sm btn-secondary">
-                            <i class="fa fa-eye"></i> Lihat
-                        </a>
+                    <td colspan="8" class="text-center text-muted py-4">
+                        <i class="fa fa-folder-open fa-2x mb-2"></i><br>
+                        Tidak ada data surat ditemukan.
                     </td>
                 </tr>
-                <tr>
-                    <td>3</td>
-                    <td>Surat Tugas Rapat Kerjasama</td>
-                    <td>Prof. Maria Dewi</td>
-                    <td>2025-10-20</td>
-                    <td>2025-10-21</td>
-                    <td><span class="badge bg-warning text-dark">Menunggu Stampel BAU</span></td>
-                    <td>
-                        <a href="#" class="btn btn-sm btn-warning">
-                            <i class="fa fa-edit"></i> Periksa
-                        </a>
-                    </td>
-                </tr>
+            @endforelse
             </tbody>
         </table>
-        <!-- 🕓 Aktivitas Terbaru -->
-        <div class="card shadow-sm mb-4">
-            <div class="card-header bg-light">
-                <strong><i class="fa fa-clock me-2"></i>Aktivitas Terbaru</strong>
-            </div>
-            <div class="card-body">
-                <ul class="list-group">
-                    <li class="list-group-item">
-                        <i class="fa fa-file-alt text-primary me-2"></i>
-                        Surat Tugas “Kunjungan Industri ke PT Telkom” telah disetujui oleh Dekan.
-                        <small class="text-muted float-end">15 Okt 2025</small>
-                    </li>
-                    <li class="list-group-item">
-                        <i class="fa fa-user-edit text-warning me-2"></i>
-                        Dosen “Ir. Budi Hartono” mengajukan revisi surat tugas.
-                        <small class="text-muted float-end">14 Okt 2025</small>
-                    </li>
-                    <li class="list-group-item">
-                        <i class="fa fa-paper-plane text-success me-2"></i>
-                        Surat keluar “Balasan Undangan LLDIKTI” berhasil dikirim.
-                        <small class="text-muted float-end">13 Okt 2025</small>
-                    </li>
-                </ul>
-            </div>
         </div>
-
-        <!-- 📄 Tombol Cetak -->
-        <div class="text-end mt-3">
-            <button class="btn btn-success"><i class="fa fa-print me-2"></i>Cetak Laporan</button>
-        </div>
-    </div>
     </div>
 </div>
 @endsection
