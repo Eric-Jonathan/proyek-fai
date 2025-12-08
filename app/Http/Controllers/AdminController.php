@@ -159,13 +159,11 @@ class AdminController extends Controller
         return redirect()->route('admin.users')->with('success', 'User berhasil diperbarui.');
     }
 
-        public function deleteUser($id)
-        {
-            Lecturer::destroy($id);
-            return redirect()->route('admin.users')->with('success', 'User berhasil dihapus.');
-        }
-
-
+    public function deleteUser($id)
+    {
+        Lecturer::destroy($id);
+        return redirect()->route('admin.users')->with('success', 'User berhasil dihapus.');
+    }
 
     public function logAktivitas(Request $request)
     {

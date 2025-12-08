@@ -15,7 +15,7 @@
             <div class="card">
                 <div class="card-body">
                     <div><strong>Diajukan</strong><br>12 Surat</div>
-                    <i class="fa fa-paper-plane fa-2x"></i>
+                    <i class="fa fa-paper-plane fa-2x text-primary mt-2"></i>
                 </div>
             </div>
         </div>
@@ -23,7 +23,7 @@
             <div class="card">
                 <div class="card-body">
                     <div><strong>Diproses</strong><br>8 Surat</div>
-                    <i class="fa fa-hourglass-half fa-2x"></i>
+                    <i class="fa fa-hourglass-half fa-2x text-warning mt-2"></i>
                 </div>
             </div>
         </div>
@@ -31,7 +31,7 @@
             <div class="card">
                 <div class="card-body">
                     <div><strong>Disetujui</strong><br>25 Surat</div>
-                    <i class="fa fa-check-circle fa-2x"></i>
+                    <i class="fa fa-check-circle fa-2x text-success mt-2"></i>
                 </div>
             </div>
         </div>
@@ -39,7 +39,7 @@
             <div class="card">
                 <div class="card-body">
                     <div><strong>Ditolak</strong><br>3 Surat</div>
-                    <i class="fa fa-times-circle fa-2x"></i>
+                    <i class="fa fa-times-circle fa-2x text-danger mt-2"></i>
                 </div>
             </div>
         </div>
@@ -48,13 +48,12 @@
     {{-- Daftar Surat Pengajuan --}}
     <div class="card shadow-sm mb-4">
         <div class="card-header bg-light">
-            <h6 class="mb-0 fw-semibold"><i class="fa fa-list me-2"></i>Daftar Pengajuan Surat Tugas</h6>
+            <h6 class="mb-0 fw-semibold">Daftar Pengajuan Surat Tugas</h6>
         </div>
-        <div class="card-body table-responsive">
-            <table class="table table-bordered table-hover align-middle">
+        <div class="card-body">
+            <table class="table table-bordered align-middle pt-3" id="tablePengajuan">
                 <thead class="table-secondary">
                     <tr class="text-center">
-                        <th>#</th>
                         <th>Jenis Tugas</th>
                         <th>Tujuan</th>
                         <th>Tanggal</th>
@@ -66,7 +65,6 @@
                     @foreach ($surat as $s)
                         @if ($s->status_surat>0 && $s->status_surat<5)
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
                                 <td>{{ $s->jenis_tugas }}</td>
                                 <td>{{ $s->tujuan }}</td>
                                 <td>{{ \Carbon\Carbon::parse($s->tanggal_mulai)->translatedFormat('d F Y') }}</td>
@@ -110,10 +108,10 @@
 
     <div class="card shadow-sm mb-4">
         <div class="card-header bg-light">
-            <h6 class="mb-0 fw-semibold"><i class="fa fa-list me-2"></i>Riwayat Pengajuan Surat Tugas</h6>
+            <h6 class="mb-0 fw-semibold">Riwayat Pengajuan Surat Tugas</h6>
         </div>
-        <div class="card-body table-responsive">
-            <table class="table table-bordered table-hover align-middle">
+        <div class="card-body">
+            <table id="tableRiwayat" class="table table-bordered align-middle pt-3">
                 <thead class="table-secondary">
                     <tr class="text-center">
                         <th>Jenis Tugas</th>
@@ -233,5 +231,21 @@
 
 
 @section('custom_js')
+    <script>
+        $(document).ready(function() {
+            var table = $('#tablePengajuan').DataTable({
+                pageLength: 10,
+                searching: true,
+            });
+            var table = $('#tableRiwayat').DataTable({
+                pageLength: 10,
+                searching: true,
+            });
 
+            // 🔥 Search khusus FULLNAME (kolom index 1)
+            // $('#searchName').on('keyup', function () {
+            //     table.column(1).search(this.value).draw();
+            // });
+        });
+    </script>
 @endsection

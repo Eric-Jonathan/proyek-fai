@@ -9,7 +9,14 @@ class DosenController extends Controller
 {
     public function dosen_dashboard(){
         $user = session('user');
-        $surat = SuratTugas::where('status_surat','>=',0)->where('nidn', '=', $user['nidn'])->get();
+
+        if ($user['role'] == 'dekan'){
+            $surat = SuratTugas::where('status_surat','>=',2)->where('status_surat','<=',3)->get();
+        }
+        else{
+            $surat = SuratTugas::where('status_surat','>=',0)->where('nidn', '=', $user['nidn'])->get();
+        }
+
         return view('dosen_kaprodi.index', compact('surat'));
     }
 }
