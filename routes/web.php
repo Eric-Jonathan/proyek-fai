@@ -28,7 +28,8 @@ Route::prefix('bau')->middleware(['auth', 'role:bau'])->group(function () {
 // 🧑‍🏫 REKTOR
 // ====================
 Route::prefix('rektor')->middleware(['auth', 'role:rektor'])->group(function () {
-    Route::get('/', [DosenController::class, 'dosen_dashboard'])->name('rektor.dashboard');
+    Route::get('/', [DosenController::class, 'rektor_dashboard'])->name('rektor.dashboard');
+    Route::get('/list-pengajuan', [SuratTugasController::class, 'riwayat_surat'])->name('rektor.listPengajuan');
     Route::get('/surat/{id}', fn($id) => view('rektor.show'))->name('rektor.show');
 });
 

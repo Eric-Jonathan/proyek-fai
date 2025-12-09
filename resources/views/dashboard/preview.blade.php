@@ -67,9 +67,9 @@
                         -1 => 'Dihapus',
                         0  => 'Ditolak',
                         1  => 'Diajukan',
-                        2  => 'Diproses',
-                        3  => 'Disetujui Dekan',
-                        4  => 'Disetujui Kaprodi',
+                        2  => 'Disetujui Kaprodi',
+                        3  => 'Diproses',
+                        4  => 'Disetujui Dekan',
                         5  => 'Ditandatangani',
                     ];
                             
@@ -84,13 +84,13 @@
                     ];
                             
                     $iconMapping = [
-                        -1 => 'bi-trash',
-                        0  => 'bi-x-circle',
-                        1  => 'bi-send',
-                        2  => 'bi-hourglass-split',
-                        3  => 'bi-check-circle',
-                        4  => 'bi-check-circle',
-                        5  => 'bi-patch-check-fill',
+                        -1 => 'bi-trash-fill',
+                        0  => 'bi-x-circle-fill',
+                        1  => 'bi-send-fill',
+                        2  => 'bi-person-check-fill',  // Approval pertama (kaprodi)
+                        3  => 'bi-hourglass-split',    // Dalam proses
+                        4  => 'bi-award-fill',         // Approval final (dekan)
+                        5  => 'bi-patch-check-fill',   // Ditandatangani (finish)
                     ];
                             
                     $statusValue = $surat->status_surat ?? 1;

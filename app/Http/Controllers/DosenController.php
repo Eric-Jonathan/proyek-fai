@@ -79,7 +79,7 @@ class DosenController extends Controller
         $user = session('user');
 
         if ($user['role'] == 'dekan'){
-            $surat = SuratTugas::where('status_surat','>=',2)->where('status_surat','<=',3)->get();
+            $surat = SuratTugas::where('status_surat','>=',3)->get();
         }
         else{
             // Semua surat milik user
@@ -101,7 +101,7 @@ class DosenController extends Controller
         // Ambil surat untuk ditandatangani dengan rule tambahan
         $suratUntukTtd = DB::table('surat_tugas')
             ->join('lecturers', 'lecturers.nidn', '=', 'surat_tugas.nidn')
-            ->where('surat_tugas.status_surat', 1)
+            ->where('surat_tugas.status_surat', 3)
             ->where('surat_tugas.signed_by_position_id', $positionId)
             ->where('surat_tugas.nidn', '!=', $userNidn)
             ->select(
@@ -109,11 +109,13 @@ class DosenController extends Controller
                 'lecturers.full_name'
             )
             ->get();
+        
+            
 
         $perluTtdPemohon = DB::table('surat_tugas')
             ->join('lecturers', 'lecturers.nidn', '=', 'surat_tugas.nidn')
             ->select('surat_tugas.nidn', 'lecturers.full_name', DB::raw('COUNT(*) as total'))
-            ->where('surat_tugas.status_surat', 1)
+            ->where('surat_tugas.status_surat', 3)
             ->where('surat_tugas.nidn', '!=', $userNidn)
             ->groupBy('surat_tugas.nidn', 'lecturers.full_name')
             ->orderByDesc('total')
@@ -128,10 +130,70 @@ class DosenController extends Controller
             'ditolak'    => SuratTugas::where('nidn', $user['nidn'])->where('status_surat', 0)->count(),
 
             // Baru ditambahkan
+            'perlu_ttd'  => $perluTtdPemohon->count()
+        ];
+
+
+
+        return view('dekan.index', compact('surat', 'stats', 'suratUntukTtd', 'perluTtdPemohon'));
+    }
+
+    public function rektor_dashboard()
+    {
+        $user = session('user');
+
+        if ($user['role'] == 'rektor'){
+            $surat = SuratTugas::where('status_surat','>=',4)->get();
+        }
+        else{
+            // Semua surat milik user
+            $surat = SuratTugas::where('status_surat','>=',0)->where('nidn', '=', $user['nidn'])->get();
+        }
+
+        $userNidn = session('user.nidn');
+
+        // Ambil prefix dari lecturer_code
+        $userKode = DB::table('lecturers')
+            ->where('nidn', $userNidn)
+            ->value(DB::raw("REGEXP_SUBSTR(lecturer_code, '^[A-Z]+')"));
+
+        // Cari posisi berdasarkan prefix
+        $positionId = DB::table('positions')
+            ->where('position_code', 'LIKE', "%{$userKode}%")
+            ->value('position_id');
+
+        // Ambil surat untuk ditandatangani dengan rule tambahan
+        $suratUntukTtd = DB::table('surat_tugas')
+            ->join('lecturers', 'lecturers.nidn', '=', 'surat_tugas.nidn')
+            ->where('surat_tugas.status_surat', 3)
+            ->where('surat_tugas.nidn', '!=', $userNidn)
+            ->select(
+                'surat_tugas.*',
+                'lecturers.full_name'
+            )
+            ->get();
+
+        $perluTtdPemohon = DB::table('surat_tugas')
+            ->join('lecturers', 'lecturers.nidn', '=', 'surat_tugas.nidn')
+            ->select('surat_tugas.nidn', 'lecturers.full_name', DB::raw('COUNT(*) as total'))
+            ->where('surat_tugas.nidn', '!=', $userNidn)
+            ->groupBy('surat_tugas.nidn', 'lecturers.full_name')
+            ->orderByDesc('total')
+            ->get();
+
+
+        // Statistik
+        $stats = [
+            'diajukan'   => SuratTugas::where('status_surat', 1)->count(),
+            'diproses'   => SuratTugas::whereIn('status_surat', [2, 3, 4])->count(),
+            'disetujui'  => SuratTugas::where('status_surat', 5)->count(),
+            'ditolak'    => SuratTugas::where('status_surat', 0)->count(),
+
+            // Baru ditambahkan
             'perlu_ttd'  => $suratUntukTtd->count()
         ];
 
-        return view('kaprodi.index', compact('surat', 'stats', 'suratUntukTtd', 'perluTtdPemohon'));
+        return view('rektor.index', compact('surat', 'stats', 'suratUntukTtd', 'perluTtdPemohon'));
     }
 
     

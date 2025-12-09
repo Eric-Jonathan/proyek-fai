@@ -12,7 +12,7 @@
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-body text-center">
                     <i class="fa fa-users fa-2x text-primary mb-2"></i>
-                    <h5 class="fw-bold mb-0">124</h5>
+                    <h5 class="fw-bold mb-0">{{ $stats['user'] }}</h5>
                     <small class="text-muted">Total Akun Pengguna</small>
                 </div>
             </div>
@@ -21,7 +21,7 @@
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-body text-center">
                     <i class="fa fa-key fa-2x text-success mb-2"></i>
-                    <h5 class="fw-bold mb-0">5</h5>
+                    <h5 class="fw-bold mb-0">{{ $stats['permission'] }}</h5>
                     <small class="text-muted">Total Role & Permission</small>
                 </div>
             </div>
@@ -30,7 +30,7 @@
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-body text-center">
                     <i class="fa fa-file-alt fa-2x text-warning mb-2"></i>
-                    <h5 class="fw-bold mb-0">8</h5>
+                    <h5 class="fw-bold mb-0">{{ $stats['surat_template'] }}</h5>
                     <small class="text-muted">Template Surat Aktif</small>
                 </div>
             </div>
@@ -62,24 +62,14 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach ($logs as $a)
                     <tr>
-                        <td>21 Okt 2025</td>
-                        <td><i class="fa fa-user text-primary me-1"></i> Sekretaris Rektor</td>
-                        <td>Mengedit Template Surat</td>
-                        <td>Pembaruan template “Surat Tugas Narasumber”.</td>
+                        <td>{{\Carbon\Carbon::parse($a->created_at)->format('Y-m-d')}}</td>
+                        <td><i class="fa fa-user text-primary me-1"></i> {{ $a->full_name }}</td>
+                        <td>{{ $a->aktivitas }}</td>
+                        <td>{{ $a->keterangan }}</td>
                     </tr>
-                    <tr>
-                        <td>20 Okt 2025</td>
-                        <td><i class="fa fa-user text-success me-1"></i> Admin Sistem</td>
-                        <td>Backup Sistem</td>
-                        <td>Backup otomatis berhasil disimpan.</td>
-                    </tr>
-                    <tr>
-                        <td>19 Okt 2025</td>
-                        <td><i class="fa fa-user text-danger me-1"></i> Kaprodi FST</td>
-                        <td>Login Gagal</td>
-                        <td>3 kali percobaan login dengan email salah.</td>
-                    </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>

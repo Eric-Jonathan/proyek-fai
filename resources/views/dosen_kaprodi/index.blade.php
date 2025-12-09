@@ -9,52 +9,54 @@
         <h4 class="fw-bold">Dashboard Surat Tugas</h4>
     </div>
 
-    {{-- Statistik Surat --}}
-    <div class="row g-3 mb-4">
-<div class="col-md-3">
-            <div class="card text-white bg-primary shadow">
+    <div class="row g-3 mb-4">    
+        {{-- Card 1: Diajukan --}}
+        <div class="col">
+            <div class="card text-white bg-primary shadow h-100">
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <div>
                         <strong>Diajukan</strong><br>{{ $stats['diajukan'] }} Surat
                     </div>
-                    <i class="fa fa-paper-plane fa-2x text-primary mt-2"></i>
+                    <i class="fa fa-paper-plane fa-2x"></i>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3">
-            <div class="card text-white bg-warning shadow">
+        {{-- Card 2: Diproses --}}
+        <div class="col">
+            <div class="card text-white bg-warning shadow h-100">
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <div>
                         <strong>Diproses</strong><br>{{ $stats['diproses'] }} Surat
                     </div>
-                    <i class="fa fa-hourglass-half fa-2x text-warning mt-2"></i>
+                    <i class="fa fa-hourglass-half fa-2x"></i>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3">
-            <div class="card text-white bg-success shadow">
+        {{-- Card 3: Disetujui --}}
+        <div class="col">
+            <div class="card text-white bg-success shadow h-100">
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <div>
                         <strong>Disetujui</strong><br>{{ $stats['disetujui'] }} Surat
                     </div>
-                    <i class="fa fa-check-circle fa-2x text-success mt-2"></i>
+                    <i class="fa fa-check-circle fa-2x"></i>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3">
-            <div class="card text-white bg-danger shadow">
+        {{-- Card 4: Ditolak --}}
+        <div class="col">
+            <div class="card text-white bg-danger shadow h-100">
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <div>
                         <strong>Ditolak</strong><br>{{ $stats['ditolak'] }} Surat
                     </div>
-                    <i class="fa fa-times-circle fa-2x text-danger mt-2"></i>
+                    <i class="fa fa-times-circle fa-2x"></i>
                 </div>
             </div>
         </div>
-
     </div>
 
     {{-- Daftar Surat Pengajuan --}}
@@ -85,8 +87,8 @@
                                     @php
                                         $statusBadge = [
                                             1 => ['warning', 'Diajukan'],
-                                            2 => ['primary', 'Diproses'],
-                                            3 => ['primary', 'Disetujui Kaprodi'],
+                                            2 => ['primary', 'Disetujui Kaprodi'],
+                                            3 => ['primary', 'Diproses'],
                                             4 => ['primary', 'Disetujui Dekan'],
                                         ];
                                     @endphp
@@ -100,7 +102,7 @@
                                     @endif
                                 </td>
                                 <td class="text-center">
-                                    @if ($s->status_surat >= 0 && $s->status_surat <= 2)
+                                    @if ($s->status_surat >= 0 && $s->status_surat < 2)
                                         <a href="{{ route('surat-tugas.detail', $s->surat_id) }}" class="btn btn-sm btn-info">
                                             <i class="fa fa-eye"></i>
                                         </a>
@@ -108,7 +110,10 @@
                                         <a href="{{ route('CRUD_Surat.edit', $s->surat_id) }}" class="btn btn-sm btn-warning">
                                             <i class="fa fa-pencil"></i>
                                         </a>
-                                    
+                                    @elseif ($s->status_surat >= 0 )
+                                        <a href="{{ route('surat-tugas.detail', $s->surat_id) }}" class="btn btn-sm btn-info">
+                                            <i class="fa fa-eye"></i>
+                                        </a>
                                     @else
                                         <a href="#" class="btn btn-sm btn-primary">
                                             <i class="fa fa-download"></i>
@@ -167,23 +172,6 @@
             </table>
         </div>
     </div>
-
-    {{-- Riwayat Persetujuan --}}
-    {{-- <div class="card shadow-sm mb-4">
-        <div class="card-header bg-light">
-            <h6 class="mb-0 fw-semibold"><i class="fa fa-history me-2"></i>Riwayat Persetujuan & Keputusan</h6>
-        </div>
-        <div class="card-body">
-            <ul class="list-group">
-                <li class="list-group-item">
-                    <strong>Kaprodi FTI</strong> menyetujui surat tugas "Seminar AI di ITS" pada <em>8 Nov 2025</em>.
-                </li>
-                <li class="list-group-item">
-                    <strong>Dekan FST</strong> menandatangani surat tugas "Evaluasi BKD FTI" pada <em>4 Des 2025</em>.
-                </li>
-            </ul>
-        </div>
-    </div> --}}
 </div>
 
 <!-- Modal: Detail Surat -->

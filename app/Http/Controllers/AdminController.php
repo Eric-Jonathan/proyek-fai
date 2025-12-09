@@ -7,6 +7,7 @@ use App\Models\Lecturer;
 use App\Models\Permission;
 use App\Models\Position;
 use App\Models\PositionAssignment;
+use App\Models\SuratTemplate;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -15,7 +16,18 @@ class AdminController extends Controller
 {
     public function dashboard()
     {
-        return view('admin.index');
+        $stats = [
+            'user'   => Lecturer::all()->count(),
+            'permission'   => Permission::all()->count(),
+            'surat_template'  => SuratTemplate::all()->count(),
+        ];
+
+        $query = LogAktivitas::join('lecturers', 'lecturers.nidn', '=', 'log_aktivitas.nidn')
+            ->select('log_aktivitas.*', 'lecturers.full_name')
+            ->orderBy('log_id', 'DESC');        
+        $logs = $query->paginate(5);
+
+        return view('admin.index', compact('stats', 'logs'));
     }
 
     // === USER MANAGEMENT ===
@@ -108,7 +120,6 @@ class AdminController extends Controller
 
         return view('admin.user_form', compact('user', 'permissions', 'positions'));
     }
-
 
     public function updateUser(Request $request, $id)
     {
@@ -216,5 +227,6 @@ class AdminController extends Controller
 
         return view('admin.logs', compact('logs'));
     }
+
 
 }

@@ -385,23 +385,29 @@ class SuratTugasController extends Controller
             //     ->orWhereIn('status_surat', ['diajukan', 'diproses'])
             //     ->get();
 
-                $surat = SuratTugas::where('nidn', $nidn);
+            $surat = SuratTugas::where('nidn', $nidn);
             // Data yang sedang diproses (kecuali ditolak dan ditandatangani)
-            $dataTop = $surat->whereNotIn('status_surat', ['ditolak', 'ditandatangani'])
+            $dataTop = $surat->whereNotIn('status_surat', [0, 5])
                              ->paginate(request('per_page') ?? 10)
                              ->appends(request()->query());
 
             // Clone query untuk bagian bottom (karena query sebelumnya sudah digunakan)
             $dataBottom = SuratTugas::where('nidn', $nidn)
-                             ->whereIn('status_surat', ['ditolak', 'ditandatangani'])
+                             ->whereIn('status_surat', [0, 5])
                              ->paginate(request('per_page') ?? 10)
                              ->appends(request()->query());
-            
-            
-
         } elseif ($role === 'dekan') {
             // Dekan hanya melihat surat yang sudah disetujui kaprodi
             $surat = SuratTugas::where('status_surat', 'disetujui_kaprodi')->get();
+        } elseif ($role === 'rektor') {
+            $dataTop = SuratTugas::whereNotIn('status_surat', [0, 5])
+                             ->paginate(request('per_page') ?? 10)
+                             ->appends(request()->query());
+
+            // Clone query untuk bagian bottom (karena query sebelumnya sudah digunakan)
+            $dataBottom = SuratTugas::whereIn('status_surat', [0, 5])
+                             ->paginate(request('per_page') ?? 10)
+                             ->appends(request()->query());
 
         } else {
             abort(403, 'Role pengguna tidak dikenali.');
@@ -411,6 +417,8 @@ class SuratTugasController extends Controller
             return view('admin.riwayat_surat', compact('surat', 'dataBottom', 'dataTop'));
         } else if ($role ==="kaprodi"){
             return view('dosen_kaprodi.riwayat_surat', compact('surat', 'dataBottom', 'dataTop'));
+        } else if ($role ==="rektor"){
+            return view('rektor.list_pengajuan', compact( 'dataBottom', 'dataTop'));
         }else {
             return view('dosen_kaprodi.riwayat_surat', compact('surat', 'dataBottom', 'dataTop'));
         }

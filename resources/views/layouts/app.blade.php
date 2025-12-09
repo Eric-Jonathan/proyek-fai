@@ -121,8 +121,8 @@
             @elseif($role === 'rektor')
                 <a href="{{ route($role . '.dashboard') }}">Dashboard</a>
 
-                @if(in_array('create_surat', $permissions))
-                    <a href="{{ route('CRUD_Surat.form_surat') }}">Buat Surat</a>
+                @if(in_array('lihat_surat', $permissions))
+                    <a href="{{ route('rektor.listPengajuan') }}">List Pengajuan Surat</a>
                 @endif
 
                 {{-- Bagian @if(in_array('lihat_surat', $permissions)) kosong sehingga saya hapus agar lebih rapi --}}
