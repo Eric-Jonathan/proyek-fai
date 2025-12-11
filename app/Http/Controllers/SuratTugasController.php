@@ -487,9 +487,27 @@ class SuratTugasController extends Controller
             ->with('success', 'Pengajuan surat tugas berhasil dikirim!');
     }
 
-    function updateStatusSurat($id, $tujuan){
-        // $t = ::find($data["so_id"]);
-        // $t->status = 0;
-        // $t->save();
+    public function updateStatusSurat($id, $tujuan){
+        $surat = SuratTugas::findOrFail($id);
+
+        if ($tujuan == 'sekretaris') {
+            $surat->status_surat = 2;
+        } 
+        elseif ($tujuan == 'dekan') {
+            $surat->status_surat = 3;
+        }
+        elseif ($tujuan == 'rektor') {
+            $surat->status_surat = 3;
+        }
+        elseif ($tujuan == 'baa') {
+            $surat->status_surat = 6;
+        }
+        else {
+            return back()->with('error', 'Tujuan tidak dikenali.');
+        }
+
+        $surat->save();
+
+        return back()->with('success', 'Status surat berhasil diperbarui.');
     }
 }
