@@ -430,6 +430,8 @@ class SuratTugasController extends Controller
             return view('dosen_kaprodi.riwayat_surat', compact('surat', 'dataBottom', 'dataTop'));
         } else if ($role ==="rektor"){
             return view('rektor.list_pengajuan', compact( 'dataBottom', 'dataTop'));
+        } else if ($role ==="dekan"){
+            return view('dekan.riwayat_surat', compact( 'surat'));
         }else {
             return view('dosen_kaprodi.riwayat_surat', compact('surat', 'dataBottom', 'dataTop'));
         }
@@ -483,5 +485,11 @@ class SuratTugasController extends Controller
         
         return redirect()->route(session('user.role') . '.dashboard')
             ->with('success', 'Pengajuan surat tugas berhasil dikirim!');
+    }
+
+    function updateStatusSurat($id, $tujuan){
+        // $t = ::find($data["so_id"]);
+        // $t->status = 0;
+        // $t->save();
     }
 }

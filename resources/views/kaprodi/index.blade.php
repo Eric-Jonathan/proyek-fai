@@ -151,7 +151,7 @@
     {{-- Daftar Surat Pengajuan --}}
     {{-- <div class="card shadow-sm mb-4">
         <div class="card-header bg-light">
-            <h6 class="mb-0 fw-semibold"><i class="fa fa-list me-2"></i>Daftar Pengajuan Surat Tugas</h6>
+            <h6 class="mb-0 fw-semibold"><i class="fa fa-list me-2"></i>Daftar Surat Tugas yang Perlu </h6>
         </div>
         <div class="card-body table-responsive">
             <table class="table table-bordered table-hover align-middle">

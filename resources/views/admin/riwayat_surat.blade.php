@@ -275,9 +275,9 @@
                                     <i class="bi bi-file-earmark-pdf-fill"></i> Print
                                 </a>
                             @else
-                                <button class="btn btn-sm btn-outline-secondary" disabled>
+                                <a href="{{ route('cetak-surat', $item->surat_id) }}" class="btn btn-sm btn-outline-secondary" disabled>
                                     <i class="bi bi-file-earmark-pdf"></i> Print
-                                </button>
+                                </a>
                             @endif
                         </td>
                     </tr>

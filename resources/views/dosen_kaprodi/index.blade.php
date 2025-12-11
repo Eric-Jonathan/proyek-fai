@@ -115,7 +115,7 @@
                                             <i class="fa fa-eye"></i>
                                         </a>
                                     @else
-                                        <a href="#" class="btn btn-sm btn-primary">
+                                        <a href="{{ route('surat-tugas.detail', $s->surat_id) }}" class="btn btn-sm btn-primary">
                                             <i class="fa fa-download"></i>
                                         </a>
                                     @endif
@@ -160,9 +160,9 @@
                                 </td>
 
                                 <td class="text-center">
-                                    <button onclick="openDetailSurat({ nomor: 'ST/2025/001' })" class="btn btn-sm btn-info">
+                                    <a href="{{ route('surat-tugas.detail', $s->surat_id) }}" class="btn btn-sm btn-info">
                                         <i class="fa fa-eye"></i>
-                                    </button>
+                                    </a>
                                     <a href="#" class="btn btn-sm btn-primary"><i class="fa fa-download"></i></a>
                                 </td>
                             </tr>
