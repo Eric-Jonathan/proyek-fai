@@ -287,16 +287,22 @@ class SuratTugasController extends Controller
 
         $statusLabels = [
             -1 => 'delete',
-            0 => 'ditolak',
-            1 => 'diajukan',
-            2 => 'disetujui_kaprodi',
-            3 => 'diproses',
-            4 => 'disetujui_dekan',
-            5 => 'ditandatangani',
+            0  => 'ditolak',
+            1  => 'diajukan',
+            2  => 'disetujui_kaprodi',
+            3  => 'diproses_sekretaris',
+            4  => 'disetujui_dekan',
+            5  => 'disetujui_rektor',
+            6  => 'stempel_BAA',
+            7  => 'selesai',
         ];
 
         // Update surat
-        $surat->status_surat += 1;
+        if ($surat->signed_by_position_id == 1) {
+            $surat->status_surat += 2; 
+        } else {
+            $surat->status_surat += 1;
+        }
         $surat->signed_by_position_id = $positionId;
         $surat->save();
         LogAktivitas::create([

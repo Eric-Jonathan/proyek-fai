@@ -57,10 +57,10 @@ class DosenController extends Controller
 
         // Statistik
         $stats = [
-            'diajukan'   => SuratTugas::where('nidn', $user['nidn'])->where('status_surat', 1)->count(),
-            'diproses'   => SuratTugas::where('nidn', $user['nidn'])->whereIn('status_surat', [2, 3, 4])->count(),
-            'disetujui'  => SuratTugas::where('nidn', $user['nidn'])->where('status_surat', 5)->count(),
-            'ditolak'    => SuratTugas::where('nidn', $user['nidn'])->where('status_surat', 0)->count(),
+            'diajukan'   => SuratTugas::where('status_surat', 1)->count(),
+            'diproses'   => SuratTugas::whereIn('status_surat', [2, 3, 4, 5, 6])->count(),
+            'disetujui'  => SuratTugas::where('status_surat', 7)->count(),
+            'ditolak'    => SuratTugas::where('status_surat', 0)->count(),
 
             // Baru ditambahkan
             'perlu_ttd'  => $suratUntukTtd->count()
@@ -82,22 +82,15 @@ class DosenController extends Controller
 
         $userNidn = session('user.nidn');
 
-        // Ambil prefix dari lecturer_code
-        $userKode = DB::table('lecturers')
-            ->where('nidn', $userNidn)
-            ->value(DB::raw("REGEXP_SUBSTR(lecturer_code, '^[A-Z]+')"));
-
         // Cari posisi berdasarkan prefix
-        $positionId = DB::table('positions')
-            ->where('position_code', 'LIKE', "%{$userKode}%")
-            ->value('position_id');
+        $positionId = session('user')['jabatanId'];
 
         // Ambil surat untuk ditandatangani dengan rule tambahan
         $suratUntukTtd = DB::table('surat_tugas')
             ->join('lecturers', 'lecturers.nidn', '=', 'surat_tugas.nidn')
             ->where('surat_tugas.status_surat', 3)
             ->where('surat_tugas.signed_by_position_id', $positionId)
-            ->where('surat_tugas.nidn', '!=', $userNidn)
+            ->where('surat_tugas.nidn', '!=', $user['nidn'])
             ->select(
                 'surat_tugas.*',
                 'lecturers.full_name'
@@ -117,13 +110,13 @@ class DosenController extends Controller
 
         // Statistik
         $stats = [
-            'diajukan'   => SuratTugas::where('nidn', $user['nidn'])->where('status_surat', 1)->count(),
-            'diproses'   => SuratTugas::where('nidn', $user['nidn'])->whereIn('status_surat', [2, 3, 4])->count(),
-            'disetujui'  => SuratTugas::where('nidn', $user['nidn'])->where('status_surat', 5)->count(),
-            'ditolak'    => SuratTugas::where('nidn', $user['nidn'])->where('status_surat', 0)->count(),
+            'diajukan'   => SuratTugas::where('status_surat', 1)->count(),
+            'diproses'   => SuratTugas::whereIn('status_surat', [2, 3, 4, 5, 6])->count(),
+            'disetujui'  => SuratTugas::where('status_surat', 7)->count(),
+            'ditolak'    => SuratTugas::where('status_surat', 0)->count(),
 
             // Baru ditambahkan
-            'perlu_ttd'  => $perluTtdPemohon->count()
+            'perlu_ttd'  => $suratUntukTtd->count()
         ];
 
 
@@ -145,21 +138,13 @@ class DosenController extends Controller
 
         $userNidn = session('user.nidn');
 
-        // Ambil prefix dari lecturer_code
-        $userKode = DB::table('lecturers')
-            ->where('nidn', $userNidn)
-            ->value(DB::raw("REGEXP_SUBSTR(lecturer_code, '^[A-Z]+')"));
-
         // Cari posisi berdasarkan prefix
-        $positionId = DB::table('positions')
-            ->where('position_code', 'LIKE', "%{$userKode}%")
-            ->value('position_id');
-
+        $positionId = session('user')['jabatanId'];
         // Ambil surat untuk ditandatangani dengan rule tambahan
         $suratUntukTtd = DB::table('surat_tugas')
             ->join('lecturers', 'lecturers.nidn', '=', 'surat_tugas.nidn')
-            ->where('surat_tugas.status_surat', 3)
-            ->where('surat_tugas.nidn', '!=', $userNidn)
+            ->where('surat_tugas.status_surat', 4)
+            ->where('surat_tugas.nidn', '!=', session('user')['nidn'])
             ->select(
                 'surat_tugas.*',
                 'lecturers.full_name'
@@ -169,7 +154,7 @@ class DosenController extends Controller
         $perluTtdPemohon = DB::table('surat_tugas')
             ->join('lecturers', 'lecturers.nidn', '=', 'surat_tugas.nidn')
             ->select('surat_tugas.nidn', 'lecturers.full_name', DB::raw('COUNT(*) as total'))
-            ->where('surat_tugas.nidn', '!=', $userNidn)
+            ->where('surat_tugas.nidn', '!=', session('user')['nidn'])
             ->groupBy('surat_tugas.nidn', 'lecturers.full_name')
             ->orderByDesc('total')
             ->get();
@@ -178,8 +163,8 @@ class DosenController extends Controller
         // Statistik
         $stats = [
             'diajukan'   => SuratTugas::where('status_surat', 1)->count(),
-            'diproses'   => SuratTugas::whereIn('status_surat', [2, 3, 4])->count(),
-            'disetujui'  => SuratTugas::where('status_surat', 5)->count(),
+            'diproses'   => SuratTugas::whereIn('status_surat', [2, 3, 4, 5, 6])->count(),
+            'disetujui'  => SuratTugas::where('status_surat', 7)->count(),
             'ditolak'    => SuratTugas::where('status_surat', 0)->count(),
 
             // Baru ditambahkan
