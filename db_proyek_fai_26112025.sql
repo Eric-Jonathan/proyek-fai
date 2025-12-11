@@ -211,7 +211,8 @@ INSERT  INTO `positions`(`position_id`,`position_code`,`position_name`,`parent_p
 (18,'DMBD','Dosen S1-Manajemen Bisnis Digital',2,3,NULL,NULL,NULL),
 (19,'DDKV','Dosen S1-Desain Komunikasi Visual',3,3,NULL,NULL,NULL),
 (20,'DDES','Dosen S1-Desain Produk',3,3,NULL,NULL,NULL),
-(21,'DSI3','Dosen D3-Sistem Informasi',2,3,NULL,NULL,NULL);
+(21,'DSI3','Dosen D3-Sistem Informasi',2,3,NULL,NULL,NULL),
+(22,'ADMIN','ADMIN',NULL,0,NULL,NULL,NULL);
 
 /*Table structure for table `stempel` */
 
@@ -258,25 +259,25 @@ INSERT  INTO `surat_templates`(`template_id`,`template_name`,`file_path`,`templa
 DROP TABLE IF EXISTS `surat_tugas`;
 
 CREATE TABLE `surat_tugas` (
-  `surat_id` int unsigned NOT NULL AUTO_INCREMENT,
-  `nidn` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `template_id` int unsigned NOT NULL,
-  `nomor_surat` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `jenis_tugas` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `dasar_tugas` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `sifat` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tujuan` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `waktu_pelaksanaan` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tanggal_mulai` date NOT NULL,
-  `tanggal_selesai` date NOT NULL,
-  `tanggal_surat` date NOT NULL,
-  `lampiran_path` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `surat_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `nidn` VARCHAR(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `template_id` INT UNSIGNED NOT NULL,
+  `nomor_surat` VARCHAR(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `jenis_tugas` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `dasar_tugas` TEXT COLLATE utf8mb4_unicode_ci NOT NULL,
+  `sifat` VARCHAR(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tujuan` TEXT COLLATE utf8mb4_unicode_ci NOT NULL,
+  `waktu_pelaksanaan` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tanggal_mulai` DATE NOT NULL,
+  `tanggal_selesai` DATE NOT NULL,
+  `tanggal_surat` DATE NOT NULL,
+  `lampiran_path` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `status_surat` TINYINT(1) NOT NULL DEFAULT '1' COMMENT '-1=`delete`, 0=ditolak, 1=diajukan, 2=diproses, 3=disetujui_dekan, 4=disetujui_kaprodi, 5=ditandatangani',
-  `nomor_surat_final` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `signed_by_position_id` int unsigned DEFAULT NULL,
+  `nomor_surat_final` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `signed_by_position_id` INT UNSIGNED DEFAULT NULL,
   `alasan_penolakan` TEXT NULL DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`surat_id`),
   KEY `fk_st_lecturer` (`nidn`),
   KEY `fk_st_template` (`template_id`),
