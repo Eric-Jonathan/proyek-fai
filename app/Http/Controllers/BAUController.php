@@ -57,7 +57,7 @@ class BAUController extends Controller
         'ditolak'    => SuratTugas::where('status_surat', 0)->count(),
     ];
 
-    return view('sekretaris.index', compact('surat', 'stats', 'bulan', 'tahun', 'status'));
+    return view('bau.index', compact('surat', 'stats', 'bulan', 'tahun', 'status'));
 }
 
 
