@@ -228,7 +228,7 @@
 
                 <tbody>
                 @forelse($dataBottom as $item)
-                    <tr onclick="window.location='{{ url('/CRUD_Surat/cetak-surat/' . $item->surat_id) }}'" style="cursor:pointer">
+                    <tr onclick="window.location='{{ url('/CRUD_Surat/surat-tugas/detail/' . $item->surat_id) }}'" style="cursor:pointer">
                         <td>{{ $loop->iteration  }}</td>
                         <td class="fw-bold">{{ $item->jenis_tugas }}</td>
                         <td>{{ $item->full_name }}</td>
