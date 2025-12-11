@@ -129,7 +129,7 @@
                 <tbody>
                 @forelse($dataTop as $item)
                 {{-- bikin condition kalo status diajukan bisa ke --}}
-                    <tr onclick="window.location='{{ url('/surat-tugas/detail/' . $item->surat_id) }}'" style="cursor:pointer">
+                    <tr onclick="window.location='{{ url('/CRUD_Surat/cetak-surat/' . $item->surat_id) }}'" style="cursor:pointer">
                         <td>{{ $loop->iteration}}</td>
                         <td class="fw-bold">{{ $item->jenis_tugas }}</td>
                         <td>{{ $item->full_name }}</td>
@@ -228,7 +228,7 @@
 
                 <tbody>
                 @forelse($dataBottom as $item)
-                    <tr onclick="window.location='{{ url('/surat-tugas/detail/' . $item->surat_id) }}'" style="cursor:pointer">
+                    <tr onclick="window.location='{{ url('/CRUD_Surat/cetak-surat/' . $item->surat_id) }}'" style="cursor:pointer">
                         <td>{{ $loop->iteration  }}</td>
                         <td class="fw-bold">{{ $item->jenis_tugas }}</td>
                         <td>{{ $item->full_name }}</td>
@@ -271,7 +271,7 @@
 
                         <td class="text-center">
                             @if($item->status_surat == 'ditandatangani')
-                                <a href="#" class="btn btn-sm btn-outline-danger">
+                                <a href="{{ route('cetak-surat', $item->surat_id) }}" class="btn btn-sm btn-outline-danger">
                                     <i class="bi bi-file-earmark-pdf-fill"></i> Print
                                 </a>
                             @else

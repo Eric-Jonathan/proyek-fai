@@ -134,8 +134,7 @@
 
         <!-- Isi -->
         <div class="content mt-3">
-            <p>Yang bertanda tangan di bawah ini {{ $atasan->position->position_name ?? 'Dekan Fakultas Teknik' }}, dengan ini memberi tugas kepada:</p>
-
+            <p>Yang bertanda tangan di bawah ini {{ $parentAssignment->position->position_name ?? '-' }}, dengan ini memberi tugas kepada:</p>
             <table>
                 <tr>
                     <td>Nama</td>
@@ -150,7 +149,7 @@
                 <tr>
                     <td>Jabatan</td>
                     <td>:</td>
-                    <td>{{ $user['jabatan'] ?? '-' }}</td>
+                    <td>{{ $lecturer->activePositions()->first()?->position?->position_name ?? '-' }}</td>
                 </tr>
                 <tr>
                     <td>Jenis Tugas</td>
@@ -195,8 +194,8 @@
                     <img src="https://www.indorentalmedia.com/wp-content/uploads/2022/10/cara-scan-tanda-tangan-1200x900.webp" width="120">
                 </div>
 
-                <p class="text-decoration-underline mb-0">{{ $atasan->full_name ?? 'Edwin Pramana' }}</p>
-                <p>{{ $parentRoleName ?? '-' }}</p>
+                <p class="text-decoration-underline mb-0">{{ $atasan->full_name ?? '-' }}</p>
+                <p>{{ $parentAssignment->position->position_name ?? '-' }}</p>
             </div>
         </div>
     </div>

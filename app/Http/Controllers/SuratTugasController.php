@@ -25,24 +25,22 @@ class SuratTugasController extends Controller
         $user = session('user');
         $surat = SuratTugas::with(['signedByPosition.parent'])->find($id);
 
-        $lecturer = Lecturer::where('nidn', $user['nidn'])->first();
+        $lecturer = Lecturer::where('nidn', $surat['nidn'])->first();
 
         $positionAssignment = PositionAssignment::where('nidn', $lecturer->nidn)
             ->with('position.parent') // ambil posisi dan parent-nya
             ->first();
-
-        // Ambil posisi saat ini
-        $currentPosition = $positionAssignment->position;
-
-        // Nama posisi/role parent
-        $parentRoleName = $currentPosition->parent?->position_name;
+        $parent = $positionAssignment->position->parent;
+        $parentAssignment = PositionAssignment::where('position_id', $parent->parent_position_id)->first();
+        $atasan = Lecturer::where('nidn', $parentAssignment->nidn)->first();
 
         // Contoh: return ke view
         return Pdf::loadView('CRUD_Surat.cetak_surat', [
             'surat' => $surat,
             'lecturer' => $lecturer,
-            'parentRoleName' => $parentRoleName, // ini ganti $atasan
-            'user' => $user
+            'parentAssignment' => $parentAssignment, // ini ganti $atasan
+            'user' => $user,
+            'atasan' => $atasan
         ])->download('surat_tugas.pdf');
     }
     
