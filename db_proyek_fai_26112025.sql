@@ -313,7 +313,7 @@ CREATE TABLE `permissions` (
   `permission_name` VARCHAR(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` TEXT COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`permission_id`)
-) ENGINE=INNODB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `permissions` */
 
@@ -339,7 +339,7 @@ CREATE TABLE `lecturers_permissions` (
   KEY `fk_lp_permission` (`permission_id`),
   CONSTRAINT `fk_lp_lecturer` FOREIGN KEY (`lecturer_id`) REFERENCES `lecturers` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_lp_permission` FOREIGN KEY (`permission_id`) REFERENCES `permissions` (`permission_id`) ON DELETE CASCADE
-) ENGINE=INNODB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `lecturers_permissions` */
 
@@ -399,9 +399,9 @@ INSERT  INTO `lecturers_permissions`(`lecturer_id`,`permission_id`) VALUES
 (13,4),
 
 
-(13,1),
-(13,2),
-(13,3);
+(14,1),
+(14,2),
+(14,3);
 
 
 
@@ -493,7 +493,7 @@ DROP TABLE IF EXISTS `surat_tugas`;
 
 CREATE TABLE `surat_tugas` (
   `surat_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `nidn` VARCHAR(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nidn` VARCHAR(11) COLLATE utf8mb4_unicode_ci NOT NULL,
   `template_id` INT UNSIGNED NOT NULL,
   `nomor_surat` VARCHAR(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `jenis_tugas` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -505,7 +505,7 @@ CREATE TABLE `surat_tugas` (
   `tanggal_selesai` DATE NOT NULL,
   `tanggal_surat` DATE NOT NULL,
   `lampiran_path` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `status_surat` TINYINT(1) NOT NULL DEFAULT '1' COMMENT '-1=`delete`, 0=ditolak, 1=diajukan,`surat_tugas` 2=disetujui_kaprodi, 3=diproses_sekretaris, 4=disetujui_dekan, 5=disetujui_rektor, 6=stempel_BAA, 7=selesai',
+  `status_surat` TINYINT(1) NOT NULL DEFAULT '1' COMMENT '-1=`delete`, 0=ditolak, 1=diajukan,`surat_tugas` 2=disetujui_kaprodi, 3=disetujui_sekretaris, 4=disetujui_dekan, 5=disetujui_rektor, 6=stempel_BAA, 7=selesai',
   `nomor_surat_final` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `signed_by_position_id` INT UNSIGNED DEFAULT NULL,
   `alasan_penolakan` TEXT NULL DEFAULT NULL,
