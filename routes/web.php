@@ -3,6 +3,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DosenController;
 use App\Http\Controllers\SeketarisController;
+use App\Http\Controllers\BAUController;
 use App\Http\Controllers\SuratTugasController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,7 +18,8 @@ Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 // 🧾 BAU
 // ====================
 Route::prefix('bau')->middleware(['auth', 'role:bau'])->group(function () {
-    Route::get('/', fn() => view('bau.index'))->name('bau.dashboard');
+    // Route::get('/', fn() => view('bau.index'))->name('bau.dashboard');
+    Route::get('/', [BAUController::class, 'dashboard'])->name('bau.dashboard');
     Route::view('/surat-tugas', 'bau.surat_tugas')->name('bau.surat_tugas');
     Route::view('/arsip', 'bau.arsip')->name('bau.arsip');
     Route::view('/transportasi', 'bau.transport')->name('bau.transport');

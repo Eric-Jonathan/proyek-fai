@@ -398,7 +398,18 @@ class SuratTugasController extends Controller
                              ->appends(request()->query());
         } elseif ($role === 'dekan') {
             // Dekan hanya melihat surat yang sudah disetujui kaprodi
-            $surat = SuratTugas::where('status_surat', 'disetujui_kaprodi')->get();
+            // $surat = SuratTugas::where('status_surat', 'disetujui_kaprodi')->get();
+            $surat = SuratTugas::where('nidn', $nidn);
+            // Data yang sedang diproses (kecuali ditolak dan ditandatangani)
+            $dataTop = $surat->whereNotIn('status_surat', [0, 5])
+                             ->paginate(request('per_page') ?? 10)
+                             ->appends(request()->query());
+
+            // Clone query untuk bagian bottom (karena query sebelumnya sudah digunakan)
+            $dataBottom = SuratTugas::where('nidn', $nidn)
+                             ->whereIn('status_surat', [0, 5])
+                             ->paginate(request('per_page') ?? 10)
+                             ->appends(request()->query());
         } elseif ($role === 'rektor') {
             $dataTop = SuratTugas::whereNotIn('status_surat', [0, 5])
                              ->paginate(request('per_page') ?? 10)
