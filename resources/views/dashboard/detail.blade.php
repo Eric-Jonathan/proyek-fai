@@ -68,11 +68,13 @@
                         0  => 'Ditolak',
                         1  => 'Diajukan',
                         2  => 'Disetujui Kaprodi',
-                        3  => 'Diproses',
+                        3  => 'Diproses Sekretaris',
                         4  => 'Disetujui Dekan',
-                        5  => 'Ditandatangani',
+                        5  => 'Disetujui Rektor',
+                        6  => 'Stempel BAA',
+                        7  => 'Selesai',
                     ];
-                            
+                                
                     $badgeClassMapping = [
                         -1 => 'bg-secondary text-white',
                         0  => 'bg-danger text-white',
@@ -81,18 +83,22 @@
                         3  => 'bg-primary text-white',
                         4  => 'bg-primary text-white',
                         5  => 'bg-success text-white',
+                        6  => 'bg-dark text-white',
+                        7  => 'bg-success text-white',
                     ];
-                            
+                                
                     $iconMapping = [
                         -1 => 'bi-trash-fill',
                         0  => 'bi-x-circle-fill',
                         1  => 'bi-send-fill',
-                        2  => 'bi-person-check-fill',  // Approval pertama (kaprodi)
-                        3  => 'bi-hourglass-split',    // Dalam proses
-                        4  => 'bi-award-fill',         // Approval final (dekan)
-                        5  => 'bi-patch-check-fill',   // Ditandatangani (finish)
+                        2  => 'bi-person-check-fill',     // Kaprodi OK
+                        3  => 'bi-hourglass-split',       // Diproses sekretaris
+                        4  => 'bi-award-fill',            // Dekan OK
+                        5  => 'bi-shield-check',          // Rektor OK
+                        6  => 'bi-stamp-fill',            // Stempel BAA
+                        7  => 'bi-patch-check-fill',      // Selesai final
                     ];
-                            
+                                
                     $statusValue = $surat->status_surat ?? 1;
                     $statusText = $statusMapping[$statusValue] ?? 'Status Tidak Dikenal';
                     $badgeClass = $badgeClassMapping[$statusValue] ?? 'bg-secondary';

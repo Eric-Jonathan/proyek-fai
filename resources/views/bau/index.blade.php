@@ -73,7 +73,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr onclick="window.location='{{ route('bau.surat_detail', 1) }}'" style="cursor: pointer;">
+                    {{-- <tr onclick="window.location='{{ route('bau.surat_detail', 1) }}'" style="cursor: pointer;">
                         <td>1</td>
                         <td>Dr. Alexander Erick</td>
                         <td>Seminar AI</td>
@@ -88,7 +88,7 @@
                         <td>Evaluasi BKD FTI</td>
                         <td>3-4 Des 2025</td>
                         <td><span class="badge bg-success">Disetujui</span></td>
-                    </tr>
+                    </tr> --}}
                 </tbody>
             </table>
         </div>

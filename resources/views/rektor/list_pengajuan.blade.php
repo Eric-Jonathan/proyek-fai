@@ -143,21 +143,37 @@
                         <td>{{ \Carbon\Carbon::parse($item->tanggal_surat)->format('d M Y') }}</td>
                         <td>{{ $item->sifat }}</td>
 
-                        <td class="text-center">
+                                                <td class="text-center">
                             @php
+                                $statusLabel = [
+                                    -1 => 'Dihapus',
+                                    0  => 'Ditolak',
+                                    1  => 'Diajukan',
+                                    2  => 'Disetujui Kaprodi',
+                                    3  => 'Diproses Sekretaris',
+                                    4  => 'Disetujui Dekan',
+                                    5  => 'Disetujui Rektor',
+                                    6  => 'Stempel BAA',
+                                    7  => 'Selesai',
+                                ];
+                        
                                 $badgeClass = [
-                                    'diajukan' => 'warning text-dark',
-                                    'diproses' => 'info text-dark',
-                                    'disetujui_kaprodi' => 'primary',
-                                    'disetujui_dekan' => 'primary',
-                                    'ditandatangani' => 'success',
-                                    'ditolak' => 'danger',
-                                ][$item->status_surat] ?? 'secondary';
+                                    -1 => 'secondary',
+                                    0  => 'danger',
+                                    1  => 'warning text-dark',
+                                    2  => 'info text-dark',
+                                    3  => 'primary',
+                                    4  => 'primary',
+                                    5  => 'success',
+                                    6  => 'dark text-white',
+                                    7  => 'success',
+                                ];
+                        
+                                $class = $badgeClass[$item->status_surat] ?? 'secondary';
+                                $label = $statusLabel[$item->status_surat] ?? 'Tidak Diketahui';
                             @endphp
-
-                            <span class="badge bg-{{ $badgeClass }}">
-                                {{ ucfirst(str_replace('_',' ',$item->status_surat)) }}
-                            </span>
+                        
+                            <span class="badge bg-{{ $class }}">{{ $label }}</span>
                         </td>
                     </tr>
 
