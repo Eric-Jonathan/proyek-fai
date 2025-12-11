@@ -137,9 +137,8 @@
                                 2  => 'Disetujui Kaprodi',
                                 3  => 'Diproses Sekretaris',
                                 4  => 'Disetujui Dekan',
-                                5  => 'Disetujui Rektor',
-                                6  => 'Stempel BAA',
-                                7  => 'Selesai',
+                                5  => 'Menunggu Stempel',
+                                6  => 'Selesai',
                             ];
                     
                             $statusClass = [
@@ -149,15 +148,14 @@
                                 2  => 'info text-dark',
                                 3  => 'primary',
                                 4  => 'primary',
-                                5  => 'success',
-                                6  => 'dark text-white',
-                                7  => 'success',
+                                5  => 'dark text-white',
+                                6  => 'success',
                             ];
                     
                             $label = $statusLabel[$item->status_surat] ?? 'Tidak Diketahui';
                             $class = $statusClass[$item->status_surat] ?? 'secondary';
                         @endphp
-                    
+
                         <span class="badge bg-{{ $class }}">
                             {{ $label }}
                         </span>

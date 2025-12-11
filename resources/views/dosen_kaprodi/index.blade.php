@@ -77,7 +77,7 @@
                 </thead>
                 <tbody>
                     @foreach ($surat as $s)
-                        @if ($s->status_surat>0 && $s->status_surat<5)
+                        @if ($s->status_surat>0 && $s->status_surat<6)
                             <tr>
                                 <td>{{ $s->jenis_tugas }}</td>
                                 <td>{{ $s->tujuan }}</td>
@@ -86,10 +86,14 @@
                                 <td class="text-center">
                                     @php
                                         $statusBadge = [
-                                            1 => ['warning', 'Diajukan'],
-                                            2 => ['primary', 'Disetujui Kaprodi'],
-                                            3 => ['primary', 'Diproses'],
-                                            4 => ['primary', 'Disetujui Dekan'],
+                                            -1 => ['secondary', 'Dihapus'],
+                                             0 => ['danger', 'Ditolak'],
+                                             1 => ['warning text-dark', 'Diajukan'],
+                                             2 => ['info text-dark', 'Disetujui Kaprodi'],
+                                             3 => ['primary', 'Diproses Sekretaris'],
+                                             4 => ['primary', 'Disetujui Dekan'],
+                                             5 => ['dark text-white', 'Menunggu Stempel'],
+                                             6 => ['success', 'Selesai'],
                                         ];
                                     @endphp
 
@@ -145,7 +149,7 @@
                 </thead>
                 <tbody>
                     @foreach ($surat as $s)
-                        @if ($s->status_surat==0 || $s->status_surat==5)
+                        @if ($s->status_surat==0 || $s->status_surat==6)
                             <tr >
                                 <td>{{ $s->jenis_tugas }}</td>
                                 <td>{{ $s->tujuan }}</td>

@@ -281,7 +281,9 @@ class SuratTugasController extends Controller
         $surat = SuratTugas::findOrFail($id);
         $nidn = session('user')['nidn'] ?? null;
         $role = session('user')['role'] ?? null;
-        $positionId = Position::where('position_id', session('user')['jabatanId'])->value('parent_position_id');
+        $lecturer = Lecturer::where('nidn', $surat->nidn)->first();
+        $xrole = $lecturer->role ?? null;
+
 
         $statusLabels = [
             -1 => 'delete',
@@ -290,18 +292,30 @@ class SuratTugasController extends Controller
             2  => 'disetujui_kaprodi',
             3  => 'diproses_sekretaris',
             4  => 'disetujui_dekan',
-            5  => 'disetujui_rektor',
-            6  => 'stempel_BAA',
-            7  => 'selesai',
+            5  => 'menunggu_stempel',
+            6  => 'selesai',
         ];
 
-        // Update surat
-        if ($surat->signed_by_position_id == 1) {
-            $surat->status_surat += 2; 
+
+        // --- LOGIKA STATUS SURAT ---
+        if ($surat->status_surat == 3 && $xrole != 'dekan') {
+        
+            // Loncat langsung ke 5
+            $surat->status_surat = 5;
+        
         } else {
-            $surat->status_surat += 1;
+        
+            if ($surat->signed_by_position_id == 1) {
+            
+                $surat->status_surat += 2;
+            
+            } else {
+            
+                $surat->status_surat += 1;
+            }
         }
-        $surat->signed_by_position_id = $positionId;
+
+
         $surat->save();
         LogAktivitas::create([
             'nidn'       => $nidn,
@@ -336,13 +350,14 @@ class SuratTugasController extends Controller
             ->value('position_id');
 
         $statusLabels = [
-            -1 => 'delete',
-            0 => 'ditolak',
-            1 => 'diajukan',
-            2 => 'kaprodi',
-            3 => 'sekretaris',
-            4 => 'dekan',
-            5 => 'ditandatangani',
+            -1 => 'Dihapus',
+            0  => 'Ditolak',
+            1  => 'Diajukan',
+            2  => 'Disetujui Kaprodi',
+            3  => 'Diproses Sekretaris',
+            4  => 'Disetujui Dekan',
+            5  => 'Menunggu Stempel',
+            6  => 'Selesai',
         ];
 
         $surat = SuratTugas::findOrFail($id);
@@ -373,13 +388,13 @@ class SuratTugasController extends Controller
             $surat = SuratTugas::all();
 
             $dataTop = SuratTugas::join('lecturers', 'lecturers.nidn', '=', 'surat_tugas.nidn')
-                ->whereNotIn('surat_tugas.status_surat', [0, 5])
+                ->whereNotIn('surat_tugas.status_surat', [0, 6])
                 ->select('surat_tugas.*', 'lecturers.full_name')
                 ->paginate(request('per_page') ?? 10)
                 ->appends(request()->query());
 
             $dataBottom = SuratTugas::join('lecturers', 'lecturers.nidn', '=', 'surat_tugas.nidn')
-                ->whereIn('surat_tugas.status_surat', [0, 5])
+                ->whereIn('surat_tugas.status_surat', [0, 6])
                 ->select('surat_tugas.*', 'lecturers.full_name')
                 ->paginate(request('per_page') ?? 10)
                 ->appends(request()->query());
@@ -387,14 +402,14 @@ class SuratTugasController extends Controller
             $surat = SuratTugas::where('nidn', $nidn);
             // Data yang sedang diproses (kecuali ditolak dan ditandatangani)
             $dataTop = SuratTugas::join('lecturers', 'lecturers.nidn', '=', 'surat_tugas.nidn')
-                ->whereNotIn('surat_tugas.status_surat', [0, 5])
+                ->whereNotIn('surat_tugas.status_surat', [0, 6])
                 ->select('surat_tugas.*', 'lecturers.full_name')
                 ->paginate(request('per_page') ?? 10)
                 ->appends(request()->query());
 
             // Clone query untuk bagian bottom (karena query sebelumnya sudah digunakan)
-            $dataTop = SuratTugas::join('lecturers', 'lecturers.nidn', '=', 'surat_tugas.nidn')
-                ->whereNotIn('surat_tugas.status_surat', [0, 5])
+            $dataBottom = SuratTugas::join('lecturers', 'lecturers.nidn', '=', 'surat_tugas.nidn')
+                ->whereIn('surat_tugas.status_surat', [0, 6])
                 ->select('surat_tugas.*', 'lecturers.full_name')
                 ->paginate(request('per_page') ?? 10)
                 ->appends(request()->query());

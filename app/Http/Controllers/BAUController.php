@@ -15,9 +15,25 @@ class BAUController extends Controller
     $status = $request->status;
 
     // Query awal
-    $query = SuratTugas::join('lecturers', 'lecturers.nidn', '=', 'surat_tugas.nidn')
-    ->where('surat_tugas.status_surat', 5)
-    ->select('surat_tugas.*', 'lecturers.full_name');
+$query = SuratTugas::join('lecturers', 'lecturers.nidn', '=', 'surat_tugas.nidn')
+    ->select('surat_tugas.*', 'lecturers.full_name', 'lecturers.role');
+
+// FILTER berdasarkan role pembuat surat
+$query->where(function ($q) {
+    // Jika role bukan dekan → status >= 4
+    $q->where(function ($q2) {
+        $q2->where('lecturers.role', '!=', 'dekan')
+           ->where('surat_tugas.status_surat', '>=', 4);
+    })
+    // Jika role dekan → status = 5
+    ->orWhere(function ($q2) {
+        $q2->where('lecturers.role', 'dekan')
+           ->where('surat_tugas.status_surat', 5);
+    });
+});
+
+$surat = $query->get();
+
 
     // Filter bulan
     if (!empty($bulan)) {
@@ -52,8 +68,8 @@ class BAUController extends Controller
     $stats = [
         'total'      => SuratTugas::count(),
         'diajukan'   => SuratTugas::where('status_surat', 1)->count(),
-        'diproses'   => SuratTugas::whereIn('status_surat', [2, 3, 4])->count(),
-        'disetujui'  => SuratTugas::where('status_surat', 5)->count(),
+        'diproses'   => SuratTugas::whereIn('status_surat', [2, 3, 4, 5])->count(),
+        'disetujui'  => SuratTugas::where('status_surat', 6)->count(),
         'ditolak'    => SuratTugas::where('status_surat', 0)->count(),
     ];
 

@@ -11,15 +11,15 @@ class DosenController extends Controller
 {
     public function dosen_dashboard()
     {
-        $user = session('user');
-        $surat = SuratTugas::where('nidn', $user['nidn'])->get();
+        $surat = SuratTugas::where('nidn', session('user')['nidn'])->get();
         $stats = [
-            'total'      => SuratTugas::count(),
-            'diajukan'   => SuratTugas::where('status_surat', 1)->count(),
-            'diproses'   => SuratTugas::whereIn('status_surat', [2, 3, 4, 5, 6])->count(),
-            'disetujui'  => SuratTugas::where('status_surat', 7)->count(),
-            'ditolak'    => SuratTugas::where('status_surat', 0)->count(),
+            'diajukan'   => $surat->where('status_surat', 1)->count(),
+            'diproses'   => $surat->whereIn('status_surat', [2, 3, 4, 5])->count(),
+            'disetujui'  => $surat->where('status_surat', 6)->count(),
+            'ditolak'    => $surat->where('status_surat', 0)->count(),
         ];
+        // dd($surat);
+
         return view('dosen_kaprodi.index', compact('surat', 'stats'));
     }
     public function kaprodi_dashboard()
@@ -57,10 +57,10 @@ class DosenController extends Controller
 
         // Statistik
         $stats = [
-            'diajukan'   => SuratTugas::where('status_surat', 1)->count(),
-            'diproses'   => SuratTugas::whereIn('status_surat', [2, 3, 4, 5, 6])->count(),
-            'disetujui'  => SuratTugas::where('status_surat', 7)->count(),
-            'ditolak'    => SuratTugas::where('status_surat', 0)->count(),
+            'diajukan'   => $surat->where('status_surat', 1)->count(),
+            'diproses'   => $surat->whereIn('status_surat', [2, 3, 4, 5])->count(),
+            'disetujui'  => $surat->where('status_surat', 6)->count(),
+            'ditolak'    => $surat->where('status_surat', 0)->count(),
             'perlu_ttd'  => $suratUntukTtd->count()
         ];
 
@@ -94,12 +94,13 @@ class DosenController extends Controller
                 'lecturers.full_name'
             )
             ->get();
-        
+
         $perluTtdPemohon = DB::table('surat_tugas')
             ->join('lecturers', 'lecturers.nidn', '=', 'surat_tugas.nidn')
             ->select('surat_tugas.nidn', 'lecturers.full_name', DB::raw('COUNT(*) as total'))
             ->where('surat_tugas.status_surat', 3)
-            ->where('surat_tugas.nidn', '!=', $userNidn)
+            ->where('surat_tugas.signed_by_position_id', $positionId)
+            ->where('surat_tugas.nidn', '!=', $user['nidn'])
             ->groupBy('surat_tugas.nidn', 'lecturers.full_name')
             ->orderByDesc('total')
             ->get();
@@ -107,8 +108,8 @@ class DosenController extends Controller
         // Statistik
         $stats = [
             'diajukan'   => SuratTugas::where('status_surat', 1)->count(),
-            'diproses'   => SuratTugas::whereIn('status_surat', [2, 3, 4, 5, 6])->count(),
-            'disetujui'  => SuratTugas::where('status_surat', 7)->count(),
+            'diproses'   => SuratTugas::whereIn('status_surat', [2, 3, 4, 5])->count(),
+            'disetujui'  => SuratTugas::where('status_surat', 6)->count(),
             'ditolak'    => SuratTugas::where('status_surat', 0)->count(),
             'perlu_ttd'  => $suratUntukTtd->count()
         ];
@@ -154,8 +155,8 @@ class DosenController extends Controller
         // Statistik
         $stats = [
             'diajukan'   => SuratTugas::where('status_surat', 1)->count(),
-            'diproses'   => SuratTugas::whereIn('status_surat', [2, 3, 4, 5, 6])->count(),
-            'disetujui'  => SuratTugas::where('status_surat', 7)->count(),
+            'diproses'   => SuratTugas::whereIn('status_surat', [2, 3, 4, 5])->count(),
+            'disetujui'  => SuratTugas::where('status_surat', 6)->count(),
             'ditolak'    => SuratTugas::where('status_surat', 0)->count(),
             'perlu_ttd'  => $suratUntukTtd->count()
         ];
