@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\SuratTugas;
+use App\Models\Position;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -24,28 +25,20 @@ class DosenController extends Controller
     public function kaprodi_dashboard()
     {
         $user = session('user');
+        // $parentId = Position::where('position_id', session('user')['jabatanId'])->value('parent_position_id');
+        // dd($parentId);
 
         // Semua surat milik user
         $surat = SuratTugas::where('nidn', $user['nidn'])->get();
 
-        $userNidn = session('user.nidn');
-
-        // Ambil prefix dari lecturer_code
-        $userKode = DB::table('lecturers')
-            ->where('nidn', $userNidn)
-            ->value(DB::raw("REGEXP_SUBSTR(lecturer_code, '^[A-Z]+')"));
-
-        // Cari posisi berdasarkan prefix
-        $positionId = DB::table('positions')
-            ->where('position_code', 'LIKE', "%{$userKode}%")
-            ->value('position_id');
+        $positionId = session('user')['jabatanId'];
 
         // Ambil surat untuk ditandatangani dengan rule tambahan
         $suratUntukTtd = DB::table('surat_tugas')
             ->join('lecturers', 'lecturers.nidn', '=', 'surat_tugas.nidn')
             ->where('surat_tugas.status_surat', 1)
-            // ->where('surat_tugas.signed_by_position_id', $positionId)
-            ->where('surat_tugas.nidn', '!=', $userNidn)
+            ->where('surat_tugas.signed_by_position_id', $positionId)
+            ->where('surat_tugas.nidn', '!=', $user['nidn'])
             ->select(
                 'surat_tugas.*',
                 'lecturers.full_name'
@@ -56,7 +49,8 @@ class DosenController extends Controller
             ->join('lecturers', 'lecturers.nidn', '=', 'surat_tugas.nidn')
             ->select('surat_tugas.nidn', 'lecturers.full_name', DB::raw('COUNT(*) as total'))
             ->where('surat_tugas.status_surat', 1)
-            ->where('surat_tugas.nidn', '!=', $userNidn)
+            ->where('surat_tugas.signed_by_position_id', $positionId)
+            ->where('surat_tugas.nidn', '!=', $user['nidn'])
             ->groupBy('surat_tugas.nidn', 'lecturers.full_name')
             ->orderByDesc('total')
             ->get();
@@ -102,7 +96,7 @@ class DosenController extends Controller
         $suratUntukTtd = DB::table('surat_tugas')
             ->join('lecturers', 'lecturers.nidn', '=', 'surat_tugas.nidn')
             ->where('surat_tugas.status_surat', 3)
-            // ->where('surat_tugas.signed_by_position_id', $positionId)
+            ->where('surat_tugas.signed_by_position_id', $positionId)
             ->where('surat_tugas.nidn', '!=', $userNidn)
             ->select(
                 'surat_tugas.*',

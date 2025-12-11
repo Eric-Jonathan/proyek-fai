@@ -48,6 +48,8 @@ class SuratTugasController extends Controller
     
     public function create()
     {
+        $parentId = Position::where('position_id', session('user')['jabatanId'])->value('parent_position_id');
+        // dd($parentId)
         $nomor_surat = app('App\Services\NomorSuratService')->generatePreview();
 
         $lecturer = Lecturer::where('nidn', session('user.nidn'))
@@ -60,6 +62,7 @@ class SuratTugasController extends Controller
             'lecturer'    => $lecturer,
             'jabatan'     => $jabatan,
             'nomor_surat' => $nomor_surat,
+            'signed_by_position_id' => $parentId,
         ]);
     }
 
@@ -223,11 +226,16 @@ class SuratTugasController extends Controller
             abort(404, 'Surat tidak ditemukan');
         }
 
+        
+
         return view('dashboard.preview', compact('surat'));
     }
 
     public function detail($id)
     {
+        // $parentId = Position::where('position_id', session('user')['jabatanId'])->value('parent_position_id');
+        // dd($parentId);
+
         $surat = SuratTugas::from('surat_tugas AS st')
         ->select(
             'st.*',
@@ -259,6 +267,8 @@ class SuratTugasController extends Controller
     /*** ACC surat */
     // 2-3 -> dekan
     // 4-12 -> kaprodi
+    //12 -> 21, 11 -> 20, 10 -> 19, 9 -> 18, 8 -> 17, 7 -> 16, 6 -> 15, 5 -> 14, 4 -> 13
+    //3 -> [10, 11], 2 -> [12, 9-4]
     public function acc($id)
     {
         $surat = SuratTugas::findOrFail($id);
@@ -311,7 +321,7 @@ class SuratTugasController extends Controller
             'catatan_penolakan' => 'required|string',
         ]);
 
-        $userNidn = session('user.nidn');
+        $userNidn = session('user');
 
         // Ambil prefix dari lecturer_code
         $userKode = DB::table('lecturers')
