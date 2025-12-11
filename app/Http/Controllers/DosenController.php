@@ -44,7 +44,7 @@ class DosenController extends Controller
         $suratUntukTtd = DB::table('surat_tugas')
             ->join('lecturers', 'lecturers.nidn', '=', 'surat_tugas.nidn')
             ->where('surat_tugas.status_surat', 1)
-            ->where('surat_tugas.signed_by_position_id', $positionId)
+            // ->where('surat_tugas.signed_by_position_id', $positionId)
             ->where('surat_tugas.nidn', '!=', $userNidn)
             ->select(
                 'surat_tugas.*',

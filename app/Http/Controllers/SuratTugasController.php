@@ -161,7 +161,7 @@ class SuratTugasController extends Controller
 
         $dataTop->setCollection(
         $dataTop->getCollection()->unique('surat_id')->values()
-    );
+        );
 
 
         /* ================================
@@ -202,7 +202,7 @@ class SuratTugasController extends Controller
 
         $dataBottom->setCollection(
         $dataBottom->getCollection()->unique('surat_id')->values()
-    );
+        );
 
 
         return view('dashboard.index', compact('dataTop', 'dataBottom'));
