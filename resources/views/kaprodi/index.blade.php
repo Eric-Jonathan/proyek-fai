@@ -149,7 +149,7 @@
     @endif
 
     {{-- Daftar Surat Pengajuan --}}
-    <div class="card shadow-sm mb-4">
+    {{-- <div class="card shadow-sm mb-4">
         <div class="card-header bg-light">
             <h6 class="mb-0 fw-semibold"><i class="fa fa-list me-2"></i>Daftar Surat Tugas yang Perlu </h6>
         </div>
@@ -187,7 +187,7 @@
                 </tbody>
             </table>
         </div>
-    </div>
+    </div> --}}
 </div>
 @endsection
 
