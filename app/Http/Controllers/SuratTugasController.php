@@ -62,7 +62,7 @@ class SuratTugasController extends Controller
             'lecturer'    => $lecturer,
             'jabatan'     => $jabatan,
             'nomor_surat' => $nomor_surat,
-            'signed_by_position_id' => $parentId,
+            'signed_by_position_id' => $parentId
         ]);
     }
 
@@ -94,6 +94,13 @@ class SuratTugasController extends Controller
             $lampiranPath = $request->file('lampiran')->store('lampiran_surat', 'public');
         }
 
+        $status=0;
+        if (session('user')['jabatanId'] <= 12) {
+            $status = 2;
+        } else {
+            $status = 1;
+        }
+
         // SIMPAN DATA KE DATABASE
         SuratTugas::create([
             'nidn'               => $nidn,
@@ -109,7 +116,7 @@ class SuratTugasController extends Controller
             'tanggal_selesai'    => $validated['tanggal_selesai'],
             'tanggal_surat'      => now()->format('Y-m-d'),
             'lampiran_path'      => $lampiranPath,
-            'status_surat'       => '1',
+            'status_surat'       => $status,
             'signed_by_position_id' => session('user.parent_position_id'),  // dari session
         ]);
         LogAktivitas::create([
@@ -207,6 +214,8 @@ class SuratTugasController extends Controller
         $dataBottom->getCollection()->unique('surat_id')->values()
         );
 
+        
+
 
         return view('dashboard.index', compact('dataTop', 'dataBottom'));
     }
@@ -265,8 +274,8 @@ class SuratTugasController extends Controller
 
 
     /*** ACC surat */
-    // 2-3 -> dekan
-    // 4-12 -> kaprodi
+    // 2-3 -> dekan (status -> 2)
+    // 4-12 -> kaprodi (status -> 2)
     //12 -> 21, 11 -> 20, 10 -> 19, 9 -> 18, 8 -> 17, 7 -> 16, 6 -> 15, 5 -> 14, 4 -> 13
     //3 -> [10, 11], 2 -> [12, 9-4]
     public function acc($id)
@@ -274,18 +283,7 @@ class SuratTugasController extends Controller
         $surat = SuratTugas::findOrFail($id);
         $nidn = session('user')['nidn'] ?? null;
         $role = session('user')['role'] ?? null;
-
-        $userNidn = session('user.nidn');
-
-        // Ambil prefix dari lecturer_code
-        $userKode = DB::table('lecturers')
-            ->where('nidn', $userNidn)
-            ->value(DB::raw("REGEXP_SUBSTR(lecturer_code, '^[A-Z]+')"));
-
-        // Cari posisi berdasarkan prefix
-        $positionId = DB::table('positions')
-            ->where('position_code', 'LIKE', "%{$userKode}%")
-            ->value('position_id');
+        $positionId = Position::where('position_id', session('user')['jabatanId'])->value('parent_position_id');
 
         $statusLabels = [
             -1 => 'delete',
@@ -367,78 +365,45 @@ class SuratTugasController extends Controller
     {
         $role = session('user')['role'] ?? null;
         $nidn = session('user')['nidn'] ?? null;
-        if ($role === 'admin') {
+        if (in_array($role, ['admin', 'rektor'])) {
             $surat = SuratTugas::all();
 
-            $dataTop = SuratTugas::whereNotIn('status_surat', [0, 5])
-                        ->paginate(request('per_page') ?? 10)
-                        ->appends(request()->query());
+            $dataTop = SuratTugas::join('lecturers', 'lecturers.nidn', '=', 'surat_tugas.nidn')
+                ->whereNotIn('surat_tugas.status_surat', [0, 5])
+                ->select('surat_tugas.*', 'lecturers.full_name')
+                ->paginate(request('per_page') ?? 10)
+                ->appends(request()->query());
 
-            $dataBottom = SuratTugas::whereIn('status_surat', [0, 5])
-                        ->paginate(request('per_page') ?? 10)
-                        ->appends(request()->query());
-        } elseif ($role === 'dosen') {
+            $dataBottom = SuratTugas::join('lecturers', 'lecturers.nidn', '=', 'surat_tugas.nidn')
+                ->whereIn('surat_tugas.status_surat', [0, 5])
+                ->select('surat_tugas.*', 'lecturers.full_name')
+                ->paginate(request('per_page') ?? 10)
+                ->appends(request()->query());
+        } elseif (in_array($role, ['dosen', 'kaprodi', 'dekan'])) {
             $surat = SuratTugas::where('nidn', $nidn);
             // Data yang sedang diproses (kecuali ditolak dan ditandatangani)
-            $dataTop = $surat->whereNotIn('status_surat', [0, 5])
-                             ->paginate(request('per_page') ?? 10)
-                             ->appends(request()->query());
+            $dataTop = SuratTugas::join('lecturers', 'lecturers.nidn', '=', 'surat_tugas.nidn')
+                ->whereNotIn('surat_tugas.status_surat', [0, 5])
+                ->select('surat_tugas.*', 'lecturers.full_name')
+                ->paginate(request('per_page') ?? 10)
+                ->appends(request()->query());
 
             // Clone query untuk bagian bottom (karena query sebelumnya sudah digunakan)
-            $dataBottom = SuratTugas::where('nidn', $nidn)
-                             ->whereIn('status_surat', [0, 5])
-                             ->paginate(request('per_page') ?? 10)
-                             ->appends(request()->query());
-
-        } elseif ($role === 'kaprodi') {
-            // Kaprodi melihat suratnya + yang status diajukan/diproses
-            // $surat = SuratTugas::where('nidn', $nidn)
-            //     ->orWhereIn('status_surat', ['diajukan', 'diproses'])
-            //     ->get();
-
-            $surat = SuratTugas::where('nidn', $nidn);
-            // Data yang sedang diproses (kecuali ditolak dan ditandatangani)
-            $dataTop = $surat->whereNotIn('status_surat', [0, 5])
-                             ->paginate(request('per_page') ?? 10)
-                             ->appends(request()->query());
-
-            // Clone query untuk bagian bottom (karena query sebelumnya sudah digunakan)
-            $dataBottom = SuratTugas::where('nidn', $nidn)
-                             ->whereIn('status_surat', [0, 5])
-                             ->paginate(request('per_page') ?? 10)
-                             ->appends(request()->query());
-        } elseif ($role === 'dekan') {
-            // Dekan hanya melihat surat yang sudah disetujui kaprodi
-            // $surat = SuratTugas::where('status_surat', 'disetujui_kaprodi')->get();
-            $surat = SuratTugas::where('nidn', $nidn);
-            // Data yang sedang diproses (kecuali ditolak dan ditandatangani)
-            $dataTop = $surat->whereNotIn('status_surat', [0, 5])
-                             ->paginate(request('per_page') ?? 10)
-                             ->appends(request()->query());
-
-            // Clone query untuk bagian bottom (karena query sebelumnya sudah digunakan)
-            $dataBottom = SuratTugas::where('nidn', $nidn)
-                             ->whereIn('status_surat', [0, 5])
-                             ->paginate(request('per_page') ?? 10)
-                             ->appends(request()->query());
-        } elseif ($role === 'rektor') {
-            $dataTop = SuratTugas::whereNotIn('status_surat', [0, 5])
-                             ->paginate(request('per_page') ?? 10)
-                             ->appends(request()->query());
-
-            // Clone query untuk bagian bottom (karena query sebelumnya sudah digunakan)
-            $dataBottom = SuratTugas::whereIn('status_surat', [0, 5])
-                             ->paginate(request('per_page') ?? 10)
-                             ->appends(request()->query());
+            $dataTop = SuratTugas::join('lecturers', 'lecturers.nidn', '=', 'surat_tugas.nidn')
+                ->whereNotIn('surat_tugas.status_surat', [0, 5])
+                ->select('surat_tugas.*', 'lecturers.full_name')
+                ->paginate(request('per_page') ?? 10)
+                ->appends(request()->query());
 
         } else {
             abort(403, 'Role pengguna tidak dikenali.');
         }
 
+
         if ($role === 'admin') {
             return view('admin.riwayat_surat', compact('surat', 'dataBottom', 'dataTop'));
         } else if ($role ==="kaprodi"){
-            return view('dosen_kaprodi.riwayat_surat', compact('surat', 'dataBottom', 'dataTop'));
+            return view('kaprodi.riwayat_surat', compact('surat', 'dataBottom', 'dataTop'));
         } else if ($role ==="rektor"){
             return view('rektor.list_pengajuan', compact( 'dataBottom', 'dataTop'));
         } else if ($role ==="dekan"){
