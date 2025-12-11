@@ -493,7 +493,7 @@ DROP TABLE IF EXISTS `surat_tugas`;
 
 CREATE TABLE `surat_tugas` (
   `surat_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `nidn` VARCHAR(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nidn` VARCHAR(11) COLLATE utf8mb4_unicode_ci NOT NULL,
   `template_id` INT UNSIGNED NOT NULL,
   `nomor_surat` VARCHAR(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `jenis_tugas` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
