@@ -147,9 +147,6 @@
         </div>
     </div>
     @endif
-
-    {{-- Daftar Surat Pengajuan --}}
-    
 </div>
 @endsection
 

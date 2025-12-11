@@ -14,12 +14,12 @@ class DosenController extends Controller
         $user = session('user');
         $surat = SuratTugas::where('nidn', $user['nidn'])->get();
         $stats = [
-            'diajukan'   => SuratTugas::where('nidn', $user['nidn'])->where('status_surat', 1)->count(),
-            'diproses'   => SuratTugas::where('nidn', $user['nidn'])->whereIn('status_surat', [2, 3, 4])->count(),
-            'disetujui'  => SuratTugas::where('nidn', $user['nidn'])->where('status_surat', 5)->count(),
-            'ditolak'    => SuratTugas::where('nidn', $user['nidn'])->where('status_surat', 0)->count(),
+            'total'      => SuratTugas::count(),
+            'diajukan'   => SuratTugas::where('status_surat', 1)->count(),
+            'diproses'   => SuratTugas::whereIn('status_surat', [2, 3, 4, 5, 6])->count(),
+            'disetujui'  => SuratTugas::where('status_surat', 7)->count(),
+            'ditolak'    => SuratTugas::where('status_surat', 0)->count(),
         ];
-
         return view('dosen_kaprodi.index', compact('surat', 'stats'));
     }
     public function kaprodi_dashboard()
@@ -61,8 +61,6 @@ class DosenController extends Controller
             'diproses'   => SuratTugas::whereIn('status_surat', [2, 3, 4, 5, 6])->count(),
             'disetujui'  => SuratTugas::where('status_surat', 7)->count(),
             'ditolak'    => SuratTugas::where('status_surat', 0)->count(),
-
-            // Baru ditambahkan
             'perlu_ttd'  => $suratUntukTtd->count()
         ];
 
@@ -97,8 +95,6 @@ class DosenController extends Controller
             )
             ->get();
         
-            
-
         $perluTtdPemohon = DB::table('surat_tugas')
             ->join('lecturers', 'lecturers.nidn', '=', 'surat_tugas.nidn')
             ->select('surat_tugas.nidn', 'lecturers.full_name', DB::raw('COUNT(*) as total'))
@@ -114,12 +110,8 @@ class DosenController extends Controller
             'diproses'   => SuratTugas::whereIn('status_surat', [2, 3, 4, 5, 6])->count(),
             'disetujui'  => SuratTugas::where('status_surat', 7)->count(),
             'ditolak'    => SuratTugas::where('status_surat', 0)->count(),
-
-            // Baru ditambahkan
             'perlu_ttd'  => $suratUntukTtd->count()
         ];
-
-
 
         return view('dekan.index', compact('surat', 'stats', 'suratUntukTtd', 'perluTtdPemohon'));
     }
@@ -159,15 +151,12 @@ class DosenController extends Controller
             ->orderByDesc('total')
             ->get();
 
-
         // Statistik
         $stats = [
             'diajukan'   => SuratTugas::where('status_surat', 1)->count(),
             'diproses'   => SuratTugas::whereIn('status_surat', [2, 3, 4, 5, 6])->count(),
             'disetujui'  => SuratTugas::where('status_surat', 7)->count(),
             'ditolak'    => SuratTugas::where('status_surat', 0)->count(),
-
-            // Baru ditambahkan
             'perlu_ttd'  => $suratUntukTtd->count()
         ];
 
