@@ -411,7 +411,7 @@ DROP TABLE IF EXISTS `log_aktivitas`;
 
 CREATE TABLE `log_aktivitas` (
   `log_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `nidn` VARCHAR(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nidn` VARCHAR(11) COLLATE utf8mb4_unicode_ci NOT NULL,
   `aktivitas` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `module` ENUM('surat_tugas','surat_keluar','template','stempel','auth') COLLATE utf8mb4_unicode_ci NOT NULL,
   `module_id` INT UNSIGNED DEFAULT NULL,
@@ -505,7 +505,7 @@ CREATE TABLE `surat_tugas` (
   `tanggal_selesai` DATE NOT NULL,
   `tanggal_surat` DATE NOT NULL,
   `lampiran_path` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `status_surat` TINYINT(1) NOT NULL DEFAULT '1' COMMENT '-1=`delete`, 0=ditolak, 1=diproses_kaprodi, 2=diproses_sekretaris, 3=diproses_dekan, 4=diproses_rektor, 5=menunggu_stempel, 6=selesai',
+  `status_surat` TINYINT(1) NOT NULL DEFAULT '1' COMMENT '-1=`delete`, 0=ditolak, 1=diajukan,`surat_tugas` 2=disetujui_kaprodi, 3=disetujui_sekretaris, 4=disetujui_dekan, 5=disetujui_rektor, 6=stempel_BAA, 7=selesai',
   `nomor_surat_final` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `signed_by_position_id` INT UNSIGNED DEFAULT NULL,
   `alasan_penolakan` TEXT NULL DEFAULT NULL,
