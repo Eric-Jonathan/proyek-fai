@@ -358,8 +358,9 @@ class SuratTugasController extends Controller
         $surat->alasan_penolakan = $request->catatan_penolakan;
         $surat->signed_by_position_id = $position_id;
         $surat->save();
-        return redirect(session('user.role') . '.dashboard')
+        return redirect()->route(session('user.role') . '.dashboard')
             ->with('success', 'Surat berhasil ditolak oleh ' . $statusLabels[$surat->status_surat + 1]);
+
     }
 
     public function riwayat_surat()
