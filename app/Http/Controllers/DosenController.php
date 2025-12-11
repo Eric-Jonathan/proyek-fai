@@ -121,7 +121,6 @@ class DosenController extends Controller
             ->orderByDesc('total')
             ->get();
 
-dd($suratUntukTtd);
         // Statistik
         $stats = [
             'diajukan'   => SuratTugas::where('nidn', $user['nidn'])->where('status_surat', 1)->count(),
