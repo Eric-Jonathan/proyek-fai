@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [LoginController::class, 'authenticate'])->name('login.process');
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
-Route::get('/cetak-surat/{id}', [SuratTugasController::class, 'surat'])->name('surat');
 
 // ====================
 // 🧾 BAU
@@ -115,6 +114,7 @@ Route::prefix('CRUD_Surat')->group(function () {
     Route::post('/surat-tugas/{id}/tolak', [SuratTugasController::class, 'tolak'])->name('surat.tolak');
     Route::get('/surat-tugas/edit/{id}', [SuratTugasController::class, 'edit'])->name('CRUD_Surat.edit');
     Route::post('/surat-tugas/update/{id}', [SuratTugasController::class, 'update'])->name('CRUD_Surat.update');
+    Route::get('/cetak-surat/{id}', [SuratTugasController::class, 'surat'])->name('cetak-surat');
 }); 
 
 // ====================

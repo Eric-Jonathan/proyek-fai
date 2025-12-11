@@ -50,6 +50,7 @@ class LoginController extends Controller
                             ->first();
 
             $jabatan = $user->activePositions()->first()?->position?->position_name;
+            $jabatanId = $user->activePositions()->first()?->position?->position_id;
 
             // array nama permissions
             $permissionList = $user->permissions
@@ -64,6 +65,7 @@ class LoginController extends Controller
                     'full_name' => $user->full_name,
                     'nidn' => $user->nidn,
                     'jabatan' => $jabatan,
+                    'jabatanId' => $jabatanId,
                     'email' => $user->email,
                     'role' => $user->role,
                     'permissions' => $permissionList,
