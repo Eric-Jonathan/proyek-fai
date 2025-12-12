@@ -162,7 +162,7 @@
                     </td>
                     <!-- Tombol -->
                     <td>
-                        <a href="{{ route('surat-tugas.preview', $item->surat_id) }}" class="btn btn-sm btn-info">
+                        <a href="{{ route('surat-tugas.preview', $item->surat_id) }}" class="btn btn-sm btn-warning">
                             <i class="fa fa-clipboard-check"></i> Review
                         </a>
                     </td>
