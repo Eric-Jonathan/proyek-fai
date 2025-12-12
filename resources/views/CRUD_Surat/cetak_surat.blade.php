@@ -191,7 +191,7 @@
                 <p>Institut Sains dan Teknologi Terpadu Surabaya</p>
 
                 <div class="tandaTangan">
-                    <img src="https://www.indorentalmedia.com/wp-content/uploads/2022/10/cara-scan-tanda-tangan-1200x900.webp" width="120">
+                    <img src="{{ public_path("asset/dummy_ttd.png") }}" width="120">
                 </div>
 
                 <p class="text-decoration-underline mb-0">{{ $atasan->full_name ?? '-' }}</p>

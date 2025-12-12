@@ -67,22 +67,13 @@ class SuratTugasController extends Controller
 
         $atasan = Lecturer::where('nidn', $parentAssignment->nidn)->first();
 
-        // Generate PDF inline (tanpa download)
-        $pdf = Pdf::loadView('CRUD_Surat.cetak_surat', [
+        return view('CRUD_Surat.preview_pdf', [
             'surat' => $surat,
             'lecturer' => $lecturer,
             'parentAssignment' => $parentAssignment,
             'user' => $user,
             'atasan' => $atasan
         ]);
-
-        // Simpan ke storage sementara
-        $fileName = 'surat_tugas_'.$id.'.pdf';
-        $filePath = storage_path('app/public/'.$fileName);
-
-        file_put_contents($filePath, $pdf->output());
-
-        return view('CRUD_Surat.preview_pdf', compact('fileName', 'surat'));
     }
 
     
