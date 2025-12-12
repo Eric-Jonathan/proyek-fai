@@ -41,8 +41,50 @@ class SuratTugasController extends Controller
             'parentAssignment' => $parentAssignment, // ini ganti $atasan
             'user' => $user,
             'atasan' => $atasan
-        ])->download('surat_tugas.pdf');
+        ])->download('surat_tugas_' . $surat->surat_id . '.pdf');
     }
+
+    public function preview_pdf($id)
+    {
+        // Enable PDF Options
+        Pdf::setOptions([
+            'isRemoteEnabled' => true,
+            'isHtml5ParserEnabled' => true,
+        ]);
+
+        $user = session('user');
+        $surat = SuratTugas::with(['signedByPosition.parent'])->find($id);
+
+        $lecturer = Lecturer::where('nidn', $surat['nidn'])->first();
+
+        $positionAssignment = PositionAssignment::where('nidn', $lecturer->nidn)
+            ->with('position.parent')
+            ->first();
+
+        $parent = $positionAssignment->position->parent;
+
+        $parentAssignment = PositionAssignment::where('position_id', $parent->parent_position_id)->first();
+
+        $atasan = Lecturer::where('nidn', $parentAssignment->nidn)->first();
+
+        // Generate PDF inline (tanpa download)
+        $pdf = Pdf::loadView('CRUD_Surat.cetak_surat', [
+            'surat' => $surat,
+            'lecturer' => $lecturer,
+            'parentAssignment' => $parentAssignment,
+            'user' => $user,
+            'atasan' => $atasan
+        ]);
+
+        // Simpan ke storage sementara
+        $fileName = 'surat_tugas_'.$id.'.pdf';
+        $filePath = storage_path('app/public/'.$fileName);
+
+        file_put_contents($filePath, $pdf->output());
+
+        return view('CRUD_Surat.preview_pdf', compact('fileName', 'surat'));
+    }
+
     
     public function create()
     {

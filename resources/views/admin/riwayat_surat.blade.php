@@ -129,7 +129,7 @@
                 <tbody>
                 @forelse($dataTop as $item)
                 {{-- bikin condition kalo status diajukan bisa ke --}}
-                    <tr onclick="window.location='{{ url('/CRUD_Surat/cetak-surat/' . $item->surat_id) }}'" style="cursor:pointer">
+                    <tr onclick="window.location='{{ url('/CRUD_Surat/surat-tugas/preview_pdf/' . $item->surat_id) }}'" style="cursor:pointer">
                         <td>{{ $loop->iteration}}</td>
                         <td class="fw-bold">{{ $item->jenis_tugas }}</td>
                         <td>{{ $item->full_name }}</td>
@@ -269,11 +269,11 @@
 
                         <td class="text-center">
                             @if($item->status_surat == 'ditandatangani')
-                                <a href="{{ route('cetak-surat', $item->surat_id) }}" class="btn btn-sm btn-outline-danger">
+                                <a href="{{ route('surat.preview_pdf', $item->surat_id) }}" class="btn btn-sm btn-outline-danger">
                                     <i class="bi bi-file-earmark-pdf-fill"></i> Print
                                 </a>
                             @else
-                                <a href="{{ route('cetak-surat', $item->surat_id) }}" class="btn btn-sm btn-outline-secondary" disabled>
+                                <a href="{{ route('surat.preview_pdf', $item->surat_id) }}" class="btn btn-sm btn-outline-secondary" disabled>
                                     <i class="bi bi-file-earmark-pdf"></i> Print
                                 </a>
                             @endif
