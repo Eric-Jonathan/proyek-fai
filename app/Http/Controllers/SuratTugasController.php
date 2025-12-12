@@ -283,7 +283,7 @@ class SuratTugasController extends Controller
         $role = session('user')['role'] ?? null;
         $lecturer = Lecturer::where('nidn', $surat->nidn)->first();
         $xrole = $lecturer->role ?? null;
-
+        $parentId = Position::where('position_id', session('user')['jabatanId'])->value('parent_position_id');
 
         $statusLabels = [
             -1 => 'delete',
@@ -312,6 +312,9 @@ class SuratTugasController extends Controller
             } else {
             
                 $surat->status_surat += 1;
+                if($parentId != null){
+                    $surat->signed_by_position_id = $parentId;
+                }
             }
         }
 
