@@ -18,18 +18,16 @@ Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 // 🧾 BAU
 // ====================
 Route::prefix('bau')->middleware(['auth', 'role:bau'])->group(function () {
-    // Route::get('/', fn() => view('bau.index'))->name('bau.dashboard');
     Route::get('/', [BAUController::class, 'dashboard'])->name('bau.dashboard');
     Route::view('/surat-tugas', 'bau.surat_tugas')->name('bau.surat_tugas');
     Route::view('/arsip', 'bau.arsip')->name('bau.arsip');
-    Route::view('/transportasi', 'bau.transport')->name('bau.transport');
 });
 
 // ====================
 // 🧑‍🏫 REKTOR
 // ====================
 Route::prefix('rektor')->middleware(['auth', 'role:rektor'])->group(function () {
-    Route::get('/', [DosenController::class, 'rektor_dashboard'])->name('rektor.dashboard');
+    Route::get('/', [DosenController::class, 'dashboard'])->name('rektor.dashboard');
     Route::get('/list-pengajuan', [SuratTugasController::class, 'riwayat_surat'])->name('rektor.listPengajuan');
     Route::get('/surat/{id}', fn($id) => view('rektor.show'))->name('rektor.show');
 });
@@ -38,23 +36,13 @@ Route::prefix('rektor')->middleware(['auth', 'role:rektor'])->group(function () 
 // 🧑‍💼 KAPRODI
 // ====================
 Route::prefix('kaprodi')->middleware(['auth', 'role:kaprodi'])->group(function () {
-    Route::get('/', [DosenController::class, 'kaprodi_dashboard'])->name('kaprodi.dashboard');
-    // Route::view('/createSurat', 'dosen_kaprodi.create_surat')->name('kaprodi.createSurat');
+    Route::get('/', [DosenController::class, 'dashboard'])->name('kaprodi.dashboard');
     Route::view('/create-surat', 'dosen_kaprodi.create_surat')->name('kaprodi.createSurat');
     Route::get('/riwayat', [SuratTugasController::class, 'riwayat_surat'])->name('kaprodi.riwayatSurat');
     Route::prefix('CRUD_Surat')->group(function () {
         Route::get('/form_surat', [SuratTugasController::class, 'create'])->name('kaprodi.CRUD_Surat.form_surat');
         Route::get('/edit_surat', [SuratTugasController::class, 'edit'])->name('kaprodi.CRUD_Surat.edit_surat');
         Route::post('/submit_surat', [SuratTugasController::class, 'store'])->name('kaprodi.CRUD_Surat.submit_surat');
-        // // Route::get('/surat-tugas', [SuratTugasController::class, 'index'])->name('surat-tugas.index');
-        // Route::get('/surat-tugas/create', [SuratTugasController::class, 'create'])->name('surat-tugas.create');
-        // Route::post('/surat-tugas', [SuratTugasController::class, 'store'])->name('surat-tugas.store');
-        // Route::get('/surat-tugas/preview/{id}', [SuratTugasController::class, 'preview'])->name('dashboard.preview');
-        // Route::get('/surat-tugas/detail/{id}', [SuratTugasController::class, 'detail'])->name('dashboard.detail');
-        // Route::post('/surat-tugas/{id}/acc', [SuratTugasController::class, 'acc'])->name('surat.acc');
-        // Route::post('/surat-tugas/{id}/tolak', [SuratTugasController::class, 'tolak'])->name('surat.tolak');
-        // Route::get('/surat-tugas/edit/{id}', [SuratTugasController::class, 'edit'])->name('CRUD_Surat.edit');
-        // Route::post('/surat-tugas/update/{id}', [SuratTugasController::class, 'update'])->name('CRUD_Surat.update');
     });
 });
 
@@ -63,12 +51,10 @@ Route::prefix('kaprodi')->middleware(['auth', 'role:kaprodi'])->group(function (
 // ====================
 Route::prefix('sekretaris')->middleware(['auth', 'role:sekretaris'])->group(function () {
     Route::get('/', [SeketarisController::class, 'dashboard'])->name('sekretaris.dashboard');
-    // Route::get('/', fn() => view('sekretaris.index'))->name('sekretaris.dashboard');
     Route::view('/daftar-surat', 'sekretaris.daftar_surat')->name('sekretaris.daftar_surat');
     Route::view('/buat-surat', 'sekretaris.create_surat')->name('sekretaris.create_surat');
-    Route::view('/surat-keluar', 'sekretaris.surat_keluar')->name('sekretaris.surat_keluar');
-    Route::view('/arsip', 'sekretaris.arsip')->name('sekretaris.arsip');
-    Route::view('/laporan', 'sekretaris.laporan')->name('sekretaris.laporan');
+    // Route::view('/arsip', 'sekretaris.arsip')->name('sekretaris.arsip');
+    // Route::view('/laporan', 'sekretaris.laporan')->name('sekretaris.laporan');
 });
 
 // ====================
@@ -84,22 +70,13 @@ Route::prefix('dosen')->middleware(['auth', 'role:dosen'])->group(function () {
 // 🧑‍💼 DEKAN
 // ====================
 Route::prefix('dekan')->middleware(['auth', 'role:dekan'])->group(function () {
-    Route::get('/', [DosenController::class, 'dekan_dashboard'])->name('dekan.dashboard');
+    Route::get('/', [DosenController::class, 'dashboard'])->name('dekan.dashboard');
     Route::view('/create-surat', 'dosen_kaprodi.create_surat')->name('dekan.createSurat');
     Route::get('/riwayat', [SuratTugasController::class, 'riwayat_surat'])->name('dekan.riwayatSurat');
     Route::prefix('CRUD_Surat')->group(function () {
         Route::get('/form_surat', [SuratTugasController::class, 'create'])->name('dekan.CRUD_Surat.form_surat');
         Route::get('/edit_surat', [SuratTugasController::class, 'edit'])->name('dekan.CRUD_Surat.edit_surat');
         Route::post('/submit_surat', [SuratTugasController::class, 'store'])->name('dekan.CRUD_Surat.submit_surat');
-        // Route::get('/surat-tugas', [SuratTugasController::class, 'index'])->name('surat-tugas.index');
-        // Route::get('/surat-tugas/create', [SuratTugasController::class, 'create'])->name('surat-tugas.create');
-        // Route::post('/surat-tugas', [SuratTugasController::class, 'store'])->name('surat-tugas.store');
-        // Route::get('/surat-tugas/preview/{id}', [SuratTugasController::class, 'preview'])->name('dashboard.preview');
-        // Route::get('/surat-tugas/detail/{id}', [SuratTugasController::class, 'detail'])->name('dashboard.detail');
-        // Route::post('/surat-tugas/{id}/acc', [SuratTugasController::class, 'acc'])->name('surat.acc');
-        // Route::post('/surat-tugas/{id}/tolak', [SuratTugasController::class, 'tolak'])->name('surat.tolak');
-        // Route::get('/surat-tugas/edit/{id}', [SuratTugasController::class, 'edit'])->name('CRUD_Surat.edit');
-        // Route::post('/surat-tugas/update/{id}', [SuratTugasController::class, 'update'])->name('CRUD_Surat.update');
     });
 });
 
@@ -107,7 +84,6 @@ Route::prefix('CRUD_Surat')->group(function () {
     Route::get('/form_surat', [SuratTugasController::class, 'create'])->name('CRUD_Surat.form_surat');
     Route::get('/edit_surat', [SuratTugasController::class, 'edit'])->name('CRUD_Surat.edit_surat');
     Route::post('/submit_surat', [SuratTugasController::class, 'store'])->name('CRUD_Surat.submit_surat');
-    // Route::get('/surat-tugas', [SuratTugasController::class, 'index'])->name('surat-tugas.index');
     Route::get('/surat-tugas/create', [SuratTugasController::class, 'create'])->name('surat-tugas.create');
     Route::post('/surat-tugas', [SuratTugasController::class, 'store'])->name('surat-tugas.store');
     Route::get('/surat-tugas/preview/{id}', [SuratTugasController::class, 'preview'])->name('surat-tugas.preview');
@@ -147,25 +123,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
             ->name('admin.logs');
 });
 
-// Route::get('/dashboard', function () {
-//     return view('dashboard.dashboard');
-// })->name('dashboard');
 
-// Route::prefix('CRUD_Surat')->group(function () {
-//     Route::get('/form_surat', [SuratTugasController::class, 'create'])->name('CRUD_Surat.form_surat');
-//     Route::get('/edit_surat', [SuratTugasController::class, 'edit'])->name('CRUD_Surat.edit_surat');
-//     Route::post('/submit_surat', [SuratTugasController::class, 'store'])->name('CRUD_Surat.submit_surat');
-//     Route::get('/surat-tugas', [SuratTugasController::class, 'index'])->name('surat-tugas.index');
-// Route::get('/surat-tugas/create', [SuratTugasController::class, 'create'])->name('surat-tugas.create');
-// Route::post('/surat-tugas', [SuratTugasController::class, 'store'])->name('surat-tugas.store');
-
-// Route::get('/surat-tugas/preview/{id}', [SuratTugasController::class, 'preview'])->name('dashboard.preview');
-// Route::get('/surat-tugas/detail/{id}', [SuratTugasController::class, 'detail'])->name('dashboard.detail');
-// Route::post('/surat-tugas/{id}/acc', [SuratTugasController::class, 'acc'])->name('surat.acc');
-// Route::post('/surat-tugas/{id}/tolak', [SuratTugasController::class, 'tolak'])->name('surat.tolak');
-// Route::get('/surat-tugas/edit/{id}', [SuratTugasController::class, 'edit'])->name('CRUD_Surat.edit');
-// Route::post('/surat-tugas/update/{id}', [SuratTugasController::class, 'update'])->name('CRUD_Surat.update');
-// });
 
 
 
