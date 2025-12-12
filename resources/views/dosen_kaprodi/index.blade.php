@@ -6,7 +6,7 @@
 <div class="container-fluid mt-4">
     {{-- Judul Halaman --}}
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="fw-bold">Dashboard Surat Tugas</h4>
+        <h4 class="fw-bold">Dashboard Dosen</h4>
     </div>
 
     <div class="row g-3 mb-4">    

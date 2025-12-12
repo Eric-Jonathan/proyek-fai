@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container mt-4">
-    <h3 class="mb-4"><i class="fa fa-home me-2"></i> Dashboard Sekretaris</h3>
+    <h3 class="mb-4"><i class="fa fa-home me-2"></i> Dashboard BAU</h3>
 
     <!-- 🔍 Filter -->
     <div class="card mb-4 shadow-sm">
