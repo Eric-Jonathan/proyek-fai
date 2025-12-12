@@ -105,9 +105,9 @@
 
                 <tbody>
                 @forelse($surat as $item)
-                {{-- bikin condition kalo status diajukan bisa ke --}}
+                @if ($item->status_surat > 0 && $item->status_surat < 6)
                     <tr onclick="window.location='{{ url('/CRUD_Surat/surat-tugas/preview_pdf/' . $item->surat_id) }}'" style="cursor:pointer">
-                        <td>{{ $loop->iteration}}</td>
+                        <td>{{ $no++ }}</td>
                         <td class="fw-bold">{{ $item->jenis_tugas }}</td>
                         <td>{{ $item->full_name }}</td>
                         <td>{{ \Carbon\Carbon::parse($item->tanggal_mulai)->format('d M Y') }}</td>
@@ -131,7 +131,7 @@
                             </span>
                         </td>
                     </tr>
-
+                @endif
                 @empty
                     <tr>
                         <td colspan="7" class="text-center text-muted py-4">
@@ -210,15 +210,22 @@
 
                         <!-- 🔥 AKSI PRINT PDF -->
                         <td class="text-center">
-                            @if ($item->status_surat == 6)
-                                <a href="{{ route('cetak-surat', $item->surat_id) }}" 
-                                   class="btn btn-sm btn-danger" target="_blank">
-                                    <i class="bi bi-filetype-pdf"></i>
+                            @if ($item->status_surat >= 0 && $item->status_surat < 2)
+                                <a href="{{ route('surat-tugas.detail', $item->surat_id) }}" class="btn btn-sm btn-info">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                            
+                                <a href="{{ route('CRUD_Surat.edit', $item->surat_id) }}" class="btn btn-sm btn-warning">
+                                    <i class="fa fa-pencil"></i>
+                                </a>
+                            @elseif ($item->status_surat >= 0 )
+                                <a href="{{ route('surat-tugas.detail', $item->surat_id) }}" class="btn btn-sm btn-info">
+                                    <i class="fa fa-eye"></i>
                                 </a>
                             @else
-                                <button class="btn btn-sm btn-secondary" disabled>
-                                    <i class="bi bi-file-earmark-lock"></i>
-                                </button>
+                                <a href="{{ route('surat-tugas.detail', $item->surat_id) }}" class="btn btn-sm btn-primary">
+                                    <i class="fa fa-download"></i>
+                                </a>
                             @endif
                         </td>
                     </tr>

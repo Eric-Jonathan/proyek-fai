@@ -61,7 +61,7 @@ Route::prefix('sekretaris')->middleware(['auth', 'role:sekretaris'])->group(func
 // 🧑‍💼 DOSEN
 // ====================
 Route::prefix('dosen')->middleware(['auth', 'role:dosen'])->group(function () {
-    Route::get('/', [DosenController::class, 'dosen_dashboard'])->name('dosen.dashboard');
+    Route::get('/', [DosenController::class, 'dashboard'])->name('dosen.dashboard');
     Route::view('/create-surat', 'dosen_kaprodi.create_surat')->name('dosen.createSurat');
     Route::get('/riwayat', [SuratTugasController::class, 'riwayat_surat'])->name('dosen.riwayatSurat');
 });

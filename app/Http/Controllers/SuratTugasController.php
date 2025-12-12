@@ -127,10 +127,19 @@ class SuratTugasController extends Controller
 
         $status=0;
         if (session('user')['jabatanId'] <= 12) {
-            $status = 2;
+            if(session('user')['jabatanId'] <= 3 && $validated['sifat_surat'] == 'Non-Dinas'){
+                $status = 6;
+            } else {
+                $status = 2;
+            }
         } else {
             $status = 1;
         }
+
+        // dd($validated['sifat_surat']);
+        //'Non-Dinas'
+        // $sifat = $validated['sifat_surat'];
+        // if($validated['sifat_surat'] == 'Non-Dinas'){}
 
         // SIMPAN DATA KE DATABASE
         SuratTugas::create([
@@ -237,25 +246,26 @@ class SuratTugasController extends Controller
             5  => 'menunggu_stempel',
             6  => 'selesai',
         ];
-
+// dd($surat['sifat']);
 
         // --- LOGIKA STATUS SURAT ---
         if ($surat->status_surat == 3 && $xrole != 'dekan') {
-
-            // Loncat langsung ke 5
+            // skip rektor 
             $surat->status_surat = 5;
         
         } else {
         
             if ($surat->signed_by_position_id == 1) {
-            
+                //dekan
                 $surat->status_surat += 2;
             
             } else {
-            
-                $surat->status_surat += 1;
-                if($parentId != null){
+                if($parentId != null){ //sekretaris
                     $surat->signed_by_position_id = $parentId;
+                }
+                $surat->status_surat += 1;
+                if ($role == 'kaprodi' && $surat['sifat'] == 'Non-Dinas') {
+                    $surat->status_surat = 6;
                 }
             }
         }
