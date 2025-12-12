@@ -15,6 +15,12 @@ class DosenController extends Controller
         $role = session('user')['role'];
         if (in_array($role, ['dosen'])) {
             $surat = SuratTugas::where('nidn', session('user')['nidn'])->get();
+            $stats = [
+                'diajukan'   => $surat->where('status_surat', 1)->count(),
+                'diproses'   => $surat->whereIn('status_surat', [2, 3, 4, 5])->count(),
+                'disetujui'  => $surat->where('status_surat', 6)->count(),
+                'ditolak'    => $surat->where('status_surat', 0)->count(),    
+            ];
             return view('dosen_kaprodi.index', compact('surat', 'stats'));
         } else {
             $statusRole = 
