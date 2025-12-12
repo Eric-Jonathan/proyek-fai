@@ -76,7 +76,7 @@
     </div>
 
     {{-- Status Sistem --}}
-    <div class="card shadow-sm border-0">
+    {{-- <div class="card shadow-sm border-0">
         <div class="card-header bg-white fw-bold">
             <i class="fa fa-cogs me-2 text-secondary"></i>Status Sistem & Reset Nomor Surat
         </div>
@@ -94,6 +94,6 @@
                 </button>
             </div>
         </div>
-    </div>
+    </div> --}}
 </div>
 @endsection

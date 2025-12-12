@@ -50,7 +50,7 @@
                 <div class="mb-3">
                     <label class="form-label">Jabatan</label>
                     <input type="text" class="form-control"
-       value="{{ $jabatan ?? 'Tidak ada jabatan aktif' }}" readonly>
+                    value="{{ $jabatan ?? 'Tidak ada jabatan aktif' }}" readonly>
                 </div>
 
                 {{-- Jenis Tugas --}}
