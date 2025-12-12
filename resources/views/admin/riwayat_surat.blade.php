@@ -107,6 +107,7 @@
                 @forelse($surat as $item)
                 {{-- bikin condition kalo status diajukan bisa ke --}}
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                     <tr onclick="window.location='{{ url('/CRUD_Surat/surat-tugas/preview_pdf/' . $item->surat_id) }}'" style="cursor:pointer">
                         <td>{{ $loop->iteration}}</td>
                         <td class="fw-bold">{{ $item->jenis_tugas }}</td>
@@ -213,6 +214,11 @@
                     <tr onclick="window.location='{{ url('/CRUD_Surat/cetak-surat/' . $item->surat_id) }}'" style="cursor:pointer">
                         <td>{{ $no++ }}</td>
 >>>>>>> Stashed changes
+=======
+                @if ($item->status_surat > 0 && $item->status_surat < 6)
+                    <tr onclick="window.location='{{ url('/CRUD_Surat/cetak-surat/' . $item->surat_id) }}'" style="cursor:pointer">
+                        <td>{{ $no++ }}</td>
+>>>>>>> Stashed changes
                         <td class="fw-bold">{{ $item->jenis_tugas }}</td>
                         <td>{{ $item->full_name }}</td>
                         <td>{{ \Carbon\Carbon::parse($item->tanggal_mulai)->format('d M Y') }}</td>
@@ -250,6 +256,7 @@
                             <span class="badge bg-{{ $class }}">{{ $label }}</span>
                         </td>
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
                         <td class="text-center">
                             @if($item->status_surat == 'ditandatangani')
@@ -262,6 +269,8 @@
                                 </a>
                             @endif
                         </td>
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
                     </tr>
