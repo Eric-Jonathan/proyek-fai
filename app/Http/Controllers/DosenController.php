@@ -9,6 +9,23 @@ use Illuminate\Support\Facades\DB;
 
 class DosenController extends Controller
 {
+    public function dashboard()
+    {
+        $surat = SuratTugas::where('nidn', session('user')['nidn'])->get();
+        $role = session('user')['role'];
+        if (in_array($role, ['dosen'])) {
+            
+        }
+        $stats = [
+            'diajukan'   => $surat->where('status_surat', 1)->count(),
+            'diproses'   => $surat->whereIn('status_surat', [2, 3, 4, 5])->count(),
+            'disetujui'  => $surat->where('status_surat', 6)->count(),
+            'ditolak'    => $surat->where('status_surat', 0)->count(),
+        ];
+        
+
+        return view('dosen_kaprodi.index', compact('surat', 'stats'));
+    }
     public function dosen_dashboard()
     {
         $surat = SuratTugas::where('nidn', session('user')['nidn'])->get();
@@ -28,12 +45,10 @@ class DosenController extends Controller
         // $parentId = Position::where('position_id', session('user')['jabatanId'])->value('parent_position_id');
         // dd($parentId);
 
-        // Semua surat milik user
         $surat = SuratTugas::where('nidn', $user['nidn'])->get();
 
         $positionId = session('user')['jabatanId'];
 
-        // Ambil surat untuk ditandatangani dengan rule tambahan
         $suratUntukTtd = DB::table('surat_tugas')
             ->join('lecturers', 'lecturers.nidn', '=', 'surat_tugas.nidn')
             ->where('surat_tugas.status_surat', 1)

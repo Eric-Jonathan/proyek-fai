@@ -107,7 +107,7 @@ Route::prefix('CRUD_Surat')->group(function () {
     Route::get('/form_surat', [SuratTugasController::class, 'create'])->name('CRUD_Surat.form_surat');
     Route::get('/edit_surat', [SuratTugasController::class, 'edit'])->name('CRUD_Surat.edit_surat');
     Route::post('/submit_surat', [SuratTugasController::class, 'store'])->name('CRUD_Surat.submit_surat');
-    Route::get('/surat-tugas', [SuratTugasController::class, 'index'])->name('surat-tugas.index');
+    // Route::get('/surat-tugas', [SuratTugasController::class, 'index'])->name('surat-tugas.index');
     Route::get('/surat-tugas/create', [SuratTugasController::class, 'create'])->name('surat-tugas.create');
     Route::post('/surat-tugas', [SuratTugasController::class, 'store'])->name('surat-tugas.store');
     Route::get('/surat-tugas/preview/{id}', [SuratTugasController::class, 'preview'])->name('surat-tugas.preview');

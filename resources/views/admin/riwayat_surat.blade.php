@@ -1,7 +1,7 @@
 
 @extends('layouts.app')
 
-@section('title', 'Dashboard Surat Tugas')
+@section('title', 'Riwayat Surat')
 
 @section('content')
 <!DOCTYPE html>
@@ -9,7 +9,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Kegiatan</title>
+    <title>Riwayat Surat</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
@@ -85,35 +85,12 @@
     <!-- TOP TABLE -->
     <h5 class="header-title mb-3">Daftar Pengajuan <span class="fw-bold">AKTIF</span></h5>
 
+    @php $no = 1; @endphp
+
     <div class="card table-card p-4 bg-white mb-5">
-
-        <!-- Filter + Search -->
-        <form method="GET" action="{{ url()->current() }}">
-            <div class="row mb-3 align-items-center">
-
-                <div class="col-md-6 d-flex align-items-center">
-                    <select name="per_page" class="form-select form-select-sm w-auto me-2" onchange="this.form.submit()">
-                        <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
-                        <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
-                        <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
-                    </select>
-                    <small class="text-muted">entitas per halaman</small>
-                </div>
-
-                <div class="col-md-6 d-flex justify-content-md-end align-items-center">
-                    <label class="me-2 small text-muted">Search:</label>
-                    <input type="search" name="search_top" value="{{ request('search_top') }}"
-                           class="form-control form-control-sm w-auto" placeholder="Cari kegiatan..."
-                           onblur="this.form.submit()">
-                    <input type="hidden" name="per_page" value="{{ request('per_page') }}">
-                </div>
-
-            </div>
-        </form>
-
         <!-- TABLE -->
         <div class="table-responsive">
-            <table class="table table-hover align-middle">
+            <table id="TableTop" class="table table-striped table-bordered">
                 <thead class="table-light">
                     <tr>
                         <th style="width:5%">No</th>
@@ -127,8 +104,9 @@
                 </thead>
 
                 <tbody>
-                @forelse($dataTop as $item)
+                @forelse($surat as $item)
                 {{-- bikin condition kalo status diajukan bisa ke --}}
+<<<<<<< Updated upstream
                     <tr onclick="window.location='{{ url('/CRUD_Surat/surat-tugas/preview_pdf/' . $item->surat_id) }}'" style="cursor:pointer">
                         <td>{{ $loop->iteration}}</td>
                         <td class="fw-bold">{{ $item->jenis_tugas }}</td>
@@ -230,6 +208,11 @@
                 @forelse($dataBottom as $item)
                     <tr onclick="window.location='{{ url('/CRUD_Surat/surat-tugas/detail/' . $item->surat_id) }}'" style="cursor:pointer">
                         <td>{{ $loop->iteration  }}</td>
+=======
+                @if ($item->status_surat > 0 && $item->status_surat < 6)
+                    <tr onclick="window.location='{{ url('/CRUD_Surat/cetak-surat/' . $item->surat_id) }}'" style="cursor:pointer">
+                        <td>{{ $no++ }}</td>
+>>>>>>> Stashed changes
                         <td class="fw-bold">{{ $item->jenis_tugas }}</td>
                         <td>{{ $item->full_name }}</td>
                         <td>{{ \Carbon\Carbon::parse($item->tanggal_mulai)->format('d M Y') }}</td>
@@ -266,6 +249,7 @@
                         
                             <span class="badge bg-{{ $class }}">{{ $label }}</span>
                         </td>
+<<<<<<< Updated upstream
 
                         <td class="text-center">
                             @if($item->status_surat == 'ditandatangani')
@@ -278,36 +262,95 @@
                                 </a>
                             @endif
                         </td>
+=======
+>>>>>>> Stashed changes
                     </tr>
-
+                    @endif
                 @empty
                     <tr>
-                        <td colspan="8" class="text-center text-muted py-4">
+                        <td colspan="7" class="text-center text-muted py-4">
                             Tidak ada data surat tugas ditemukan.
                         </td>
                     </tr>
-
                 @endforelse
                 </tbody>
             </table>
         </div>
+    </div>
 
-        <!-- Pagination -->
-        <div class="row mt-2 align-items-center">
-            <div class="col-md-6 small text-muted">
-                Showing {{ $dataBottom->firstItem() ?? 0 }} to {{ $dataBottom->lastItem() ?? 0 }} of {{ $dataBottom->total() }} entries
-            </div>
+    <!-- RIWAYAT -->
+    <h5 class="header-title mb-3">Riwayat Pengajuan</h5>
 
-            <div class="col-md-6">
-                <div class="d-flex justify-content-end">
-                    {{ $dataBottom->appends([
-                        'search_bottom' => request('search_bottom'),
-                        'per_page_bottom' => request('per_page_bottom'),
-                    ])->links('pagination::bootstrap-5') }}
-                </div>
-            </div>
+    <div class="card table-card p-4 bg-white mb-5">
+        <!-- TABLE -->
+        <div class="table-responsive">
+            @php $no = 1; @endphp
+            <table id="TableBottom" class="table table-striped table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width:5%">No</th>
+                        <th>Nama Kegiatan</th>
+                        <th>Pengaju</th>
+                        <th>Tanggal Mulai</th>
+                        <th>Tanggal Surat</th>
+                        <th>Sifat</th>
+                        <th class="text-center">Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                @forelse($surat as $item)
+                @if ($item->status_surat == 0 || $item->status_surat == 6)
+                    <tr onclick="window.location='{{ url('/CRUD_Surat/cetak-surat/' . $item->surat_id) }}'" style="cursor:pointer">
+                        <td>{{ $no++ }}</td>
+                        <td class="fw-bold">{{ $item->jenis_tugas }}</td>
+                        <td>{{ $item->full_name }}</td>
+                        <td>{{ \Carbon\Carbon::parse($item->tanggal_mulai)->format('d M Y') }}</td>
+                        <td>{{ \Carbon\Carbon::parse($item->tanggal_surat)->format('d M Y') }}</td>
+                        <td>{{ $item->sifat }}</td>
+
+                        <td class="text-center">
+                        @php
+                            $statusLabel = [
+                                -1 => 'Dihapus',
+                                0  => 'Ditolak',
+                                1  => 'Diajukan',
+                                2  => 'Disetujui Kaprodi',
+                                3  => 'Diproses Sekretaris',
+                                4  => 'Disetujui Dekan',
+                                5  => 'Menunggu Stempel',
+                                6  => 'Selesai',
+                            ];
+                    
+                            $statusClass = [
+                                -1 => 'secondary',
+                                0  => 'danger',
+                                1  => 'warning text-dark',
+                                2  => 'info text-dark',
+                                3  => 'primary',
+                                4  => 'primary',
+                                5  => 'dark text-white',
+                                6  => 'success',
+                            ];
+                    
+                            $label = $statusLabel[$item->status_surat] ?? 'Tidak Diketahui';
+                            $class = $statusClass[$item->status_surat] ?? 'secondary';
+                        @endphp
+                        
+                            <span class="badge bg-{{ $class }}">{{ $label }}</span>
+                        </td>
+                    </tr>
+                    @endif
+                @empty
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-4">
+                            Tidak ada data surat tugas ditemukan.
+                        </td>
+                    </tr>
+                @endforelse
+                </tbody>
+            </table>
         </div>
-
     </div>
 </div>
 
@@ -317,3 +360,37 @@
 </body>
 </html>
 @endsection
+@push('scripts')
+
+<script>
+$(document).ready(function() {
+
+    // ============================
+    // TABEL ATAS (AKTIF)
+    // ============================
+    var tableTop = $('#TableTop').DataTable({
+        pageLength: 10,
+        searching: true,
+    });
+
+    $('#searchNameTop').on('keyup', function () {
+        tableTop.column(1).search(this.value).draw();
+    });
+
+
+    // ============================
+    // TABEL BAWAH (RIWAYAT)
+    // ============================
+    var tableBottom = $('#TableBottom').DataTable({
+        pageLength: 10,
+        searching: true,
+    });
+
+    $('#searchNameBottom').on('keyup', function () {
+        tableBottom.column(1).search(this.value).draw();
+    });
+
+});
+</script>
+
+@endpush
