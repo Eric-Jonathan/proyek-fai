@@ -12,6 +12,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class SuratTugasController extends Controller
 {
@@ -76,9 +77,7 @@ class SuratTugasController extends Controller
             'tujuan'             => 'required|string',
             'tanggal_mulai'      => 'required|date',
             'tanggal_selesai'    => 'required|date|after_or_equal:tanggal_mulai',
-            'lampiran'           => 'nullable|file|mimes:pdf,jpg,png|max:2048',
-        ]);
-
+            'lampiran' => 'nullable|file|mimes:pdf,jpg,png,doc,docx|max:2048',        ]);
         // Ambil NIDN dari session
         $nidn = session('user.nidn');
 
@@ -212,8 +211,6 @@ class SuratTugasController extends Controller
         $dataBottom->getCollection()->unique('surat_id')->values()
         );
 
-        
-
 
         return view('dashboard.index', compact('dataTop', 'dataBottom'));
     }
@@ -231,10 +228,7 @@ class SuratTugasController extends Controller
 
         if (!$surat) {
             abort(404, 'Surat tidak ditemukan');
-        }
-
-        
-
+        }        
         return view('dashboard.preview', compact('surat'));
     }
 
@@ -251,6 +245,7 @@ class SuratTugasController extends Controller
         ->leftJoin('lecturers AS l', 'l.nidn', '=', 'st.nidn')
         ->where('st.surat_id', $id)
         ->first();
+        // dd($surat);
 
         if (!$surat) {
             abort(404, 'Surat tidak ditemukan');
@@ -437,9 +432,10 @@ class SuratTugasController extends Controller
 
     public function edit($id)
     {
-        $surat = SuratTugas::findOrFail($id);
+        $surat = SuratTugas::with('lecturer')->findOrFail($id);
 
         return view('CRUD_Surat.edit_surat', compact('surat'));
+        
     }
 
     public function update(Request $request, $id)
@@ -464,25 +460,34 @@ class SuratTugasController extends Controller
         $surat->tujuan = $request->tujuan;
         $surat->tanggal_mulai = $request->tanggal_mulai;
         $surat->tanggal_selesai = $request->tanggal_selesai;
-
-        // → hanya replace file jika upload baru
+        
+        // Upload lampiran baru
         if ($request->hasFile('lampiran')) {
-            $fileName = time().'_'.$request->lampiran->getClientOriginalName();
-            $request->lampiran->storeAs('lampiran', $fileName, 'public');
-            $surat->lampiran = $fileName;
+
+            // Delete file lama
+            if ($surat->lampiran_path && Storage::disk('public')->exists($surat->lampiran_path)) {
+                Storage::disk('public')->delete($surat->lampiran_path);
+            }
+
+            // Simpan file baru
+            $path = $request->file('lampiran')->store('lampiran_surat', 'public');
+
+            // Update kolom sesuai tabel
+            $surat->lampiran_path = $path;
         }
 
         $surat->save();
+
         LogAktivitas::create([
             'nidn'       => session('user')['nidn'] ?? null,
             'aktivitas'  => 'Update Surat Tugas',
             'module'     => 'Surat_Tugas',
             'module_id'  => $id,
             'keterangan' => 'Surat dengan ID: ' . $id . ' diperbarui.',
-        ]); 
-        
+        ]);
+
         return redirect()->route(session('user.role') . '.dashboard')
-            ->with('success', 'Pengajuan surat tugas berhasil dikirim!');
+            ->with('success', 'Surat tugas berhasil diperbarui!');
     }
 
     public function updateStatusSurat($id, $tujuan){

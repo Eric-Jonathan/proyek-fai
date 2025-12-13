@@ -45,10 +45,8 @@
 </head>
 
 <body class="bg-light p-4">
-
     <div class="container">
         <div class="card shadow rounded-4">
-
             <!-- Header -->
             <div class="header-bar d-flex justify-content-between align-items-center">
                 <h4 class="fw-bold mb-0">
@@ -142,8 +140,10 @@
                     <p><strong>Tujuan Tugas:</strong> {{ $surat->tujuan }}</p>
 
                     <p><strong>Lampiran:</strong>
-                        @if(!empty($surat->lampiran))
-                            <a href="{{ asset('storage/' . $surat->lampiran) }}" target="_blank">Lihat Lampiran</a>
+                        @if(!empty($surat->lampiran_path))
+                            <a href="{{ asset('storage/' . $surat->lampiran_path) }}" target="_blank">
+                                Lihat Lampiran
+                            </a>
                         @else
                             <span class="text-muted">Tidak ada lampiran</span>
                         @endif

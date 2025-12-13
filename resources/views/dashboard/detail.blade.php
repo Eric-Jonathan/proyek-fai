@@ -141,13 +141,13 @@
                     <p><strong>Dasar Tugas:</strong> {{ $surat->dasar_tugas }}</p>
                     <p><strong>Tujuan Tugas:</strong> {{ $surat->tujuan }}</p>
 
-                    <p><strong>Lampiran:</strong>
-                        @if(!empty($surat->lampiran))
-                            <a href="{{ asset('storage/' . $surat->lampiran) }}" target="_blank">Lihat Lampiran</a>
-                        @else
-                            <span class="text-muted">Tidak ada lampiran</span>
-                        @endif
-                    </p>
+                @if(!empty($surat->lampiran_path))
+                    <a href="{{ asset('storage/' . $surat->lampiran_path) }}" target="_blank">
+                        Lihat Lampiran
+                    </a>
+                @else
+                    <span class="text-muted">Tidak ada lampiran</span>
+                @endif
 
                 </div>
 

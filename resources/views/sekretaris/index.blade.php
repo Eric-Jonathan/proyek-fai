@@ -163,6 +163,10 @@
                     <!-- Tombol -->
                     <td>
                         @if ($item->status_surat == 2)
+                                                            
+                                        <a href="{{ route('CRUD_Surat.edit', $item->surat_id) }}" class="btn btn-sm btn-warning">
+                                            <i class="fa fa-pencil"></i>
+                                        </a>
                             <a href="{{ route('surat-tugas.preview', $item->surat_id) }}" class="btn btn-sm btn-warning">
                                 <i class="fa fa-clipboard-check"></i> Review
                             </a>

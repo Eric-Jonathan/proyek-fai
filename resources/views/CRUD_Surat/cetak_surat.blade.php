@@ -119,6 +119,15 @@
             width: 100%;
         }
 
+        .atasan_nama{
+            margin-bottom: -10px;
+            padding-bottom: 0;
+        }
+
+        .tanggal{
+            margin-bottom: -10px;
+        }
+
    </style>
 </head>
 
@@ -187,14 +196,14 @@
         <!-- Tanda tangan -->
         <div class="foot">
             <div class="block">
-                <p class="m-0">Surabaya, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
+                <p class="tanggal">Surabaya, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
                 <p>Institut Sains dan Teknologi Terpadu Surabaya</p>
 
                 <div class="tandaTangan">
                     <img src="https://www.indorentalmedia.com/wp-content/uploads/2022/10/cara-scan-tanda-tangan-1200x900.webp" width="120">
                 </div>
 
-                <p class="text-decoration-underline mb-0">{{ $atasan->full_name ?? '-' }}</p>
+                <p class="text-decoration-underline atasan_nama">{{ $atasan->full_name ?? '-' }}</p>
                 <p>{{ $parentAssignment->position->position_name ?? '-' }}</p>
             </div>
         </div>

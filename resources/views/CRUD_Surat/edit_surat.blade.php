@@ -32,9 +32,10 @@
                     <input 
                         type="text" 
                         class="form-control" 
-                        value="{{ session('user.full_name') }}" 
+                        value="{{ $surat->lecturer->full_name ?? '-' }}" 
                         readonly>
                 </div>
+
 
                 {{-- NIDN --}}
                 <div class="mb-3">
@@ -42,33 +43,19 @@
                     <input 
                         type="text" 
                         class="form-control" 
-                        value="{{ session('user.nidn') }}" 
+                        value="{{ $surat->nidn }}" 
                         readonly>
                 </div>
 
                 {{-- Jabatan --}}
                 <div class="mb-3">
                     <label class="form-label">Jabatan</label>
-                    {{-- <select name="jabatan" class="form-select" required> --}}
-                    <select  class="form-select" required>
-                        <option value="">-- Pilih Jabatan --</option>
-                    
-                        @php
-                            $jabatans = session('user.jabatan');
-                    
-                            // Jika session jabatan bukan array, ubah menjadi array satu elemen
-                            if (!is_array($jabatans)) {
-                                $jabatans = [$jabatans];
-                            }
-                        @endphp
-                
-                        @foreach($jabatans as $jab)
-                            <option value="{{ $jab }}" {{ $surat->jabatan == $jab ? 'selected' : '' }}>
-                                {{ $jab }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('jabatan') <small class="text-danger">{{ $message }}</small> @enderror
+                    <input 
+                        type="text"
+                        class="form-control"
+                        value="{{ session('user.jabatan') ?? 'Tidak ada jabatan aktif' }}"
+                        readonly
+                    >
                 </div>
 
                 {{-- Jenis Tugas --}}
@@ -145,11 +132,11 @@
                     <label class="form-label">Lampiran Surat Masuk / Undangan</label>
                     <input type="file" name="lampiran" class="form-control">
                     
-                    @if($surat->lampiran)
+                    @if($surat->lampiran_path)
                         <small class="text-muted d-block mt-1">
-                            File sekarang: 
-                            <a href="{{ asset('storage/lampiran/'.$surat->lampiran) }}" target="_blank">
-                                {{ $surat->lampiran }}
+                            File sekarang:
+                            <a href="{{ asset('storage/' . $surat->lampiran_path) }}" target="_blank">
+                                {{ basename($surat->lampiran_path) }}
                             </a>
                         </small>
                     @endif
