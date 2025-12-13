@@ -15,7 +15,7 @@
         <thead>
             <tr>
                 <th>NIDN</th>
-                <th>Fullname</th>
+                <th>Full Name</th>
                 <th>Position</th>
                 <th>Email</th>
                 <th>Employee Status</th>

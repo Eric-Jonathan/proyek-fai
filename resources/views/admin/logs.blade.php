@@ -6,6 +6,8 @@
 <div class="container-fluid px-4 py-4">
     <h2 class="fw-bold mb-4"><i class="fa fa-history me-2"></i>Log Aktivitas Sistem</h2>
 
+    
+
     {{-- 🔍 Filter Pencarian --}}
     <div class="card shadow-sm mb-4 border-0">
         <div class="card-body">
@@ -37,6 +39,35 @@
             </form>
         </div>
     </div>
+
+    {{-- 📈 Statistik Singkat --}}
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card text-center border-primary shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted">Total Aktivitas Hari Ini</h6>
+                    <h4 class="fw-bold text-primary">18</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center border-success shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted">Aktivitas Berhasil</h6>
+                    <h4 class="fw-bold text-success">15</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center border-danger shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted">Aktivitas Gagal</h6>
+                    <h4 class="fw-bold text-danger">3</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
 
     {{-- 📋 Tabel Log Aktivitas --}}
     <div class="card shadow-sm border-0">
@@ -109,32 +140,6 @@
         
     </div>
 
-    {{-- 📈 Statistik Singkat --}}
-    <div class="row mt-4">
-        <div class="col-md-4">
-            <div class="card text-center border-primary shadow-sm">
-                <div class="card-body">
-                    <h6 class="text-muted">Total Aktivitas Hari Ini</h6>
-                    <h4 class="fw-bold text-primary">18</h4>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card text-center border-success shadow-sm">
-                <div class="card-body">
-                    <h6 class="text-muted">Aktivitas Berhasil</h6>
-                    <h4 class="fw-bold text-success">15</h4>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card text-center border-danger shadow-sm">
-                <div class="card-body">
-                    <h6 class="text-muted">Aktivitas Gagal</h6>
-                    <h4 class="fw-bold text-danger">3</h4>
-                </div>
-            </div>
-        </div>
-    </div>
+    
 </div>
 @endsection

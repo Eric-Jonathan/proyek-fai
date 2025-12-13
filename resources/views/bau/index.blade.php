@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container mt-4">
-    <h3 class="mb-4"><i class="fa fa-home me-2"></i> Dashboard Sekretaris</h3>
+    <h3 class="mb-4"><i class="fa fa-home me-2"></i> Dashboard BAU</h3>
 
     <!-- 🔍 Filter -->
     <div class="card mb-4 shadow-sm">
@@ -162,15 +162,9 @@
                     </td>
                     <!-- Tombol -->
                     <td>
-                        @if ($item->status_surat == 2)
-                            <a href="{{ route('surat-tugas.preview', $item->surat_id) }}" class="btn btn-sm btn-warning">
-                                <i class="fa fa-clipboard-check"></i> Review
-                            </a>
-                        @else
-                            <a href="{{ route('surat-tugas.detail', $item->surat_id) }}" class="btn btn-sm btn-info">
-                                <i class="fa fa-eye"></i> Detail
-                            </a>
-                        @endif
+                        <a href="{{ route('surat-tugas.preview', $item->surat_id) }}" class="btn btn-sm btn-warning">
+                            <i class="fa fa-clipboard-check"></i> Review
+                        </a>
                     </td>
                 </tr>
 

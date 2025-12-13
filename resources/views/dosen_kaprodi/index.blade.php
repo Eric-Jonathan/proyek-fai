@@ -6,7 +6,7 @@
 <div class="container-fluid mt-4">
     {{-- Judul Halaman --}}
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="fw-bold">Dashboard Surat Tugas</h4>
+        <h4 class="fw-bold">Dashboard Dosen</h4>
     </div>
 
     <div class="row g-3 mb-4">    
@@ -156,10 +156,25 @@
                                 <td>{{ \Carbon\Carbon::parse($s->tanggal_mulai)->translatedFormat('d F Y') }}</td>
 
                                 <td class="text-center">
-                                    @if($s->status_surat == 0)
-                                        <span class="badge bg-danger">Ditolak</span>
+                                    @php
+                                        $statusBadge = [
+                                            -1 => ['secondary', 'Dihapus'],
+                                             0 => ['danger', 'Ditolak'],
+                                             1 => ['warning text-dark', 'Diajukan'],
+                                             2 => ['info text-dark', 'Disetujui Kaprodi'],
+                                             3 => ['primary', 'Diproses Sekretaris'],
+                                             4 => ['primary', 'Disetujui Dekan'],
+                                             5 => ['dark text-white', 'Menunggu Stempel'],
+                                             6 => ['success', 'Selesai'],
+                                        ];
+                                    @endphp
+
+                                    @if(isset($statusBadge[$s->status_surat]))
+                                        <span class="badge bg-{{ $statusBadge[$s->status_surat][0] }}">
+                                            {{ $statusBadge[$s->status_surat][1] }}
+                                        </span>
                                     @else
-                                        <span class="badge bg-success">Telah Ditandatangani</span>
+                                        <span class="badge bg-danger">Ditolak</span>
                                     @endif
                                 </td>
 
@@ -167,7 +182,9 @@
                                     <a href="{{ route('surat-tugas.detail', $s->surat_id) }}" class="btn btn-sm btn-info">
                                         <i class="fa fa-eye"></i>
                                     </a>
-                                    <a href="#" class="btn btn-sm btn-primary"><i class="fa fa-download"></i></a>
+                                    @if ($s->sifat != 'Non-Dinas')
+                                        <a href="#" class="btn btn-sm btn-primary"><i class="fa fa-download"></i></a>
+                                    @endif
                                 </td>
                             </tr>
                         @endif
@@ -176,65 +193,6 @@
             </table>
         </div>
     </div>
-</div>
-
-<!-- Modal: Detail Surat -->
-<div class="modal fade" id="modalDetailSurat" tabindex="-1" aria-labelledby="modalDetailSuratLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title" id="modalDetailSuratLabel">Detail Surat Tugas</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <table class="table table-bordered">
-          <tr>
-            <th>Nomor Surat</th>
-            <td>ST/2025/034</td>
-          </tr>
-          <tr>
-            <th>Nama Dosen</th>
-            <td>Dr. Alexander Erick</td>
-          </tr>
-          <tr>
-            <th>Kegiatan</th>
-            <td>Seminar AI di ITS</td>
-          </tr>
-          <tr>
-            <th>Tanggal</th>
-            <td>5 - 7 November 2025</td>
-          </tr>
-          <tr>
-            <th>Status</th>
-            <td><span class="badge bg-warning">Diproses</span></td>
-          </tr>
-        </table>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-{{-- Modal tolak surat --}}
-<div class="modal" id="modalTolakSurat" tabindex="-1" aria-labelledby="modalDetailSuratLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Alasan Penolakan</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <p>Berikan alasan mengapa menolak pengajuan surat</p>
-        <input type="text" name="" class="form-control" placeholder="ex : Ada acara besar kampus">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-        <button type="button" class="btn btn-danger">Tolak</button>
-      </div>
-    </div>
-  </div>
 </div>
 @endsection
 
@@ -250,11 +208,6 @@
                 pageLength: 10,
                 searching: true,
             });
-
-            // 🔥 Search khusus FULLNAME (kolom index 1)
-            // $('#searchName').on('keyup', function () {
-            //     table.column(1).search(this.value).draw();
-            // });
         });
     </script>
 @endsection

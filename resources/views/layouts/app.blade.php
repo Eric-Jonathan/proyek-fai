@@ -55,6 +55,7 @@
         }
 
     </style>
+    @yield('custom_css')
 </head>
 <body>
 

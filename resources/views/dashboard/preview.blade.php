@@ -68,9 +68,8 @@
                         2  => 'Disetujui Kaprodi',
                         3  => 'Diproses Sekretaris',
                         4  => 'Disetujui Dekan',
-                        5  => 'Disetujui Rektor',
-                        6  => 'Stempel BAA',
-                        7  => 'Selesai',
+                        5  => 'Stempel BAA',
+                        6  => 'Selesai',
                     ];
                                 
                     $badgeClassMapping = [
@@ -80,9 +79,8 @@
                         2  => 'bg-info text-dark',
                         3  => 'bg-primary text-white',
                         4  => 'bg-primary text-white',
-                        5  => 'bg-success text-white',
-                        6  => 'bg-dark text-white',
-                        7  => 'bg-success text-white',
+                        5  => 'bg-dark text-white',
+                        6  => 'bg-success text-white',
                     ];
                                 
                     $iconMapping = [
@@ -92,9 +90,8 @@
                         2  => 'bi-person-check-fill',     // Kaprodi OK
                         3  => 'bi-hourglass-split',       // Diproses sekretaris
                         4  => 'bi-award-fill',            // Dekan OK
-                        5  => 'bi-shield-check',          // Rektor OK
-                        6  => 'bi-stamp-fill',            // Stempel BAA
-                        7  => 'bi-patch-check-fill',      // Selesai final
+                        5  => 'bi-patch-check-fill',            // Stempel BAA
+                        6  => 'bi-check2-circle',      // Selesai final
                     ];
                                 
                     $statusValue = $surat->status_surat ?? 1;
