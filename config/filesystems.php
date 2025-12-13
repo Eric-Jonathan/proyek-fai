@@ -59,6 +59,14 @@ return [
             'throw' => false,
             'report' => false,
         ],
+        'google' => [
+        'driver' => 'google',
+        // Masukkan kredensial Service Account
+        'serviceAccountJson' => base_path(env('GOOGLE_DRIVE_SERVICE_ACCOUNT_PATH')),
+        // Folder ID tujuan utama upload
+        'folderId' => env('GOOGLE_DRIVE_FOLDER_ID'), 
+        'allow_download' => true,
+    ],
 
     ],
 

@@ -219,7 +219,8 @@
                                     <i class="fa fa-pencil"></i>
                                 </a>
                             @elseif ($item->status_surat >= 0 )
-                                <a href="{{ route('surat-tugas.detail', $item->surat_id) }}" class="btn btn-sm btn-info">
+                                <!-- <a href="{{ route('surat-tugas.detail', $item->surat_id) }}" class="btn btn-sm btn-info"> -->
+                                <a onclick="window.location='{{ url('/CRUD_Surat/surat-tugas/preview_pdf/' . $item->surat_id) }}'" class="btn btn-sm btn-info">
                                     <i class="fa fa-eye"></i>
                                 </a>
                             @else

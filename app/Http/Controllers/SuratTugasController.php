@@ -12,6 +12,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class SuratTugasController extends Controller
@@ -313,63 +314,200 @@ class SuratTugasController extends Controller
     // 4-12 -> kaprodi (status -> 2)
     //12 -> 21, 11 -> 20, 10 -> 19, 9 -> 18, 8 -> 17, 7 -> 16, 6 -> 15, 5 -> 14, 4 -> 13
     //3 -> [10, 11], 2 -> [12, 9-4]
-    public function acc($id)
+    
+
+public function acc(Request $request, $id)
     {
         $surat = SuratTugas::findOrFail($id);
-        $nidn = session('user')['nidn'] ?? null;
-        $role = session('user')['role'] ?? null;
+
+        $nidn       = session('user')['nidn'] ?? null;
+        $role       = session('user')['role'] ?? null;
+        $actionType = $request->input('action_type');
+
+        // Pastikan Anda mendapatkan data Lecturer/Jabatan yang diperlukan untuk logika forwarding/status
         $lecturer = Lecturer::where('nidn', $surat->nidn)->first();
         $xrole = $lecturer->role ?? null;
-        $parentId = Position::where('position_id', session('user')['jabatanId'])->value('parent_position_id');
+
+        $parentId = Position::where('position_id', session('user')['jabatanId'])
+            ->value('parent_position_id');
 
         $statusLabels = [
-            -1 => 'delete',
-            0  => 'ditolak',
-            1  => 'diajukan',
-            2  => 'disetujui_kaprodi',
-            3  => 'diproses_sekretaris',
-            4  => 'disetujui_dekan',
-            5  => 'menunggu_stempel',
-            6  => 'selesai',
+            -1 => 'delete', 0 => 'ditolak', 1 => 'diajukan', 2 => 'disetujui_kaprodi',
+            3 => 'diproses_sekretaris', 4 => 'disetujui_dekan', 5 => 'menunggu_stempel', 6 => 'selesai',
         ];
-// dd($surat['sifat']);
 
-        // --- LOGIKA STATUS SURAT ---
-        if ($surat->status_surat == 3 && $xrole != 'dekan') {
-            // skip rektor 
-            $surat->status_surat = 5;
+        $nextStatus = $surat->status_surat;
+        $message = 'Surat berhasil disetujui!';
+
+        /* =====================================================
+          | BLOK 1: LOGIKA FINALISASI (KHUSUS BAU)
+          | Role: BAU, Action: 'stempel', Status: 4 atau 5
+          ===================================================== */
+        if ($role === 'bau' && $actionType === 'stempel' && ($surat->status_surat == 4 || $surat->status_surat == 5)) {
+
+    // Simpan path TTD Dekan sebelum di-null-kan di DB
+    $ttd_dekan_path = $surat->ttd_dekan; 
+    
+    // Path stempel (disimpan ke DB sebagai penanda stempel sudah diaplikasikan)
+    $stempelRelativePath = 'asset/stempel.png'; 
+    
+    $message = 'Surat berhasil distempel dan difinalisasi.';
+
+    try {
         
-        } else {
+        // 1. Update Status ke Selesai (6), Simpan Path Stempel, dan Hapus Path TTD (di DB)
+        $surat->status_surat = 6; 
+        $surat->stempel_path = $stempelRelativePath; // Simpan path stempel
+        // $surat->drive_file_id = null; // Opsional: Pastikan ID Drive di-null-kan atau dihapus jika upload tidak dilakukan
+        // $surat->ttd_dekan = null; // Hapus path TTD dari DB
+        $surat->save(); 
         
-            if ($surat->signed_by_position_id == 1) {
-                //dekan
-                $surat->status_surat += 2;
+        // // 2. HAPUS FILE TTD DEKAN DARI STORAGE 
+        // if ($ttd_dekan_path && Storage::disk('public')->exists($ttd_dekan_path)) {
+        //     // Hanya hapus jika file TTD Dekan memang ada
+        //     Storage::disk('public')->delete($ttd_dekan_path);
+        // }
+        
+        // 3. Log Aktivitas
+        LogAktivitas::create([
+            'nidn' => $nidn, 'aktivitas' => 'Surat Tugas Selesai (Stempel & Finalisasi)',
+            'module' => 'Surat_Tugas', 'module_id' => $id, 'keterangan' => $message,
+        ]);
+
+        // 4. Kembali ke Dashboard dengan pesan sukses
+        return redirect()
+            ->route(session('user.role') . '.dashboard')
+            ->with('success', $message);
+
+    } catch (\Exception $e) {
+        // Log error kritis
+        Log::critical('FINALIZATION FAILED (DB/Storage): Surat ID ' . $surat->surat_id, [
+            'message' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+        ]);
+        
+        // Kembalikan ke dashboard dengan pesan error
+        $errorMessage = 'Gagal di proses finalisasi data. Harap cek Log Server. Pesan teknis: ' . $e->getMessage();
+        
+        return redirect()
+            ->route(session('user.role') . '.dashboard')
+            ->with('error', $errorMessage);
+    }
+}
+
+        /* =====================================================
+          | BLOK 2: TANDA TANGAN DIGITAL (KHUSUS DEKAN)
+          | Role: Dekan, Status: 3
+          ===================================================== */
+        if ($role === 'dekan' && $surat->status_surat == 3) {
             
-            } else {
-                if($parentId != null){ //sekretaris
-                    $surat->signed_by_position_id = $parentId;
-                }
-                $surat->status_surat += 1;
-                if ($role == 'kaprodi' && $surat['sifat'] == 'Non-Dinas') {
-                    $surat->status_surat = 6;
-                }
+            // [Logika validasi dan penyimpanan TTD Base64 ke Storage - Tidak ditampilkan di sini, asumsikan sudah ada]
+            
+            // Placeholder Logika TTD (asumsikan sukses menyimpan ke $path)
+            $request->validate(['ttd_base64' => 'required|string']);
+            $base64Image = $request->ttd_base64; 
+            if (preg_match('/^data:image\/(\w+);base64,/', $base64Image, $type)) {
+                $base64Image = substr($base64Image, strpos($base64Image, ',') + 1);
             }
+            $base64Image = base64_decode($base64Image);
+            $filename = 'ttd_dekan_' . time() . '.png';
+            $path = 'ttd_dekan/' . $filename;
+            Storage::disk('public')->put($path, $base64Image);
+
+            $surat->ttd_dekan = $path; // Simpan path TTD ke model
+            $nextStatus = 4; // Status Disetujui Dekan
+            $message = 'Surat berhasil disetujui dan ditandatangani Dekan.';
         }
 
 
-        $surat->save();
-        LogAktivitas::create([
-            'nidn'       => $nidn,
-            'aktivitas'  => 'Surat Tugas' . $statusLabels[$surat->status_surat],
-            'module'     => 'Surat_Tugas',
-            'module_id'  => $id,
-            'keterangan' => 'Surat dengan ID: ' . $id . ' di-ACC oleh ' . $role,
-        ]);
-        return redirect()->route(session('user.role') . '.dashboard')
-            ->with('success', 'Surat berhasil disetujui!');
+        /* =====================================================
+          | BLOK 3: LOGIKA STATUS SURAT (UMUM)
+          | Digunakan oleh Kaprodi, Sekretaris, dan untuk finalisasi Dekan
+          ===================================================== */
+        if ($role !== 'bau' || $actionType !== 'stempel') {
+            
+            if ($role === 'dekan' && $surat->status_surat == 3) {
+                // $nextStatus dan $surat->ttd_dekan sudah diatur di Blok 2 (TTD)
+                // Lanjut save
+            }
+            // Jika status 3 dan role bukan dekan (skip dekan)
+            elseif ($surat->status_surat == 3 && $xrole != 'dekan') {
+                $nextStatus = 5; 
+            } 
+            // Setelah disetujui dekan (status 4)
+            elseif ($surat->status_surat == 4) {
+                $nextStatus = 5; // Pindah ke status 5 (Menunggu Stempel/BAU)
+            } 
+            // Logika forwarding ke atasan (umum)
+            elseif ($parentId != null) { 
+                $surat->signed_by_position_id = $parentId;
+                $nextStatus += 1; 
+            } else {
+                $nextStatus += 1; 
+            }
+            
+            // Aturan Khusus Non-Dinas
+            if ($role == 'kaprodi' && $surat->sifat == 'Non-Dinas' && $nextStatus == 2) {
+                $nextStatus = 6; 
+                $message = 'Surat Non-Dinas selesai diproses Kaprodi.';
+            }
+            
+            // Final Save
+            $surat->status_surat = $nextStatus;
+            $surat->save();
+        }
+
+        /* =====================================================
+          | LOG AKTIVITAS 
+          ===================================================== */
+        if (!($role === 'bau' && $actionType === 'stempel')) {
+            LogAktivitas::create([
+                'nidn' => $nidn,
+                'aktivitas' => 'Surat Tugas ' . ($statusLabels[$surat->status_surat] ?? 'Proses'),
+                'module' => 'Surat_Tugas',
+                'module_id' => $id,
+                'keterangan' => 'Surat ID ' . $id . ' di-ACC oleh ' . $role,
+            ]);
+        }
+
+        return redirect()
+            ->route(session('user.role') . '.dashboard')
+            ->with('success', $message);
     }
 
 
+    public function downloadDrive($id)
+    {
+        $surat = SuratTugas::findOrFail($id);
+        
+        // Cek status harus Selesai (6) dan ID file harus ada
+        if ($surat->status_surat != 6 || empty($surat->drive_file_id)) {
+            return back()->with('error', 'Dokumen belum selesai atau ID file Drive tidak ditemukan.');
+        }
+
+        try {
+            $fileId = $surat->drive_file_id; 
+            
+            // Ambil konten file dari Google Drive
+            $contents = Storage::disk('google')->get($fileId);
+            
+            // Tentukan nama file saat diunduh
+            $fileName = 'ST_' . ($surat->nomor_surat ?? $surat->surat_id) . '_Final.pdf';
+
+            // Mengirim konten file sebagai respons download
+            return response()->streamDownload(function() use ($contents) {
+                echo $contents;
+            }, $fileName, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+            ]);
+            
+        } catch (\Exception $e) {
+            \Log::error('GDrive Download Failed: ' . $e->getMessage());
+            return back()->with('error', 'Gagal mengunduh dokumen dari Google Drive. Pastikan konfigurasi sudah benar.');
+        }
+    }
 
     /*** Tolak surat */
     public function tolak(Request $request, $id)

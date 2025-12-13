@@ -10,11 +10,12 @@
             width: 210mm;
             min-height: 297mm;
             margin: 0 auto;
-            padding: 160px 25mm 20mm 25mm;  
+            padding: 160px 25mm 20mm 25mm; 
 
+            /* Styling untuk Kop Surat */
             background-image: url('{{ asset("asset/kop_surat.png") }}');
             background-repeat: no-repeat;
-            background-size: 100% 100%; /* PNG sudah ukuran A4, aman */
+            background-size: 100% 100%; 
             background-position: top center;
 
             font-family: "Times New Roman", serif;
@@ -30,12 +31,6 @@
         .header {
             margin: 0 0 10px 0;
             text-align: left;
-        }
-
-        .nomor {
-            margin-top: 3px;
-            text-align: center;
-            font-size: 12pt;
         }
 
         p, td {
@@ -82,54 +77,103 @@
             text-align: justify;
         }
 
-        .ttd-container {
-            margin-top: 25px;
-            width: 100%;
-            display: flex;
-            justify-contain: end;
-            text-align: right;
-        }
-
-        .ttd-area {
-            width: 260px;
-            display: inline-block;
-            text-align: left;
-        }
-
-        .ttd-area img {
-            margin: 5px 0;
-        }
-
-        .name {
-            text-decoration: underline;
-            margin-bottom: 0;
-        }
-
+        /* TTD Styling */
         .foot {
             margin-top: 20mm;
             text-align: right;
             padding-right: 5mm;
+            /* **PENYESUAIAN PENTING UNTUK STAMPEL OVERLAY** */
+            position: relative; 
+            height: 200px; /* Tambahkan tinggi agar stempel tidak keluar */
         }
+        
+        .tandaTangan img {
+            width: 140px; 
+            height: auto;
+            display: inline-block;
+            margin: 5px 0;
+            position: relative; /* Pastikan TTD ada di Z-index yang benar */
+            z-index: 2; 
+        }
+
+        /* **CSS BARU UNTUK STAMPEL OVERLAY** */
+        .stamp-overlay {
+            position: absolute;
+            width: 180px;         /* Ukuran Stempel */
+            height: 180px; 
+            top: 5px;             /* Jarak dari atas div .foot */
+            right: 150px;         /* Jarak dari kanan div .foot */
+            z-index: 3;           /* Di atas TTD */
+            pointer-events: none; /* Agar tidak mengganggu klik/seleksi teks di belakangnya */
+        }
+        
+        .stamp-image {
+            width: 100%;
+            height: 100%;
+            opacity: 0.7; /* Efek tembus pandang */
+        }
+        /* **AKHIR CSS BARU** */
+
     </style>
 @endsection
 
 @section('content')
+
     <div class="d-flex justify-content-between mb-3">
         <h4>Preview Surat Tugas</h4>
-        <a href="{{ route('cetak-surat', $surat->nomor_surat) }}" class="btn btn-outline-secondary">
-            Download PDF
-        </a>
+        <div class="d-flex gap-2">
+            
+            {{-- Tombol Action (Setuju/Tolak) hanya muncul di halaman preview, bukan cetak --}}
+            @if (request()->routeIs('surat.preview'))
+                <form method="POST" action="{{ route('surat.tolak', $surat->surat_id) }}" class="d-flex gap-2">
+                    @csrf
+                    <div id="notesSection" class="d-none d-flex align-items-start gap-2">
+                        <textarea 
+                            id="textareaPenolakan"
+                            name="catatan_penolakan"
+                            class="form-control"
+                            placeholder="Tuliskan alasan penolakan..."
+                            rows="3"
+                            style="text-align: left; vertical-align: top; padding-left: 8px;"
+                        ></textarea>
+                        <div class="d-flex flex-column gap-2">
+                            <button type="button" class="btn btn-secondary" onclick="cancelTolak()">Cancel</button>
+                            <button id="btnSubmitTolak" type="submit" class="btn btn-danger">Konfirmasi</button>
+                        </div>
+                    </div>
+
+                    <button id="btnTolakAwal" type="button" class="btn btn-danger px-4" onclick="showNotes()">
+                        <i class="bi bi-x-circle"></i> Tolak
+                    </button>
+                </form>
+
+                @if ($userRole == 'dekan')
+                    <button id="btnSetujui" type="button" class="btn btn-success px-4" data-bs-toggle="modal" data-bs-target="#ttdModal">
+                        <i class="bi bi-check-circle"></i> Setujui & TTD
+                    </button>
+                @else
+                    <form id="formSetujui" method="POST" action="{{ route('surat.acc', $surat->surat_id) }}">
+                        @csrf
+                        <button id="btnSetujui" type="submit" class="btn btn-success px-4">
+                            <i class="bi bi-check-circle"></i> Setujui
+                        </button>
+                    </form>
+                @endif
+            @endif
+            
+            <a href="{{ route('cetak-surat', $surat->nomor_surat) }}" class="btn btn-outline-secondary">
+                Download PDF
+            </a>
+        </div>
     </div>
 
     <div class="card shadow-sm">
         <div class="card-body">
             <div class="surat">
-                <!-- Header -->
                 <div class="header text-center">
                     <h1 class="fw-bold text-decoration-underline">SURAT TUGAS</h1>
                     <p>Nomor: {{ $surat->nomor_surat ?? "-" }}</p>
                 </div>
-                <!-- Isi -->
                 <div class="contain mt-3">
                     <p>Yang bertanda tangan di bawah ini {{ $parentAssignment->position->position_name ?? '-' }}, dengan ini memberi tugas kepada:</p>
                     <table>
@@ -175,23 +219,58 @@
                         </tr>
                     </table>
                 </div>
-                <!-- Penutup -->
                 <div class="closing">
                     <p>Demikian surat tugas ini dibuat untuk dilaksanakan dengan penuh tanggung jawab.</p>
                 </div>
-                <!-- Tanda tangan -->
+                
                 <div class="foot">
-                    <div class="block">
-                        <p class="m-0">Surabaya, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
-                        <p>Institut Sains dan Teknologi Terpadu Surabaya</p>
-                        <div class="tandaTangan">
-                            <img src="{{ asset("asset/dummy_ttd.png") }}" width="120">
+                    
+                    {{-- **LOGIKA BARU: TAMPILAN STAMPEL OVERLAY** --}}
+                    {{-- Stempel hanya tampil jika path-nya ada di database (sudah difinalisasi BAU) --}}
+                    @if ($surat->stempel_path)
+                        <div class="stamp-overlay">
+                            {{-- Gunakan asset() karena ini adalah preview web --}}
+                            <img 
+                                src="{{ asset($surat->stempel_path) }}" 
+                                class="stamp-image" 
+                                alt="Stempel Fakultas"
+                            >
                         </div>
-                        <p class="text-decoration-underline mb-0">{{ $atasan->full_name ?? '-' }}</p>
+                    @endif
+                    {{-- **AKHIR LOGIKA STAMPEL** --}}
+
+                    <div class="block">
+                        {{-- Tanggal Surat --}}
+                        <p class="m-0">Surabaya, {{ \Carbon\Carbon::parse($surat->tanggal_surat)->translatedFormat('d F Y') }}</p>
+                        
+                        {{-- Jabatan Penandatangan --}}
                         <p>{{ $parentAssignment->position->position_name ?? '-' }}</p>
+                        
+                        {{-- Area Tanda Tangan (100px agar ada ruang untuk TTD) --}}
+                        <div class="tandaTangan" style="height: 100px; text-align: right;">
+                            @if ($surat->ttd_dekan)
+                                {{-- Tampilkan TTD Dekan yang tersimpan jika ada --}}
+                                <img 
+                                    src="{{ asset('storage/' . $surat->ttd_dekan) }}" 
+                                    alt="Tanda Tangan Dekan" 
+                                    width="140" 
+                                    style="margin-top: 5px; margin-bottom: 5px; display: inline-block;"
+                                >
+                            @else
+                                {{-- Tampilkan placeholder jika TTD belum ada/disetujui --}}
+                                <div style="height: 80px;">&nbsp;</div>
+                            @endif
+                        </div>
+                        
+                        {{-- Nama Penandatangan --}}
+                        <p class="text-decoration-underline mb-0">{{ $atasan->full_name ?? '-' }}</p>
+                        
+                        {{-- Jabatan atau NIDN (Asumsi ini adalah baris di bawah nama) --}}
+                        <p>{{ $atasan->nidn ?? '-' }}</p> 
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
 @endsection
