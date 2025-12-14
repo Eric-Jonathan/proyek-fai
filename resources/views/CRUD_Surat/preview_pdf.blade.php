@@ -161,7 +161,7 @@
                 @endif
             @endif
             
-            <a href="{{ route('cetak-surat', $surat->nomor_surat) }}" class="btn btn-outline-secondary">
+            <a href="{{ route('surat.cetak', $surat->nomor_surat) }}" class="btn btn-outline-secondary">
                 Download PDF
             </a>
         </div>
