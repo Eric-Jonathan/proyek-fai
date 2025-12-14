@@ -57,6 +57,7 @@ class DosenController extends Controller
             'ditolak'    => $surat->where('status_surat', 0)->count(),
             'perlu_ttd'  => $suratUntukTtd->count() ?? 'null'
         ];
+        dd(session('user')['role']);
         
         return view('kaprodi.index', compact('surat', 'stats', 'suratUntukTtd', 'perluTtdPemohon'));
     }

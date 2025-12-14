@@ -182,8 +182,10 @@ private function generateAndStorePdf(SuratTugas $surat)
 
         $status=0;
         if (session('user')['jabatanId'] <= 12) {
-            if(session('user')['jabatanId'] <= 3 && $validated['sifat_surat'] == 'Non-Dinas'){
+            if(session('user')['role'] == "dekan" && $validated['sifat_surat'] == 'Non-Dinas'){
                 $status = 6;
+            } elseif (session('user')['role'] == "kaprodi" && $validated['sifat_surat'] == 'Non-Dinas') {
+                $status = 3;
             } else {
                 $status = 2;
             }
@@ -489,9 +491,13 @@ public function acc(Request $request, $id)
             $nextStatus += 1; 
         }
         
-        if ($role == 'kaprodi' && $surat->sifat == 'Non-Dinas' && $nextStatus == 2) {
+        if ($surat->sifat == 'Non-Dinas'){
+            if ($role == 'kaprodi' && $nextStatus == 2) {
+                $message = 'Surat Non-Dinas selesai diproses Kaprodi.';
+            } else {
+                $message = 'Surat Non-Dinas selesai diproses Dekan.';
+            }
             $nextStatus = 6; 
-            $message = 'Surat Non-Dinas selesai diproses Kaprodi.';
         }
         
         $surat->status_surat = $nextStatus;
