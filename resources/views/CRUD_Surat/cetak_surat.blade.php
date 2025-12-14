@@ -1,149 +1,132 @@
-<html lang="en">
+<!DOCTYPE html>
+<html lang="id">
 <head>
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Surat Tugas</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-<style>
+    <title>Surat Tugas - {{ $surat->nomor_surat ?? 'Preview' }}</title>
+    
+    <style>
         @page {
             size: A4;
-            margin: 2.5cm 2.5cm 2.5cm 2.5cm;
             margin: 0;
         }
-        
 
         body {
             margin: 0;
             padding: 0;
-
+            font-family: "Times New Roman", serif;
+            font-size: 12pt;
             background-image: url('{{ public_path("asset/kop_surat.png") }}');
             background-repeat: no-repeat;
-            background-position: top left;
-            background-size: 100% 100%;
-
-            font-family: "Times New Roman", serif;
-            background-color: #fff;
+            background-size: 100% auto;
+            background-position: top center;
         }
 
         .surat {
-            padding: 45mm 25mm 20mm 25mm; /* Sesuaikan agar tidak nabrak header/footer */
-            font-size: 12pt;
+            padding: 160px 25mm 20mm 25mm; /* top untuk kop surat */
+            margin: 0 auto;
+            height: auto;
         }
 
-        h1 {
-           font-size: 20pt;
-            margin-bottom: 0;
-        }
-
-        .header{
-            margin-top: 4rem;
-            margin: 0;
+        .header h1 {
             text-align: center;
-            text-decoration: underline;
             font-weight: bold;
+            margin: 0;
         }
 
-        .nomor {
-            margin-top: 3px;
+        .header p {
             text-align: center;
-           font-size: 12pt;
+            margin: 5px 0 20px 0;
         }
 
-        p, td {
-            font-size: 12pt;
-        }
-
-        .content p {
-            text-indent: 50px;
+        .contain p {
             text-align: justify;
+            text-indent: 50px;
         }
 
         table {
-            margin-top: 10px;
             width: 100%;
-            margin-top: 12px;
+            margin-top: 10px;
             border-collapse: collapse;
         }
 
-        td {
-            padding: 3px 0;
-            vertical-align: top;
+        table td {
             padding: 3px 5px;
-            font-size: 12pt;
-        }
-
-        td:first-child {
-            width: 150px;
-        }
-
-        td:nth-child(2) {
-           width: 10px;
-            padding-left: 10px;
+            vertical-align: top;
         }
 
         .closing {
-            margin-top: 20px;
+            margin-top: 15px;
         }
 
         .closing p {
-            margin-top: 15px;
+            margin-top: 10px;
             text-align: justify;
+            text-indent: 50px;
         }
 
-        .ttd-container {
-            margin-top: 25px;
-            width: 100%;
-            display: flex;
-            justify-content: end;
+        .foot {
+            margin-top: 10mm;
             text-align: right;
-        }
-
-        .ttd-area {
-            width: 260px;
-            display: inline-block;
-            text-align: left;
-        }
-
-        .ttd-area img {
-            margin: 5px 0;
-        }
-
-        .name {
-            text-decoration: underline;
-            margin-bottom: 0;
-        }
-
-        .foot{
-            text-align: right !important;
+            padding-right: 5mm;
+            position: relative;
             width: 100%;
         }
 
-        .atasan_nama{
-            margin-bottom: -10px;
-            padding-bottom: 0;
+        .ttd-block {
+            display: inline-block;
+            text-align: right; 
+            width: 260px;
+            position: relative;
         }
 
-        .tanggal{
-            margin-bottom: -10px;
+        .tandaTangan {
+            height: 100px;
         }
 
-   </style>
-</head>
+        .stamp-overlay {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    top: 0;
+    left: 10px;   /* jarak dari sisi kiri */
+    z-index: 3;
+    opacity: 0.7;
+}
 
+        .stamp-image {
+            width: 100%;
+            height: 100%;
+        }
+
+        .tandaTangan img {
+            width: 140px;
+            height: auto;
+            display: inline-block;
+            position: relative;
+            z-index: 2;
+        }
+
+        .block p {
+            line-height: 1.2;
+            margin: 0;
+            padding: 0;
+        }
+
+        .text-decoration-underline {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
     <div class="surat">
-
-        <!-- Header -->
-        <div class="header text-center">
-            <h1 class="fw-bold text-decoration-underline">SURAT TUGAS</h1>
+        <div class="header">
+            <h1>SURAT TUGAS</h1>
             <p>Nomor: {{ $surat->nomor_surat ?? "-" }}</p>
         </div>
 
-        <!-- Isi -->
-        <div class="content mt-3">
-            <p>Yang bertanda tangan di bawah ini {{ $parentAssignment->position->position_name ?? '-' }}, dengan ini memberi tugas kepada:</p>
+        <div class="contain">
+            <p>Yang bertanda tangan di bawah ini {{ $parentAssignment->position->position_name ?? '-' }}, memberi tugas kepada:</p>
             <table>
                 <tr>
                     <td>Nama</td>
@@ -188,23 +171,31 @@
             </table>
         </div>
 
-        <!-- Penutup -->
         <div class="closing">
             <p>Demikian surat tugas ini dibuat untuk dilaksanakan dengan penuh tanggung jawab.</p>
         </div>
 
-        <!-- Tanda tangan -->
         <div class="foot">
-            <div class="block">
-                <p class="tanggal">Surabaya, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
-                <p>Institut Sains dan Teknologi Terpadu Surabaya</p>
+            <div class="ttd-block">
+                @if ($surat->ttd_dekan)
+                    <div class="stamp-overlay">
+                        <img src="{{ public_path('asset/stempel.png') }}" class="stamp-image" alt="Stempel Fakultas">
+                    </div>
+                @endif
 
-                <div class="tandaTangan">
-                    <img src="{{ public_path("asset/dummy_ttd.png") }}" width="120">
+                <div class="block">
+                    <p>Surabaya, {{ \Carbon\Carbon::parse($surat->tanggal_surat)->translatedFormat('d F Y') }}</p>
+                    <p>{{ $parentAssignment->position->position_name ?? '-' }}</p>
+                    <div class="tandaTangan">
+                        @if ($surat->ttd_dekan)
+                            <img src="{{ public_path('storage/' . $surat->ttd_dekan) }}" alt="Tanda Tangan Dekan">
+                        @else
+                            <div style="height: 100px;">&nbsp;</div>
+                        @endif
+                    </div>
+                    <p class="text-decoration-underline mb-0">{{ $atasan->full_name ?? '-' }}</p>
+                    <p>{{ $atasan->nidn ?? '-' }}</p> 
                 </div>
-
-                <p class="text-decoration-underline atasan_nama">{{ $atasan->full_name ?? '-' }}</p>
-                <p>{{ $parentAssignment->position->position_name ?? '-' }}</p>
             </div>
         </div>
     </div>

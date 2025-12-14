@@ -232,7 +232,8 @@
                     
                     @elseif ($statusValue == 6)
                         {{-- AKSI TAMBAHAN JIKA SUDAH SELESAI --}}
-                        <a href="{{ route('surat.cetak', $surat->surat_id) }}" target="_blank" class="btn btn-primary px-4">
+                         <a href="{{ route('surat.cetak', $surat->surat_id) }}" target="_blank" class="btn btn-primary px-4">
+                        
                             <i class="bi bi-printer"></i> Cetak PDF
                         </a>
                         

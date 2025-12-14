@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DosenController;
 use App\Http\Controllers\SeketarisController;
 use App\Http\Controllers\BAUController;
+use App\Http\Controllers\GoogleDriveAuthController;
 use App\Http\Controllers\SuratTugasController;
 use Illuminate\Support\Facades\Route;
 
@@ -92,10 +93,9 @@ Route::prefix('CRUD_Surat')->group(function () {
     Route::post('/surat-tugas/{id}/tolak', [SuratTugasController::class, 'tolak'])->name('surat.tolak');
     Route::get('/surat-tugas/edit/{id}', [SuratTugasController::class, 'edit'])->name('CRUD_Surat.edit');
     Route::post('/surat-tugas/update/{id}', [SuratTugasController::class, 'update'])->name('CRUD_Surat.update');
-    Route::get('/cetak-surat/{id}', [SuratTugasController::class, 'surat'])->name('cetak-surat');
+    Route::get('/surat-tugas/{id}/download', [SuratTugasController::class, 'surat'])->name('surat.cetak');
     Route::get('/surat-tugas/preview_pdf/{id}', [SuratTugasController::class, 'preview_pdf'])->name('surat.preview_pdf');
-    Route::get('/surat-tugas/download/{id}', [SuratTugasController::class, 'downloadPDF'])
-        ->name('surat-tugas.download');
+    
 }); 
 
 // ====================
@@ -124,3 +124,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/logs', [AdminController::class, 'logAktivitas'])
             ->name('admin.logs');
 });
+
+
+Route::get('/google/auth', [GoogleDriveAuthController::class, 'handleAuth']);
+Route::get('/google/oauth', [GoogleDriveAuthController::class, 'handleCallback']);
