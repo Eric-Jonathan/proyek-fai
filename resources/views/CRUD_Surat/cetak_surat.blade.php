@@ -32,6 +32,8 @@
             text-align: center;
             font-weight: bold;
             margin: 0;
+            text-decoration: underline;
+            font-size: 20pt;
         }
 
         .header p {
@@ -85,14 +87,14 @@
         }
 
         .stamp-overlay {
-    position: absolute;
-    width: 150px;
-    height: 150px;
-    top: 0;
-    left: 10px;   /* jarak dari sisi kiri */
-    z-index: 3;
-    opacity: 0.7;
-}
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            top: 0;
+            left: 10px;   /* jarak dari sisi kiri */
+            z-index: 3;
+            opacity: 0.7;
+        }
 
         .stamp-image {
             width: 100%;
@@ -185,7 +187,7 @@
 
                 <div class="block">
                     <p>Surabaya, {{ \Carbon\Carbon::parse($surat->tanggal_surat)->translatedFormat('d F Y') }}</p>
-                    <p>{{ $parentAssignment->position->position_name ?? '-' }}</p>
+                    <p>Institut Sains dan Teknologi Terpadu Surabaya</p>
                     <div class="tandaTangan">
                         @if ($surat->ttd_dekan)
                             <img src="{{ public_path('storage/' . $surat->ttd_dekan) }}" alt="Tanda Tangan Dekan">
@@ -194,7 +196,7 @@
                         @endif
                     </div>
                     <p class="text-decoration-underline mb-0">{{ $atasan->full_name ?? '-' }}</p>
-                    <p>{{ $atasan->nidn ?? '-' }}</p> 
+                    <p>{{ $parentAssignment->position->position_name ?? '-' }}</p>
                 </div>
             </div>
         </div>

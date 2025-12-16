@@ -22,6 +22,7 @@ class SuratTugasController extends Controller
     public function surat($id)
     {
         $surat = SuratTugas::find($id);
+        $lecturer = Lecturer::where('nidn', $surat->nidn)->first();
 
         // === GUARD CHECK: Hanya boleh dicetak jika statusnya 6 (Selesai) ===
         if (!$surat || $surat->status_surat != 6) {
@@ -35,10 +36,9 @@ class SuratTugasController extends Controller
         if (!$storagePath) {
             return back()->with('error', 'Gagal membuat file PDF. Cek log server.');
         }
-
         // PICU DOWNLOAD FILE YANG SUDAH TERSIMPAN
-        $fileName = 'Surat_Tugas_' . ($surat->nomor_surat ? str_replace('/', '_', $surat->nomor_surat) : $surat->surat_id) . '.pdf';
-        return Storage::disk('public')->download($storagePath, $fileName);
+        $fileName = 'st ' . $lecturer->username . ' -- ' . $surat->jenis_tugas . '.pdf';
+        return Storage::disk('public')->download($storagePath["storage_path"], $fileName);
     }
 
 private function generateAndStorePdf(SuratTugas $surat)
@@ -83,7 +83,7 @@ private function generateAndStorePdf(SuratTugas $surat)
         ]);
 
         // 2. TENTUKAN NAMA FILE DAN PATH PENYIMPANAN
-        $fileName = 'Surat_Tugas_' . ($surat->nomor_surat ? str_replace('/', '_', $surat->nomor_surat) : $surat->surat_id) . '.pdf';
+        $fileName = 'st ' . $lecturer->username . ' -- ' . $surat->jenis_tugas . '.pdf';
         $storagePath = 'surat_tugas/final/' . $fileName; 
 
         // 3. SIMPAN FILE KE LARAVEL STORAGE (DISK 'PUBLIC')
@@ -132,6 +132,52 @@ private function generateAndStorePdf(SuratTugas $surat)
             'atasan' => $atasan
         ]);
     }
+
+    public function preview_storage($id)
+    {
+        $surat = SuratTugas::findOrFail($id);
+
+        $lecturer = Lecturer::where('nidn', $surat->nidn)->first();
+
+        $positionAssignment = PositionAssignment::where('nidn', $lecturer->nidn)
+            ->with('position.parent')
+            ->first();
+
+        $parent = $positionAssignment?->position?->parent;
+
+        $parentAssignment = PositionAssignment::where(
+            'position_id',
+            $parent?->parent_position_id
+        )->first();
+
+        $atasan = Lecturer::where('nidn', $parentAssignment?->nidn)->first();
+
+        Pdf::setOptions([
+            'isRemoteEnabled' => true,
+            'isHtml5ParserEnabled' => true,
+            'defaultPaperSize' => 'a4',
+            'defaultFont' => 'times',
+        ]);
+
+        // 1️⃣ Generate PDF
+        $pdf = Pdf::loadView('CRUD_Surat.cetak_surat', [
+            'surat' => $surat,
+            'lecturer' => $lecturer,
+            'parentAssignment' => $parentAssignment,
+            'atasan' => $atasan,
+        ])->setPaper('A4', 'portrait');
+
+        // 2️⃣ Tentukan path storage
+        $fileName = 'st ' . $lecturer->username . ' -- ' . $surat->jenis_tugas . '.pdf';
+        $storagePath = 'preview/' . $fileName;
+
+        // 3️⃣ Simpan ke storage/public
+        Storage::disk('public')->put($storagePath, $pdf->output());
+
+        // 5️⃣ Redirect ke file PDF (inline)
+        return response()->file(storage_path('app/public/' . $storagePath));
+    }
+
 
     
     public function create()

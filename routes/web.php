@@ -95,7 +95,7 @@ Route::prefix('CRUD_Surat')->group(function () {
     Route::post('/surat-tugas/update/{id}', [SuratTugasController::class, 'update'])->name('CRUD_Surat.update');
     Route::get('/surat-tugas/{id}/download', [SuratTugasController::class, 'surat'])->name('surat.cetak');
     Route::get('/surat-tugas/preview_pdf/{id}', [SuratTugasController::class, 'preview_pdf'])->name('surat.preview_pdf');
-    
+    Route::get('/surat-tugas/preview_storage/{id}', [SuratTugasController::class, 'preview_storage'])->name('surat.preview_storage');
 }); 
 
 // ====================

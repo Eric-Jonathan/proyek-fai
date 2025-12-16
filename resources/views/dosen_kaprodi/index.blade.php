@@ -183,7 +183,7 @@
                                         <i class="fa fa-eye"></i>
                                     </a>
                                     @if ($s->sifat != 'Non-Dinas')
-                                        <a href="#" class="btn btn-sm btn-primary"><i class="fa fa-download"></i></a>
+                                        <a href="{{ route('surat.preview_storage', $s->surat_id) }}" target="_blank" class="btn btn-sm btn-primary"><i class="fa fa-download"></i></a>
                                     @endif
                                 </td>
                             </tr>

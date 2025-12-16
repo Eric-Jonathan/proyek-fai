@@ -160,11 +160,16 @@
                     </form>
                 @endif
             @endif
-            
-            <a href="{{ route('surat.cetak', $surat->nomor_surat) }}" class="btn btn-outline-secondary">
+            <a href="{{ url()->previous() }}" class="btn btn-outline-danger">< Back</a>
+            <a href="{{ route('surat.cetak', $surat->surat_id) }}" class="btn btn-outline-secondary">
                 Download PDF
             </a>
         </div>
+        @if (session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ session('error') }}
+            </div>
+        @endif
     </div>
 
     <div class="card shadow-sm">
@@ -242,9 +247,7 @@
                     <div class="block">
                         {{-- Tanggal Surat --}}
                         <p class="m-0">Surabaya, {{ \Carbon\Carbon::parse($surat->tanggal_surat)->translatedFormat('d F Y') }}</p>
-                        
-                        {{-- Jabatan Penandatangan --}}
-                        <p>{{ $parentAssignment->position->position_name ?? '-' }}</p>
+                        <p>Institut Sains dan Teknologi Terpadu Surabaya</p>
                         
                         {{-- Area Tanda Tangan (100px agar ada ruang untuk TTD) --}}
                         <div class="tandaTangan" style="height: 100px; text-align: right;">
@@ -264,9 +267,7 @@
                         
                         {{-- Nama Penandatangan --}}
                         <p class="text-decoration-underline mb-0">{{ $atasan->full_name ?? '-' }}</p>
-                        
-                        {{-- Jabatan atau NIDN (Asumsi ini adalah baris di bawah nama) --}}
-                        <p>{{ $atasan->nidn ?? '-' }}</p> 
+                        <p>{{ $parentAssignment->position->position_name ?? '-' }}</p>
                     </div>
                 </div>
             </div>
