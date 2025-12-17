@@ -515,11 +515,27 @@ public function acc(Request $request, $id)
         $path = 'ttd_dekan/' . $filename;
         Storage::disk('public')->put($path, $base64Image);
 
-        $surat->ttd_dekan = $path;
+        $surat->ttd_path = $path;
         $nextStatus = 5;
         $message = 'Surat berhasil disetujui dan ditandatangani Dekan.';
     }
 
+
+    elseif ($role === 'rektor' && $surat->status_surat == 4) {
+        $request->validate(['ttd_base64' => 'required|string']);
+        $base64Image = $request->ttd_base64; 
+        if (preg_match('/^data:image\/(\w+);base64,/', $base64Image, $type)) {
+            $base64Image = substr($base64Image, strpos($base64Image, ',') + 1);
+        }
+        $base64Image = base64_decode($base64Image);
+        $filename = 'ttd_rektor_' . time() . '.png';
+        $path = 'ttd_rektor/' . $filename;
+        Storage::disk('public')->put($path, $base64Image);
+
+        $surat->ttd_path = $path;
+        $nextStatus = 5;
+        $message = 'Surat berhasil disetujui dan ditandatangani Dekan.';
+    }
     if ($role !== 'bau' || $actionType !== 'stempel') {
         
         if ($role === 'dekan' && $surat->status_surat == 3) {

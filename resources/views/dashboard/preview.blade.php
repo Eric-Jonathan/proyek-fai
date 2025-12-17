@@ -222,6 +222,17 @@
                         >
                             <i class="bi bi-check-circle"></i> Setujui & TTD
                         </button>
+                    @elseif($userRole == 'rektor' && $statusValue == 4)
+                        {{-- REKTOR: TTD --}}
+                        <button 
+                            id="btnSetujui" 
+                            type="button" 
+                            class="btn btn-success px-4" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#ttdModal"
+                        >
+                            <i class="bi bi-check-circle"></i> Setujui & TTD
+                        </button>
 
                     @elseif ($userRole == 'bau' && ($statusValue == 4 || $statusValue == 5) && !$surat->stempel_path)
                         {{-- BAU: Tambahkan Stempel dan Selesaikan (jika Dekan sudah TTD dan belum distempel) --}}
