@@ -108,7 +108,7 @@
             <thead class="table-light">
                 <tr>
                     <th style="width:50px;">No</th>
-                    <th>Judul Surat</th>
+                    <th>Jenis Tugas</th>
                     <th>Dosen Pengaju</th>
                     <th>Tanggal Surat</th>
                     <th>Tanggal Mulai</th>
@@ -121,7 +121,7 @@
             @forelse ($surat as $index => $item)
                 <tr>
                     <td>{{ $index + 1 }}</td>
-                    <td>{{ $item->dasar_tugas ?? '-' }}</td>
+                    <td>{{ $item->jenis_tugas ?? '-' }}</td>
                     <td>{{ $item->full_name ?? '-' }}</td>
                     <td>{{ $item->tanggal_surat ? \Carbon\Carbon::parse($item->tanggal_surat)->format('Y-m-d') : '-' }}</td>
                     <td>{{ $item->tanggal_mulai ? \Carbon\Carbon::parse($item->tanggal_mulai)->format('Y-m-d') : '-' }}</td>
@@ -164,9 +164,9 @@
                     <td>
                         @if ($item->status_surat == 2)
                                                             
-                                        <a href="{{ route('CRUD_Surat.edit', $item->surat_id) }}" class="btn btn-sm btn-warning">
-                                            <i class="fa fa-pencil"></i>
-                                        </a>
+                            <a href="{{ route('CRUD_Surat.edit', $item->surat_id) }}" class="btn btn-sm btn-warning">
+                                <i class="fa fa-pencil"></i>
+                            </a>
                             <a href="{{ route('surat-tugas.preview', $item->surat_id) }}" class="btn btn-sm btn-warning">
                                 <i class="fa fa-clipboard-check"></i> Review
                             </a>

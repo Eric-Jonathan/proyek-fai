@@ -81,9 +81,9 @@
                         0  => 'Ditolak',
                         1  => 'Diajukan',
                         2  => 'Disetujui Kaprodi',
-                        3  => 'Diproses Sekretaris',
+                        3  => 'Disetujui Sekretaris',
                         4  => 'Disetujui Dekan',
-                        5  => 'Stempel BAA', // Status ini bisa dilewati atau digunakan sebagai penanda
+                        5  => 'Stempel BAA', 
                         6  => 'Selesai',
                     ];
                                         
@@ -133,7 +133,9 @@
                             </span>
                         @endif
                     </div>
-                    <a href="{{ route('surat.preview_pdf', $surat->surat_id) }}" class="btn btn-primary px-3 py-2"><i class="fe fe-eye"></i> Lihat Surat</a>
+                    @if ($surat->sifat == 'Dinas')
+                        <a href="{{ route('surat.preview_pdf', $surat->surat_id) }}" class="btn btn-primary px-3 py-2"><i class="fe fe-eye"></i> Lihat Surat</a>
+                    @endif
                 </div>
 
                 <h5 class="fw-semibold">Detail Surat</h5>
