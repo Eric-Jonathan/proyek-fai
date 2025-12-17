@@ -219,7 +219,7 @@
                 @forelse ($surat as $index => $item)
                     <tr>
                         <td>{{ $index + 1 }}</td>
-                        <td>{{ $item->dasar_tugas ?? '-' }}</td>
+                        <td>{{ $item->jenis_tugas ?? '-' }}</td>
                         <td>{{ $item->full_name ?? '-' }}</td>
                         <td>{{ $item->tanggal_surat ? \Carbon\Carbon::parse($item->tanggal_surat)->format('Y-m-d') : '-' }}</td>
                         <td>{{ $item->tanggal_mulai ? \Carbon\Carbon::parse($item->tanggal_mulai)->format('Y-m-d') : '-' }}</td>
