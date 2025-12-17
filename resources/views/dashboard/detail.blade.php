@@ -68,7 +68,7 @@
                         0  => 'Ditolak',
                         1  => 'Diajukan',
                         2  => 'Disetujui Kaprodi',
-                        3  => 'Diproses Sekretaris',
+                        3  => 'Disetujui Sekretaris',
                         4  => 'Disetujui Dekan',
                         5  => 'Stempel BAA',
                         6  => 'Selesai',

@@ -201,11 +201,6 @@
             </a>
         </div>
     </div>
-    @if (session('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            {{ session('error') }}
-        </div>
-    @endif
 
     @if (session('error'))
         <div class="alert alert-danger mx-auto" style="width: 210mm;">{{ session('error') }}</div>

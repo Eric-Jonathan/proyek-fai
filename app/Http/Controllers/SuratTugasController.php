@@ -120,9 +120,13 @@ private function generateAndStorePdf(SuratTugas $surat)
 
         $parent = $positionAssignment->position->parent;
 
-        $parentAssignment = PositionAssignment::where('position_id', $parent->parent_position_id)->first();
-
-        $atasan = Lecturer::where('nidn', $parentAssignment->nidn)->first();
+        if ($parent->position_id == 1){
+            $parentAssignment = PositionAssignment::where('position_id', $parent->position_id)->first();
+            $atasan = Lecturer::where('nidn', $parentAssignment->nidn)->first();
+        } else {
+            $parentAssignment = PositionAssignment::where('position_id', $parent->parent_position_id)->first();
+            $atasan = Lecturer::where('nidn', $parentAssignment->nidn)->first();
+        }
 
         return view('CRUD_Surat.preview_pdf', [
             'surat' => $surat,
@@ -273,93 +277,93 @@ private function generateAndStorePdf(SuratTugas $surat)
             ->with('success', 'Pengajuan surat tugas berhasil dikirim!');
     }
 
-    public function index(Request $request)
-    {
-        /* ================================
-         * TABEL ATAS (status: diajukan/diproses)
-         * ================================ */
-        $perPageTop = $request->input('per_page_top', 10);
+    // public function index(Request $request)
+    // {
+    //     /* ================================
+    //      * TABEL ATAS (status: diajukan/diproses)
+    //      * ================================ */
+    //     $perPageTop = $request->input('per_page_top', 10);
 
-        $queryTop = SuratTugas::from('surat_tugas AS st')
-            ->select(
-                'st.*',
-                'l.full_name',
-                'l.lecturer_code',
-                'p.position_name',
-                'p.bureau_name'
-            )
-            ->join('lecturers AS l', 'st.nidn', '=', 'l.nidn')
-            ->leftJoin('position_assignments AS pa', function ($join) {
-                $join->on('l.nidn', '=', 'pa.nidn')
-                     ->where('pa.assignment_status', 1);
-            })
-            ->leftJoin('positions AS p', 'pa.position_id', '=', 'p.position_id')
-            ->whereIn('st.status_surat', ['diajukan', 'diproses']);
+    //     $queryTop = SuratTugas::from('surat_tugas AS st')
+    //         ->select(
+    //             'st.*',
+    //             'l.full_name',
+    //             'l.lecturer_code',
+    //             'p.position_name',
+    //             'p.bureau_name'
+    //         )
+    //         ->join('lecturers AS l', 'st.nidn', '=', 'l.nidn')
+    //         ->leftJoin('position_assignments AS pa', function ($join) {
+    //             $join->on('l.nidn', '=', 'pa.nidn')
+    //                  ->where('pa.assignment_status', 1);
+    //         })
+    //         ->leftJoin('positions AS p', 'pa.position_id', '=', 'p.position_id')
+    //         ->whereIn('st.status_surat', ['diajukan', 'diproses']);
 
-        // Search tabel atas
-        if ($request->filled('search_top')) {
-            $search = $request->search_top;
+    //     // Search tabel atas
+    //     if ($request->filled('search_top')) {
+    //         $search = $request->search_top;
 
-            $queryTop->where(function ($q) use ($search) {
-                $q->where('st.nama_kegiatan', 'like', "%{$search}%")
-                  ->orWhere('l.full_name', 'like', "%{$search}%")
-                  ->orWhere('p.position_name', 'like', "%{$search}%");
-            });
-        }
+    //         $queryTop->where(function ($q) use ($search) {
+    //             $q->where('st.nama_kegiatan', 'like', "%{$search}%")
+    //               ->orWhere('l.full_name', 'like', "%{$search}%")
+    //               ->orWhere('p.position_name', 'like', "%{$search}%");
+    //         });
+    //     }
 
-        $dataTop = $queryTop
-        ->distinct('st.surat_id')
-            ->orderBy('st.created_at', 'desc')
-            ->paginate($perPageTop, ['*'], 'page_top');
+    //     $dataTop = $queryTop
+    //     ->distinct('st.surat_id')
+    //         ->orderBy('st.created_at', 'desc')
+    //         ->paginate($perPageTop, ['*'], 'page_top');
 
-        $dataTop->setCollection(
-        $dataTop->getCollection()->unique('surat_id')->values()
-        );
-
-
-        /* ================================
-         * TABEL BAWAH (semua riwayat)
-         * ================================ */
-        $perPageBottom = $request->input('per_page_bottom', 10);
-
-        $queryBottom = SuratTugas::from('surat_tugas AS st')
-            ->select(
-                'st.*',
-                'l.full_name',
-                'l.lecturer_code',
-                'p.position_name',
-                'p.bureau_name'
-            )
-            ->join('lecturers AS l', 'st.nidn', '=', 'l.nidn')
-            ->leftJoin('position_assignments AS pa', function ($join) {
-                $join->on('l.nidn', '=', 'pa.nidn')
-                     ->where('pa.assignment_status', 1);
-            })
-            ->leftJoin('positions AS p', 'pa.position_id', '=', 'p.position_id');
-
-        // Search tabel bawah
-        if ($request->filled('search_bottom')) {
-            $search = $request->search_bottom;
-
-            $queryBottom->where(function ($q) use ($search) {
-                $q->where('st.nama_kegiatan', 'like', "%{$search}%")
-                  ->orWhere('l.full_name', 'like', "%{$search}%")
-                  ->orWhere('p.position_name', 'like', "%{$search}%");
-            });
-        }
-
-        $dataBottom = $queryBottom
-        ->distinct('st.surat_id')
-            ->orderBy('st.created_at', 'desc')
-            ->paginate($perPageBottom, ['*'], 'page_bottom');
-
-        $dataBottom->setCollection(
-        $dataBottom->getCollection()->unique('surat_id')->values()
-        );
+    //     $dataTop->setCollection(
+    //     $dataTop->getCollection()->unique('surat_id')->values()
+    //     );
 
 
-        return view('dashboard.index', compact('dataTop', 'dataBottom'));
-    }
+    //     /* ================================
+    //      * TABEL BAWAH (semua riwayat)
+    //      * ================================ */
+    //     $perPageBottom = $request->input('per_page_bottom', 10);
+
+    //     $queryBottom = SuratTugas::from('surat_tugas AS st')
+    //         ->select(
+    //             'st.*',
+    //             'l.full_name',
+    //             'l.lecturer_code',
+    //             'p.position_name',
+    //             'p.bureau_name'
+    //         )
+    //         ->join('lecturers AS l', 'st.nidn', '=', 'l.nidn')
+    //         ->leftJoin('position_assignments AS pa', function ($join) {
+    //             $join->on('l.nidn', '=', 'pa.nidn')
+    //                  ->where('pa.assignment_status', 1);
+    //         })
+    //         ->leftJoin('positions AS p', 'pa.position_id', '=', 'p.position_id');
+
+    //     // Search tabel bawah
+    //     if ($request->filled('search_bottom')) {
+    //         $search = $request->search_bottom;
+
+    //         $queryBottom->where(function ($q) use ($search) {
+    //             $q->where('st.nama_kegiatan', 'like', "%{$search}%")
+    //               ->orWhere('l.full_name', 'like', "%{$search}%")
+    //               ->orWhere('p.position_name', 'like', "%{$search}%");
+    //         });
+    //     }
+
+    //     $dataBottom = $queryBottom
+    //     ->distinct('st.surat_id')
+    //         ->orderBy('st.created_at', 'desc')
+    //         ->paginate($perPageBottom, ['*'], 'page_bottom');
+
+    //     $dataBottom->setCollection(
+    //     $dataBottom->getCollection()->unique('surat_id')->values()
+    //     );
+
+
+    //     return view('dashboard.index', compact('dataTop', 'dataBottom'));
+    // }
 
     public function preview($id)
     {
