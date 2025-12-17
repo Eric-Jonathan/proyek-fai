@@ -525,7 +525,7 @@ public function acc(Request $request, $id)
         if ($role === 'dekan' && $surat->status_surat == 3) {
         // ...
         }
-        elseif ($surat->status_surat == 3 && $xrole != 'dekan') {
+        elseif ($surat->status_surat == 3 && $role != 'dekan') {
             $nextStatus = 5; 
         } 
         elseif ($surat->status_surat == 4) {
