@@ -197,7 +197,7 @@
             @endphp
             <a href="{{ $backUrl }}" class="btn btn-outline-danger">< Back</a>
             <a href="{{ route('surat.cetak', $surat->surat_id) }}" class="btn btn-outline-secondary">
-                Download PDF
+                <i class="fe fe-download"></i>Download PDF
             </a>
         </div>
     </div>
