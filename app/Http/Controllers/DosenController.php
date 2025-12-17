@@ -57,8 +57,8 @@ class DosenController extends Controller
             'ditolak'    => $surat->where('status_surat', 0)->count(),
             'perlu_ttd'  => $suratUntukTtd->count() ?? 'null'
         ];
-        if ($role === 'dekan') return view('dekan.index', compact('surat', 'stats', 'suratUntukTtd', 'perluTtdPemohon'));
-        elseif ($role === 'kaprodi') return view('kaprodi.index', compact('surat', 'stats', 'suratUntukTtd', 'perluTtdPemohon'));
+        return view('dekan.index', compact('surat', 'stats', 'suratUntukTtd', 'perluTtdPemohon'));
+        // elseif ($role === 'kaprodi') return view('kaprodi.index', compact('surat', 'stats', 'suratUntukTtd', 'perluTtdPemohon'));
     }
     // public function dosen_dashboard()
     // {

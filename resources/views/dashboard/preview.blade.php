@@ -241,6 +241,15 @@
                                 <i class="bi bi-check-circle"></i> Setujui
                             </button>
                         </form>
+
+                    @elseif ($statusValue == 4)
+                        {{-- KAPRODI/SEKRETARIS: Setujui Biasa --}}
+                        <form id="formSetujui" method="POST" action="{{ route('surat.acc', $surat->surat_id) }}">
+                            @csrf
+                            <button id="btnSetujui" type="submit" class="btn btn-success px-4">
+                                <i class="bi bi-check-circle"></i> Setujui
+                            </button>
+                        </form>
                     
                     @elseif ($statusValue == 6)
                         {{-- AKSI TAMBAHAN JIKA SUDAH SELESAI --}}

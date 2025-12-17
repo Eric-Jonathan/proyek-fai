@@ -531,6 +531,9 @@ public function acc(Request $request, $id)
         elseif ($surat->status_surat == 4) {
             $nextStatus = 5; 
         } 
+        elseif ($surat->signed_by_position_id == 1) {
+            $nextStatus = 4; 
+        } 
         elseif ($parentId != null) { 
             $surat->signed_by_position_id = $parentId;
             $nextStatus += 1; 

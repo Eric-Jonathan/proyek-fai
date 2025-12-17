@@ -137,6 +137,9 @@
 
                     <p><strong>Dasar Tugas:</strong> {{ $surat->dasar_tugas }}</p>
                     <p><strong>Tujuan Tugas:</strong> {{ $surat->tujuan }}</p>
+                    @if ($statusValue == 0)
+                    <p><strong>Alasan Penolakan:</strong> {{ $surat->alasan_penolakan }}</p>
+                    @endif
 
                 @if(!empty($surat->lampiran_path))
                     <a href="{{ asset('storage/' . $surat->lampiran_path) }}" target="_blank">

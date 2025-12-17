@@ -147,47 +147,6 @@
         </div>
     </div>
     @endif
-
-    {{-- Daftar Surat Pengajuan --}}
-    {{-- <div class="card shadow-sm mb-4">
-        <div class="card-header bg-light">
-            <h6 class="mb-0 fw-semibold"><i class="fa fa-list me-2"></i>Daftar Surat Tugas yang Perlu </h6>
-        </div>
-        <div class="card-body table-responsive">
-            <table class="table table-bordered table-hover align-middle">
-                <thead class="table-secondary">
-                    <tr class="text-center">
-                        <th>#</th>
-                        <th>Jenis Tugas</th>
-                        <th>Tujuan</th>
-                        <th>Tanggal</th>
-                        <th>Status</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($surat as $s)
-                        @if ($s->status_surat > 0 && $s->status_surat < 5)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $s->jenis_tugas }}</td>
-                                <td>{{ $s->tujuan }}</td>
-                                <td>{{ \Carbon\Carbon::parse($s->tanggal_mulai)->translatedFormat('d F Y') }}</td>
-                                <td class="text-center">
-                                    <span class="badge bg-warning">Diproses</span>
-                                </td>
-                                <td class="text-center">
-                                    <a href="{{ route('surat-tugas.detail', $s->surat_id) }}" class="btn btn-info btn-sm">
-                                        <i class="fa fa-eye"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        @endif
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    </div> --}}
 </div>
 @endsection
 
