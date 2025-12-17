@@ -68,7 +68,7 @@
                         0  => 'Ditolak',
                         1  => 'Diajukan',
                         2  => 'Disetujui Kaprodi',
-                        3  => 'Diproses Sekretaris',
+                        3  => 'Disetujui Sekretaris',
                         4  => 'Disetujui Dekan',
                         5  => 'Stempel BAA',
                         6  => 'Selesai',
@@ -137,6 +137,9 @@
 
                     <p><strong>Dasar Tugas:</strong> {{ $surat->dasar_tugas }}</p>
                     <p><strong>Tujuan Tugas:</strong> {{ $surat->tujuan }}</p>
+                    @if ($statusValue == 0)
+                    <p><strong>Alasan Penolakan:</strong> {{ $surat->alasan_penolakan }}</p>
+                    @endif
 
                 @if(!empty($surat->lampiran_path))
                     <a href="{{ asset('storage/' . $surat->lampiran_path) }}" target="_blank">

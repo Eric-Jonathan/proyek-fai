@@ -210,23 +210,14 @@
 
                         <!-- 🔥 AKSI PRINT PDF -->
                         <td class="text-center">
-                            @if ($item->status_surat >= 0 && $item->status_surat < 2)
-                                <a href="{{ route('surat-tugas.detail', $item->surat_id) }}" class="btn btn-sm btn-info">
-                                    <i class="fa fa-eye"></i>
-                                </a>
-                            
-                                <a href="{{ route('CRUD_Surat.edit', $item->surat_id) }}" class="btn btn-sm btn-warning">
-                                    <i class="fa fa-pencil"></i>
-                                </a>
-                            @elseif ($item->status_surat >= 0 )
-                                <!-- <a href="{{ route('surat-tugas.detail', $item->surat_id) }}" class="btn btn-sm btn-info"> -->
-                                <a onclick="window.location='{{ url('/CRUD_Surat/surat-tugas/preview_pdf/' . $item->surat_id) }}'" class="btn btn-sm btn-info">
-                                    <i class="fa fa-eye"></i>
-                                </a>
+                            @if ($item->sifat == "Dinas")
+                            <a onclick="window.location='{{ url('/CRUD_Surat/surat-tugas/preview_pdf/' . $item->surat_id) }}'" class="btn btn-sm btn-info">
+                                <i class="fa fa-eye"></i>
+                            </a>
                             @else
-                                <a href="{{ route('surat-tugas.detail', $item->surat_id) }}" class="btn btn-sm btn-primary">
-                                    <i class="fa fa-download"></i>
-                                </a>
+                            <a href="{{ route('surat-tugas.detail', $item->surat_id) }}" class="btn btn-sm btn-info">
+                                <i class="fa fa-eye"></i>
+                            </a>
                             @endif
                         </td>
                     </tr>
