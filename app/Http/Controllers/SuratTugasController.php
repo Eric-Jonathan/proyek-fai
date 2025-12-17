@@ -440,6 +440,7 @@ public function acc(Request $request, $id)
 
     $nextStatus = $surat->status_surat;
     $message = 'Surat berhasil disetujui!';
+    $tt= $surat->signed_by_position_id;
 
     /* =====================================================
       | BLOK 1: LOGIKA FINALISASI (KHUSUS BAU) - HANYA STEMPEL
@@ -515,7 +516,7 @@ public function acc(Request $request, $id)
         Storage::disk('public')->put($path, $base64Image);
 
         $surat->ttd_dekan = $path;
-        $nextStatus = 4;
+        $nextStatus = 5;
         $message = 'Surat berhasil disetujui dan ditandatangani Dekan.';
     }
 

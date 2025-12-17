@@ -46,7 +46,7 @@
             <div class="card text-center border-primary shadow-sm">
                 <div class="card-body">
                     <h6 class="text-muted">Total Aktivitas Hari Ini</h6>
-                    <h4 class="fw-bold text-primary">18</h4>
+                    <h4 class="fw-bold text-primary">{{ $today }}</h4>
                 </div>
             </div>
         </div>
@@ -54,7 +54,7 @@
             <div class="card text-center border-success shadow-sm">
                 <div class="card-body">
                     <h6 class="text-muted">Aktivitas Berhasil</h6>
-                    <h4 class="fw-bold text-success">15</h4>
+                    <h4 class="fw-bold text-success">{{ $total }}</h4>
                 </div>
             </div>
         </div>
@@ -62,7 +62,7 @@
             <div class="card text-center border-danger shadow-sm">
                 <div class="card-body">
                     <h6 class="text-muted">Aktivitas Gagal</h6>
-                    <h4 class="fw-bold text-danger">3</h4>
+                    <h4 class="fw-bold text-danger">0</h4>
                 </div>
             </div>
         </div>

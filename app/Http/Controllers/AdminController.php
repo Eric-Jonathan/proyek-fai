@@ -11,6 +11,7 @@ use App\Models\SuratTemplate;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 
 class AdminController extends Controller
 {
@@ -206,6 +207,8 @@ class AdminController extends Controller
     public function logAktivitas(Request $request)
     {
         $query = LogAktivitas::with('lecturer')->orderBy('log_id', 'DESC');
+        $today = LogAktivitas::whereDate('created_at', Carbon::today())->count();
+        $total = $query->count();
 
         if ($request->filled('tanggal')) {
             $query->whereDate('created_at', $request->tanggal);
@@ -225,7 +228,7 @@ class AdminController extends Controller
         // 🔥 Pagination 20 item
         $logs = $query->paginate(20);
 
-        return view('admin.logs', compact('logs'));
+        return view('admin.logs', compact('logs', 'today', 'total'));
     }
 
 
