@@ -7,7 +7,7 @@
     <h3 class="mb-4"><i class="fa fa-home me-2"></i> Dashboard Sekretaris</h3>
 
     <!-- 🔍 Filter -->
-    <div class="card mb-4 shadow-sm">
+    {{-- <div class="card mb-4 shadow-sm">
         <div class="card-body">
             <form action="" method="GET" class="row g-3 align-items-end">
                 
@@ -56,7 +56,7 @@
                 </div>            
             </form>
         </div>
-    </div>
+    </div> --}}
 
     <!-- 📊 Statistik -->
     <div class="row mb-4">

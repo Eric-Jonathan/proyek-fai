@@ -24,17 +24,19 @@
                     <label class="form-label">Jenis Aktivitas</label>
                     <select class="form-select" name="jenis">
                         <option value="">Semua</option>
-                        <option value="login">Login</option>
-                        <option value="create">Membuat Data</option>
-                        <option value="update">Mengubah Data</option>
-                        <option value="delete">Menghapus Data</option>
-                        <option value="backup">Backup Sistem</option>
+                        <option value="aju">Mengajukan Surat</option>
+                        <option value="update">Mengubah Surat</option>
+                        <option value="nolak">Menolak Surat</option>
+                        <option value="buat">Membuat User</option>
+                        <option value="baru">Update User</option>
+                        <option value="hapus">Menghapus User</option>
                     </select>
                 </div>
                 <div class="col-md-3 d-flex justify-content-end">
                     <button type="submit" class="btn btn-primary">
                         <i class="fa fa-search me-1"></i> Filter
                     </button>
+                    <a href="{{ route('admin.logs') }}" class="btn btn-secondary ms-2"><i class="fas fa-sync-alt"></i> Reset </a>
                 </div>
             </form>
         </div>
