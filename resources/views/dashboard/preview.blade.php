@@ -56,7 +56,14 @@
                     <i class="bi bi-file-earmark-text"></i> Preview Surat Tugas
                 </h4>
 
-                <a href="{{ url()->previous() ?? '/surat-tugas' }}" class="btn btn-kembali">
+                @php
+                    $previous = url()->previous();
+                    $current  = url()->current();
+                    $fallback = route(session('user.role') . '.dashboard');
+
+                    $backUrl = ($previous && $previous !== $current) ? $previous : $fallback;
+                @endphp
+                <a href="{{ route(session('user.role') . '.dashboard') }}" class="btn btn-kembali">
                     <i class="bi bi-arrow-left"></i> Kembali
                 </a>
 
@@ -107,23 +114,27 @@
                     $iconClass = $iconMapping[$statusValue] ?? 'bi-question-circle';
                 @endphp
 
-
-                <span class="badge {{ $badgeClass }} mb-3 px-3 py-2">
-                    <i class="bi {{ $iconClass }}"></i>
-                    {{ $statusText }}
-                </span>
-
-                <span class="badge bg-info text-dark mb-3 px-3 py-2">
-                    <i class="bi bi-flag"></i>
-                    {{ $surat->sifat ?? '-' }}
-                </span>
-                
-                @if ($surat->nomor_surat)
-                    <span class="badge bg-secondary mb-3 px-3 py-2">
-                        <i class="bi bi-hash"></i>
-                        Nomor Surat: {{ $surat->nomor_surat }}
-                    </span>
-                @endif
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="">
+                        <span class="badge {{ $badgeClass }} mb-3 px-3 py-2">
+                            <i class="bi {{ $iconClass }}"></i>
+                            {{ $statusText }}
+                        </span>
+        
+                        <span class="badge bg-info text-dark mb-3 px-3 py-2">
+                            <i class="bi bi-flag"></i>
+                            {{ $surat->sifat ?? '-' }}
+                        </span>
+                        
+                        @if ($surat->nomor_surat)
+                            <span class="badge bg-secondary mb-3 px-3 py-2">
+                                <i class="bi bi-hash"></i>
+                                Nomor Surat: {{ $surat->nomor_surat }}
+                            </span>
+                        @endif
+                    </div>
+                    <a href="{{ route('surat.preview_pdf', $surat->surat_id) }}" class="btn btn-primary px-3 py-2"><i class="fe fe-eye"></i> Lihat Surat</a>
+                </div>
 
                 <h5 class="fw-semibold">Detail Surat</h5>
 
@@ -188,14 +199,15 @@
                                 <button id="btnSubmitTolak" type="submit" class="btn btn-danger">Konfirmasi</button>
                             </div>
                         </div>
-
-                        <button 
-                            id="btnTolakAwal"
-                            type="button"
-                            class="btn btn-danger px-4"
-                            onclick="showNotes()">
-                            <i class="bi bi-x-circle"></i> Tolak
-                        </button>
+                        @if ($statusValue < 5)
+                            <button 
+                                id="btnTolakAwal"
+                                type="button"
+                                class="btn btn-danger px-4"
+                                onclick="showNotes()">
+                                <i class="bi bi-x-circle"></i> Tolak
+                            </button>
+                        @endif
 
                     </form>
                     

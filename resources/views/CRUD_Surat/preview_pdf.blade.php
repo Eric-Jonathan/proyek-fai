@@ -160,17 +160,26 @@
                     </form>
                 @endif
             @endif
-            <a href="{{ url()->previous() }}" class="btn btn-outline-danger">< Back</a>
+
+            {{-- Pengecekan URL --}}
+            @php
+                $previous = url()->previous();
+                $current  = url()->current();
+                $fallback = route(session('user.role') . '.dashboard');
+
+                $backUrl = ($previous && $previous !== $current) ? $previous : $fallback;
+            @endphp
+            <a href="{{ $backUrl }}" class="btn btn-outline-danger">< Back</a>
             <a href="{{ route('surat.cetak', $surat->surat_id) }}" class="btn btn-outline-secondary">
                 Download PDF
             </a>
         </div>
-        @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                {{ session('error') }}
-            </div>
-        @endif
     </div>
+    @if (session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+        </div>
+    @endif
 
     <div class="card shadow-sm">
         <div class="card-body">

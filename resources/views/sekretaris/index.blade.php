@@ -103,8 +103,8 @@
             Daftar Surat Tugas
         </div>
 
-        <div class="table-responsive">
-        <table class="table table-bordered table-hover align-middle mb-0">
+        <div class="table-responsive p-3">
+        <table class="table table-bordered table-hover align-middle mb-0 table-striped pt-3" id="tableSurat">
             <thead class="table-light">
                 <tr>
                     <th style="width:50px;">No</th>
@@ -135,7 +135,7 @@
                                 0  => 'Ditolak',
                                 1  => 'Diajukan',
                                 2  => 'Disetujui Kaprodi',
-                                3  => 'Diproses Sekretaris',
+                                3  => 'Disetujui Sekretaris',
                                 4  => 'Disetujui Dekan',
                                 5  => 'Menunggu Stempel',
                                 6  => 'Selesai',
@@ -191,4 +191,13 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('custom_js')
+    <script>
+        $('#tableSurat').DataTable({
+            pageLength: 10,
+            searching: true,
+        });
+    </script>
 @endsection

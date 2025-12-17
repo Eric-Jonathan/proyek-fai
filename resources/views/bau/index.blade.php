@@ -135,7 +135,7 @@
                                     0  => 'Ditolak',
                                     1  => 'Diajukan',
                                     2  => 'Disetujui Kaprodi',
-                                    3  => 'Diproses Sekretaris',
+                                    3  => 'Disetujui Sekretaris',
                                     4  => 'Disetujui Dekan',
                                     5  => 'Menunggu Stempel',
                                     6  => 'Selesai',
@@ -233,7 +233,7 @@
                                     0  => 'Ditolak',
                                     1  => 'Diajukan',
                                     2  => 'Disetujui Kaprodi',
-                                    3  => 'Diproses Sekretaris',
+                                    3  => 'Disetujui Sekretaris',
                                     4  => 'Disetujui Dekan',
                                     5  => 'Menunggu Stempel',
                                     6  => 'Selesai',
@@ -261,7 +261,7 @@
                         <!-- Tombol -->
                         <td>
                             @if ($item->status_surat >= 0 && $item->status_surat < 2)
-                                <a href="{{ route('surat-tugas.detail', $item->surat_id) }}" class="btn btn-sm btn-info">
+                                <a href="{{ route('surat.preview_pdf', $item->surat_id) }}" class="btn btn-sm btn-info">
                                     <i class="fa fa-eye"></i>
                                 </a>
                             

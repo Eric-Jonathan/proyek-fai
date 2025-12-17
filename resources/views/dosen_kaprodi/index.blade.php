@@ -90,7 +90,7 @@
                                              0 => ['danger', 'Ditolak'],
                                              1 => ['warning text-dark', 'Diajukan'],
                                              2 => ['info text-dark', 'Disetujui Kaprodi'],
-                                             3 => ['primary', 'Diproses Sekretaris'],
+                                             3 => ['primary', 'Disetujui Sekretaris'],
                                              4 => ['primary', 'Disetujui Dekan'],
                                              5 => ['dark text-white', 'Menunggu Stempel'],
                                              6 => ['success', 'Selesai'],
@@ -162,7 +162,7 @@
                                              0 => ['danger', 'Ditolak'],
                                              1 => ['warning text-dark', 'Diajukan'],
                                              2 => ['info text-dark', 'Disetujui Kaprodi'],
-                                             3 => ['primary', 'Diproses Sekretaris'],
+                                             3 => ['primary', 'Disetujui Sekretaris'],
                                              4 => ['primary', 'Disetujui Dekan'],
                                              5 => ['dark text-white', 'Menunggu Stempel'],
                                              6 => ['success', 'Selesai'],
@@ -179,7 +179,7 @@
                                 </td>
 
                                 <td class="text-center">
-                                    <a href="{{ route('surat-tugas.detail', $s->surat_id) }}" class="btn btn-sm btn-info">
+                                    <a href="{{ route('surat.preview_pdf', $s->surat_id) }}" class="btn btn-sm btn-info">
                                         <i class="fa fa-eye"></i>
                                     </a>
                                     @if ($s->sifat != 'Non-Dinas')
