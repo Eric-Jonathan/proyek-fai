@@ -120,9 +120,13 @@ private function generateAndStorePdf(SuratTugas $surat)
 
         $parent = $positionAssignment->position->parent;
 
-        $parentAssignment = PositionAssignment::where('position_id', $parent->parent_position_id)->first();
-
-        $atasan = Lecturer::where('nidn', $parentAssignment->nidn)->first();
+        if ($parent->position_id == 1){
+            $parentAssignment = PositionAssignment::where('position_id', $parent->position_id)->first();
+            $atasan = Lecturer::where('nidn', $parentAssignment->nidn)->first();
+        } else {
+            $parentAssignment = PositionAssignment::where('position_id', $parent->parent_position_id)->first();
+            $atasan = Lecturer::where('nidn', $parentAssignment->nidn)->first();
+        }
 
         return view('CRUD_Surat.preview_pdf', [
             'surat' => $surat,
