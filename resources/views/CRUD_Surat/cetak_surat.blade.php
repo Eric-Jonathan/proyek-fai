@@ -102,12 +102,19 @@
         }
 
         .tandaTangan img {
-            width: 140px;
-            height: auto;
-            display: inline-block;
-            position: relative;
-            z-index: 2;
+           width: 240px;
+    height: auto;
+    display: inline-block;
+    position: relative;
+    z-index: 2;
+    
+    /* TRICK CSS: Menghilangkan background putih */
+    mix-blend-mode: multiply;
+    
+    /* Opsional: Mempertegas warna hitam tanda tangan jika agak pudar */
+    filter: contrast(150%) brightness(110%);
         }
+
 
         .block p {
             line-height: 1.2;
