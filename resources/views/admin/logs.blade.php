@@ -104,7 +104,7 @@
             {{-- Pengguna --}}
             <td>
                 <i class="fa fa-user text-primary me-1"></i>
-                {{ $log->lecturer->nama ?? $log->nidn }}
+                {{ $log->lecturer->username ?? $log->nidn }}
             </td>
 
             {{-- Aktivitas --}}
