@@ -181,6 +181,9 @@
 
                 <tbody>
                 @forelse($surat as $item)
+                @if ($item->status_surat > 0 && $item->status_surat < 6)
+                    @continue
+                @endif
                 @if ($item->status_surat == 0 || $item->status_surat == 6)
                     <tr onclick="window.location='{{ url('/CRUD_Surat/cetak-surat/' . $item->surat_id) }}'" style="cursor:pointer">
                         <td>{{ $no++ }}</td>

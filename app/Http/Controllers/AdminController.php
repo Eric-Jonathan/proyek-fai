@@ -216,7 +216,7 @@ class AdminController extends Controller
 
         if ($request->filled('user')) {
             $query->whereHas('lecturer', function ($q) use ($request) {
-                $q->where('nama', 'like', '%' . $request->user . '%')
+                $q->where('username', 'like', '%' . $request->user . '%')
                 ->orWhere('nidn', 'like', '%' . $request->user . '%');
             });
         }

@@ -1,4 +1,3 @@
-
 @extends('layouts.app')
 
 @section('title', 'Riwayat Surat')
@@ -106,6 +105,8 @@
                 <tbody>
                 @forelse($surat as $item)
                 @if ($item->status_surat > 0 && $item->status_surat < 6)
+                    @continue
+                @endif
                     <tr onclick="window.location='{{ url('/CRUD_Surat/surat-tugas/preview_pdf/' . $item->surat_id) }}'" style="cursor:pointer">
                         <td>{{ $no++ }}</td>
                         <td class="fw-bold">{{ $item->jenis_tugas }}</td>
@@ -131,7 +132,6 @@
                             </span>
                         </td>
                     </tr>
-                @endif
                 @empty
                     <tr>
                         <td colspan="7" class="text-center text-muted py-4">
@@ -169,7 +169,10 @@
                 <tbody>
                 @forelse($surat as $item)
                 @if ($item->status_surat == 0 || $item->status_surat == 6)
-                    <tr>
+                @continue
+                    
+                @endif
+                <tr>
                         <td>{{ $no++ }}</td>
                         <td class="fw-bold">{{ $item->jenis_tugas }}</td>
                         <td>{{ $item->full_name }}</td>
@@ -221,7 +224,6 @@
                             @endif
                         </td>
                     </tr>
-                @endif
                 @empty
                     <tr>
                         <td colspan="7" class="text-center text-muted py-4">
