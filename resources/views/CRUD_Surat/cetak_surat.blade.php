@@ -196,8 +196,8 @@
                     <p>Surabaya, {{ \Carbon\Carbon::parse($surat->tanggal_surat)->translatedFormat('d F Y') }}</p>
                     <p>Institut Sains dan Teknologi Terpadu Surabaya</p>
                     <div class="tandaTangan">
-                        @if ($surat->ttd_dekan)
-                            <img src="{{ public_path('storage/' . $surat->ttd_dekan) }}" alt="Tanda Tangan Dekan">
+                        @if ($surat->ttd_path)
+                            <img src="{{ public_path('storage/' . $surat->ttd_path) }}" alt="Tanda Tangan Dekan">
                         @else
                             <div style="height: 100px;">&nbsp;</div>
                         @endif

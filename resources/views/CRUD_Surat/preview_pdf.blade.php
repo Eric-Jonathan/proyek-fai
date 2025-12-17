@@ -279,8 +279,8 @@
                         <p>Institut Sains dan Teknologi Terpadu Surabaya</p>
                         
                         <div class="tandaTangan">
-                            @if ($surat->ttd_dekan)
-                                <img src="{{ asset('storage/' . $surat->ttd_dekan) }}" alt="TTD">
+                            @if ($surat->ttd_path)
+                                <img src="{{ asset('storage/' . $surat->ttd_path) }}" alt="TTD">
                             @else
                                 <div style="height: 100px;">&nbsp;</div>
                             @endif
