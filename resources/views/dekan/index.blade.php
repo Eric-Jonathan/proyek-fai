@@ -103,10 +103,28 @@
     </div>
     
     {{-- Chart --}}
-    <div class="card mb-4">
-      <div class="card-body">
-        <canvas id="chartPemohon" height="120"></canvas>
-      </div>
+    <div class="row g-3 mb-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body p-3">
+                    <h6 class="fw-semibold mb-2">Tren Pengajuan</h6>
+                    <canvas id="chartLine" height="140"></canvas>
+                </div>
+            </div>
+        </div>
+    
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body p-3">
+                    <h6 class="fw-semibold mb-2">Jumlah Pemohon</h6>
+                    <div class="d-flex justify-content-center">
+                        <div style="max-width: 280px;">
+                            <canvas id="chartPie"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     
     {{-- Surat Perlu Tanda Tangan --}}
@@ -158,20 +176,59 @@
   const labels = {!! json_encode($perluTtdPemohon->pluck('full_name')) !!};
   const data   = {!! json_encode($perluTtdPemohon->pluck('total')) !!};
 
-  new Chart(document.getElementById('chartPemohon'), {
-    type: 'bar',
+new Chart(document.getElementById('chartLine'), {
+    type: 'line',
     data: {
-      labels: labels,
-      datasets: [{
-        label: 'Jumlah Pengajuan (status = Diajukan)',
-        data: data,
-        borderWidth: 1
-      }]
+        labels: labels,
+        datasets: [{
+            data: data,
+            borderColor: '#0d6efd',
+            backgroundColor: 'rgba(13,110,253,.15)',
+            tension: 0.4,
+            fill: true,
+            pointRadius: 3
+        }]
     },
     options: {
-      plugins: { legend: { display: false } },
-      scales: { y: { beginAtZero: true, precision: 0 } }
+        plugins: { legend: { display: false } },
+        scales: {
+            y: { beginAtZero: true, ticks: { precision: 0 } }
+        }
     }
-  });
+});
+
+
+new Chart(document.getElementById('chartPie'), {
+    type: 'pie',
+    data: {
+        labels: labels,
+        datasets: [{
+            data: data,
+            backgroundColor: [
+                '#0d6efd',
+                '#198754',
+                '#ffc107',
+                '#dc3545',
+                '#6f42c1'
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false, // 🔥 penting
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    boxWidth: 10,
+                    font: { size: 11 }
+                }
+            }
+        }
+    }
+});
+
+
+
 </script>
 @endsection
