@@ -107,7 +107,7 @@
                 @forelse($surat as $item)
                 {{-- bikin condition kalo status diajukan bisa ke --}}
                 @if ($item->status_surat > 0 && $item->status_surat < 6)
-                    <tr onclick="window.location='{{ url('/CRUD_Surat/cetak-surat/' . $item->surat_id) }}'" style="cursor:pointer">
+                    <tr onclick="window.location='{{ $item->sifat_surat == 'Dinas' ? url('/CRUD_Surat/surat-tugas/preview_pdf/' . $item->surat_id) : url('/CRUD_Surat/surat-tugas/detail/' . $item->surat_id) }}'" style="cursor:pointer">
                         <td>{{ $no++ }}</td>
                         <td class="fw-bold">{{ $item->jenis_tugas }}</td>
                         <td>{{ $item->full_name }}</td>

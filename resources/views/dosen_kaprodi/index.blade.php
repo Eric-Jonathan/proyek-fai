@@ -179,9 +179,15 @@
                                 </td>
 
                                 <td class="text-center">
-                                    <a href="{{ route('surat.preview_pdf', $s->surat_id) }}" class="btn btn-sm btn-info">
-                                        <i class="fa fa-eye"></i>
-                                    </a>
+                                    @if ($s->sifat == 'Dinas' && $s->status_surat == 6)
+                                        <a href="{{ route('surat.preview_pdf', $s->surat_id) }}" class="btn btn-sm btn-info">
+                                            <i class="fa fa-eye"></i>
+                                        </a>
+                                    @else
+                                        <a href="{{ route('surat-tugas.detail', $s->surat_id) }}" class="btn btn-sm btn-info">
+                                            <i class="fa fa-eye"></i>
+                                        </a>
+                                    @endif
                                     {{-- @if ($s->sifat != 'Non-Dinas')
                                         <a href="{{ route('surat.preview_storage', $s->surat_id) }}" target="_blank" class="btn btn-sm btn-primary"><i class="fa fa-download"></i></a>
                                     @endif --}}

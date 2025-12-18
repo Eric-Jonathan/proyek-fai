@@ -7,7 +7,13 @@
 
     {{-- Judul Halaman --}}
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="fw-bold">Dashboard Dekan</h4>
+        <h4 class="fw-bold">Dashboard
+            @if(session('user.role') == 'dekan')
+                Dekan
+            @elseif(session('user.role') == 'kaprodi')
+                Kaprodi
+            @endif
+        </h4>
     </div>
 
     {{-- Statistik Surat --}}
